@@ -257,7 +257,7 @@ class GNH_Admin_Page {
             <h1>
                 <span class="dashicons dashicons-rss" style="font-size:30px;line-height:1;vertical-align:middle;margin-right:6px;color:#e8612d;"></span>
                 <?php esc_html_e( 'Google News Helper', 'google-news-helper' ); ?>
-                <span class="gnh-version">v<?php echo esc_html( GNH_VERSION ); ?></span>
+                <span class="gnh-version">v<?php echo esc_html( GNH_VERSION ); ?> &mdash; by <a href="https://buy-it.gr/" target="_blank">Ioannis Kokkinis</a></span>
             </h1>
 
             <?php if ( isset( $_GET['updated'] ) ): ?>

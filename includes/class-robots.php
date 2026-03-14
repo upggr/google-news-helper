@@ -11,6 +11,43 @@ class GNH_Robots {
 
     public function __construct() {
         add_filter( 'robots_txt', [ $this, 'add_rules' ], 10, 2 );
+        $this->maybe_bypass_cache_for_crawlers();
+    }
+
+    /**
+     * If a social/news crawler is detected, tell cache plugins to skip
+     * serving a cached version so they always get a fresh full response.
+     */
+    private function maybe_bypass_cache_for_crawlers(): void {
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        if ( empty( $ua ) ) {
+            return;
+        }
+
+        $crawlers = [
+            'facebookexternalhit',
+            'Facebot',
+            'Twitterbot',
+            'LinkedInBot',
+            'WhatsApp',
+            'Googlebot-News',
+            'Slackbot',
+            'TelegramBot',
+        ];
+
+        foreach ( $crawlers as $bot ) {
+            if ( stripos( $ua, $bot ) !== false ) {
+                // Cache Enabler: define constant it checks
+                if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+                    define( 'DONOTCACHEPAGE', true );
+                }
+                // W3 Total Cache / WP Super Cache compat
+                if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
+                    define( 'DONOTCACHEOBJECT', true );
+                }
+                break;
+            }
+        }
     }
 
     /**

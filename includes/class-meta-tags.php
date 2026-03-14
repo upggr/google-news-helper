@@ -87,7 +87,9 @@ class GNH_Meta_Tags {
             $this->meta( 'property', 'og:locale',      $locale );
 
             if ( $image_url ) {
-                $this->meta( 'property', 'og:image', $image_url );
+                $this->meta( 'property', 'og:image',        $image_url );
+                $this->meta( 'property', 'og:image:type',   $this->get_image_mime( $image_url ) );
+                $this->meta( 'property', 'og:image:alt',    $title );
                 if ( $image_w ) {
                     $this->meta( 'property', 'og:image:width',  (string) $image_w );
                     $this->meta( 'property', 'og:image:height', (string) $image_h );
@@ -190,6 +192,19 @@ class GNH_Meta_Tags {
             $text = mb_substr( $text, 0, 197 ) . '...';
         }
         return $text;
+    }
+
+    private function get_image_mime( string $url ): string {
+        $ext = strtolower( pathinfo( wp_parse_url( $url, PHP_URL_PATH ) ?? '', PATHINFO_EXTENSION ) );
+        $map = [
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png'  => 'image/png',
+            'webp' => 'image/webp',
+            'gif'  => 'image/gif',
+            'avif' => 'image/avif',
+        ];
+        return $map[ $ext ] ?? 'image/jpeg';
     }
 
     private function get_keywords( $tags ): string {
