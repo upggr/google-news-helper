@@ -1,0 +1,279 @@
+/* Google News Helper – Admin Styles */
+
+.gnh-wrap h1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.gnh-version {
+    font-size: 13px;
+    font-weight: 400;
+    color: #999;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* ── Cards ───────────────────────────────────────────────── */
+
+.gnh-card {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    max-width: 860px;
+}
+
+.gnh-card h2,
+.gnh-card h3 {
+    margin-top: 0;
+}
+
+.gnh-info-card ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.gnh-info-card ul li {
+    margin-bottom: 6px;
+    color: #3c434a;
+}
+
+/* ── Toggle switch ───────────────────────────────────────── */
+
+.gnh-toggle-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.gnh-toggle-card h2 {
+    flex-basis: 100%;
+    margin-bottom: 4px;
+}
+
+.gnh-toggle-card .description {
+    flex-basis: 100%;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.gnh-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.gnh-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.gnh-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    border-radius: 28px;
+    transition: background-color 0.2s;
+}
+
+.gnh-slider::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.gnh-switch input:checked + .gnh-slider {
+    background-color: #2271b1;
+}
+
+.gnh-switch input:checked + .gnh-slider::before {
+    transform: translateX(24px);
+}
+
+.gnh-toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.gnh-status-on  { color: #46b450; }
+.gnh-status-off { color: #dc3232; }
+
+/* ── Preview grid ────────────────────────────────────────── */
+
+.gnh-preview-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.gnh-preview-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: box-shadow 0.15s;
+}
+
+.gnh-preview-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.gnh-preview-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.gnh-preview-meta-top {
+    font-size: 12px;
+    color: #70757a;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gnh-preview-source {
+    font-weight: 600;
+    color: #3c434a;
+}
+
+.gnh-preview-dot {
+    color: #bbb;
+}
+
+.gnh-preview-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #1a0dab;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.gnh-preview-title:hover {
+    text-decoration: underline;
+}
+
+.gnh-preview-meta-bottom {
+    font-size: 12px;
+    color: #70757a;
+    margin-top: 5px;
+}
+
+.gnh-preview-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    margin-top: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.gnh-preview-status .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.gnh-status-good {
+    background: #edfaee;
+    color: #1e7e34;
+}
+
+.gnh-status-warn {
+    background: #fff8e5;
+    color: #856404;
+}
+
+/* ── Thumbnail ───────────────────────────────────────────── */
+
+.gnh-preview-thumb {
+    flex-shrink: 0;
+}
+
+.gnh-card-thumb {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.gnh-thumb-placeholder {
+    width: 96px;
+    height: 96px;
+    border-radius: 6px;
+    background: #f0f0f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+}
+
+.gnh-thumb-placeholder .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #bbb;
+}
+
+/* ── Tag tester ──────────────────────────────────────────── */
+
+.gnh-test-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.gnh-tags-table code {
+    font-size: 12px;
+}
+
+.gnh-tag-ok td:last-child    { color: #1e7e34; font-weight: 600; }
+.gnh-tag-missing td:last-child { color: #b91c1c; font-weight: 600; }
+.gnh-tag-duplicate td:last-child { color: #92400e; font-weight: 600; }
+.gnh-tag-optional td:last-child  { color: #888; }
+
+/* ── Badges ──────────────────────────────────────────────── */
+
+.gnh-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.gnh-badge-ok      { background: #edfaee; color: #1e7e34; }
+.gnh-badge-warn    { background: #fff8e5; color: #856404; }
+.gnh-badge-missing { background: #fef2f2; color: #b91c1c; }
+.gnh-badge-info    { background: #eff6ff; color: #1e40af; }

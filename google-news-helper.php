@@ -1,0 +1,78 @@
+<?php
+/**
+ * Plugin Name: Google News Helper
+ * Description: Optimizes your WordPress site for Google News: adds required meta tags, Open Graph, NewsArticle JSON-LD structured data, and a preview dashboard. Auto-updates from GitHub.
+ * Version:     1.0.0
+ * Author:      Ioannis Kokkinis
+ * Author URI:  https://buy-it.gr/
+ * License:     GPL-2.0-or-later
+ * Text Domain: google-news-helper
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+define( 'GNH_VERSION',     '1.0.0' );
+define( 'GNH_PLUGIN_FILE', __FILE__ );
+define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
+define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
+define( 'GNH_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
+
+// ── Activation / deactivation / uninstall ────────────────────────────────────
+
+register_activation_hook( __FILE__, 'gnh_activate' );
+function gnh_activate(): void {
+    add_option( 'gnh_enabled', true );
+}
+
+register_deactivation_hook( __FILE__, 'gnh_deactivate' );
+function gnh_deactivate(): void {}
+
+register_uninstall_hook( __FILE__, 'gnh_uninstall' );
+function gnh_uninstall(): void {
+    delete_option( 'gnh_enabled' );
+}
+
+// ── Load includes ─────────────────────────────────────────────────────────────
+
+$_gnh_includes = [
+    'includes/class-settings.php',
+    'includes/class-meta-tags.php',
+    'includes/class-admin-page.php',
+    'includes/class-updater.php',
+];
+
+foreach ( $_gnh_includes as $_gnh_file ) {
+    $path = GNH_PLUGIN_DIR . $_gnh_file;
+    if ( file_exists( $path ) ) {
+        require_once $path;
+    } else {
+        error_log( 'Google News Helper: missing file ' . $path );
+    }
+}
+unset( $_gnh_includes, $_gnh_file, $path );
+
+// ── Bootstrap on plugins_loaded ───────────────────────────────────────────────
+
+add_action( 'plugins_loaded', static function (): void {
+    if ( class_exists( 'GNH_Settings' ) ) {
+        new GNH_Settings();
+    }
+    if ( class_exists( 'GNH_Meta_Tags' ) ) {
+        new GNH_Meta_Tags();
+    }
+    if ( is_admin() && class_exists( 'GNH_Admin_Page' ) ) {
+        new GNH_Admin_Page();
+    }
+} );
+
+// ── GitHub updater (admin-only) ───────────────────────────────────────────────
+
+if ( is_admin() ) {
+    add_action( 'admin_init', static function (): void {
+        if ( function_exists( 'wp_remote_get' ) && class_exists( 'GNH_GitHub_Updater' ) ) {
+            new GNH_GitHub_Updater();
+        }
+    } );
+}

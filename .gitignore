@@ -1,0 +1,16 @@
+# Local WordPress test site – never commit
+test site/
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (if ever added)
+node_modules/
+
+# Composer (if ever added)
+vendor/
