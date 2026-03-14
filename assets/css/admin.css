@@ -245,6 +245,27 @@
 
 /* ── Tag tester ──────────────────────────────────────────── */
 
+.gnh-check-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.gnh-check-ok   { background: #edfaee; color: #1e5c28; }
+.gnh-check-fail { background: #fef2f2; color: #7f1d1d; }
+.gnh-check-warn { background: #fff8e5; color: #7c5e00; }
+
+.gnh-check-row .dashicons {
+    flex-shrink: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
 .gnh-test-links {
     display: flex;
     flex-wrap: wrap;

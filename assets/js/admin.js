@@ -88,6 +88,22 @@
                 html += '</p>';
             }
 
+            // ── Googlebot-News access
+            var gb = data.googlebot || {};
+            if (gb.reachable === true) {
+                html += '<div class="gnh-check-row gnh-check-ok"><span class="dashicons dashicons-yes-alt"></span> <strong>Googlebot-News can access this page</strong> (HTTP ' + gb.code + ')</div>';
+            } else if (gb.reachable === false) {
+                html += '<div class="gnh-check-row gnh-check-fail"><span class="dashicons dashicons-dismiss"></span> <strong>Googlebot-News cannot access this page</strong> — ' + escHtml(gb.error || 'HTTP ' + gb.code) + '</div>';
+            }
+
+            // ── Ad nosnippet count
+            var ns = data.nosnippet_count || 0;
+            if (ns > 0) {
+                html += '<div class="gnh-check-row gnh-check-ok"><span class="dashicons dashicons-hidden"></span> <strong>' + ns + ' ad image container(s)</strong> marked with <code>data-nosnippet</code> — Google will ignore them as article thumbnails.</div>';
+            } else {
+                html += '<div class="gnh-check-row gnh-check-warn"><span class="dashicons dashicons-warning"></span> No <code>data-nosnippet</code> found on this page. If ads appear before the article image, Google may pick them as the thumbnail.</div>';
+            }
+
             // ── Google test links
             var encodedUrl = encodeURIComponent(data.url);
             html += '<div class="gnh-test-links">';

@@ -216,6 +216,14 @@ class GNH_Admin_Page {
             }
         }
 
+        // ── Googlebot-News access test ───────────────────────────────────────
+        $googlebot_result = class_exists( 'GNH_Robots' )
+            ? GNH_Robots::test_googlebot_access( $url )
+            : [ 'reachable' => null, 'code' => 0, 'error' => 'GNH_Robots class not loaded' ];
+
+        // ── Count ad images that have data-nosnippet (our fix applied) ───────
+        $nosnippet_count = substr_count( $html, 'data-nosnippet' );
+
         wp_send_json_success( [
             'url'                    => $url,
             'tags'                   => $results,
@@ -224,6 +232,8 @@ class GNH_Admin_Page {
             'seo_plugins'            => $seo_plugins,
             'conflict_plugins'       => $active_conflict_plugins,
             'mu_conflict_plugins'    => $mu_conflict_plugins,
+            'googlebot'              => $googlebot_result,
+            'nosnippet_count'        => $nosnippet_count,
         ] );
     }
 
