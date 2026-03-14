@@ -104,9 +104,21 @@ class GNH_Admin_Page {
         $ld_type  = null;
 
         foreach ( $tags_to_check as $key => $info ) {
-            // Count occurrences
-            $pattern = '/content=["\'][^"\']*["\']\s+(?:property|name)=["\']' . preg_quote( $key, '/' ) . '["\']|(?:property|name)=["\']' . preg_quote( $key, '/' ) . '["\'][^>]*content=["\'][^"\']*["\']/i';
-            $count   = preg_match_all( $pattern, $html );
+            // Match both attribute orders and capture the content value
+            $pattern = '/(?:property|name)=["\']' . preg_quote( $key, '/' ) . '["\'][^>]*content=["\']([^"\']*)["\']|content=["\']([^"\']*)["\'][^>]*(?:property|name)=["\']' . preg_quote( $key, '/' ) . '["\']]/i';
+            $count   = preg_match_all( $pattern, $html, $matches );
+
+            // Grab first captured value from either capture group
+            $value = '';
+            if ( $count > 0 ) {
+                foreach ( $matches[1] as $i => $m ) {
+                    $candidate = $m !== '' ? $m : ( $matches[2][ $i ] ?? '' );
+                    if ( $candidate !== '' ) {
+                        $value = $candidate;
+                        break;
+                    }
+                }
+            }
 
             $results[ $key ] = [
                 'label'    => $info['label'],
@@ -115,6 +127,7 @@ class GNH_Admin_Page {
                 'count'    => $count,
                 'found'    => $count > 0,
                 'duplicate'=> $count > 1,
+                'value'    => $value,
             ];
         }
 

@@ -88,9 +88,17 @@
                 html += '</p>';
             }
 
+            // ── Google test links
+            var encodedUrl = encodeURIComponent(data.url);
+            html += '<div class="gnh-test-links">';
+            html += '<a href="https://search.google.com/test/rich-results?url=' + encodedUrl + '" target="_blank" class="button">🔍 Rich Results Test</a> ';
+            html += '<a href="https://search.google.com/search-console/inspect?resource_id=' + encodedUrl + '" target="_blank" class="button">🔗 Search Console URL Inspection</a> ';
+            html += '<a href="https://developers.facebook.com/tools/debug/?q=' + encodedUrl + '" target="_blank" class="button">📘 Facebook OG Debugger</a>';
+            html += '</div>';
+
             // ── Tags table
             html += '<table class="gnh-tags-table widefat striped"><thead><tr>';
-            html += '<th>Tag</th><th>Type</th><th>Required</th><th>Status</th>';
+            html += '<th>Tag</th><th>Type</th><th>Required</th><th>Status</th><th>Value</th>';
             html += '</tr></thead><tbody>';
 
             var tags = data.tags || {};
@@ -106,10 +114,22 @@
                     statusText  = '— Not found (optional)';
                 } else if (t.duplicate) {
                     statusClass = 'gnh-tag-duplicate';
-                    statusText  = '⚠ Duplicate (' + t.count + ' occurrences) — likely a plugin conflict';
+                    statusText  = '⚠ Duplicate (' + t.count + 'x) — possible conflict';
                 } else {
                     statusClass = 'gnh-tag-ok';
                     statusText  = '✓ Present';
+                }
+
+                // Value cell — show image preview for image tags, plain text otherwise
+                var valueCell = '';
+                if (t.found && t.value) {
+                    var isImageTag = (key === 'og:image' || key === 'twitter:image');
+                    if (isImageTag) {
+                        valueCell = '<img src="' + escHtml(t.value) + '" class="gnh-tag-thumb" alt="og:image preview">'
+                                  + '<br><a href="' + escHtml(t.value) + '" target="_blank" class="gnh-tag-img-url">' + escHtml(t.value) + '</a>';
+                    } else {
+                        valueCell = '<span class="gnh-tag-value">' + escHtml(t.value) + '</span>';
+                    }
                 }
 
                 html += '<tr class="' + statusClass + '">';
@@ -117,6 +137,7 @@
                 html += '<td>' + escHtml(t.type) + '</td>';
                 html += '<td>' + (t.required ? 'Yes' : 'No') + '</td>';
                 html += '<td>' + statusText + '</td>';
+                html += '<td>' + valueCell + '</td>';
                 html += '</tr>';
             });
             html += '</tbody></table>';
