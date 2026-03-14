@@ -1,0 +1,189 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+/**
+ * GNH_Post_SEO — per-post SEO controls.
+ *
+ * Adds a metabox on post edit screens with:
+ *  - noindex / nofollow toggles
+ *  - Custom SEO title override
+ *  - Custom meta description override
+ */
+class GNH_Post_SEO {
+
+    const META_NOINDEX  = '_gnh_noindex';
+    const META_NOFOLLOW = '_gnh_nofollow';
+    const META_TITLE    = '_gnh_seo_title';
+    const META_DESC     = '_gnh_seo_desc';
+
+    public function __construct() {
+        add_action( 'add_meta_boxes', [ $this, 'add_metabox' ] );
+        add_action( 'save_post',      [ $this, 'save_meta' ], 10, 2 );
+        add_action( 'wp_head',        [ $this, 'output_robots' ], 1 );
+    }
+
+    // ── Metabox ───────────────────────────────────────────────────────────────
+
+    public function add_metabox(): void {
+        add_meta_box(
+            'gnh-post-seo',
+            '<span class="dashicons dashicons-rss" style="color:#e8612d;vertical-align:middle;margin-right:4px;"></span> ' . esc_html__( 'Google News Helper — SEO', 'google-news-helper' ),
+            [ $this, 'render_metabox' ],
+            'post',
+            'normal',
+            'high'
+        );
+    }
+
+    public function render_metabox( WP_Post $post ): void {
+        wp_nonce_field( 'gnh_post_seo_save', 'gnh_post_seo_nonce' );
+
+        $noindex  = (bool) get_post_meta( $post->ID, self::META_NOINDEX,  true );
+        $nofollow = (bool) get_post_meta( $post->ID, self::META_NOFOLLOW, true );
+        $title    = (string) get_post_meta( $post->ID, self::META_TITLE,  true );
+        $desc     = (string) get_post_meta( $post->ID, self::META_DESC,   true );
+        ?>
+        <style>
+            .gnh-meta-section { margin-bottom: 16px; }
+            .gnh-meta-section label { font-weight: 600; display: block; margin-bottom: 4px; }
+            .gnh-meta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+            .gnh-meta-row input[type=checkbox] { width: 16px; height: 16px; }
+            .gnh-char-count { font-size: 11px; color: #888; margin-top: 2px; }
+            .gnh-char-ok   { color: #1e7e34; }
+            .gnh-char-warn { color: #b91c1c; }
+        </style>
+
+        <!-- Robots -->
+        <div class="gnh-meta-section">
+            <label><?php esc_html_e( 'Search Engine Visibility', 'google-news-helper' ); ?></label>
+            <div class="gnh-meta-row">
+                <input type="checkbox" id="gnh-noindex" name="gnh_noindex" value="1" <?php checked( $noindex ); ?>>
+                <label for="gnh-noindex" style="font-weight:400;">
+                    <?php esc_html_e( 'noindex — hide this post from Google (and Google News)', 'google-news-helper' ); ?>
+                </label>
+            </div>
+            <div class="gnh-meta-row">
+                <input type="checkbox" id="gnh-nofollow" name="gnh_nofollow" value="1" <?php checked( $nofollow ); ?>>
+                <label for="gnh-nofollow" style="font-weight:400;">
+                    <?php esc_html_e( 'nofollow — tell Google not to follow links in this post', 'google-news-helper' ); ?>
+                </label>
+            </div>
+            <?php if ( $noindex ): ?>
+            <p style="margin:4px 0 0;padding:6px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-size:12px;color:#7f1d1d;">
+                <?php esc_html_e( 'This post is set to noindex and will not appear in Google or Google News.', 'google-news-helper' ); ?>
+            </p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Custom title -->
+        <div class="gnh-meta-section">
+            <label for="gnh-seo-title"><?php esc_html_e( 'SEO Title Override', 'google-news-helper' ); ?></label>
+            <input type="text" id="gnh-seo-title" name="gnh_seo_title" class="large-text"
+                value="<?php echo esc_attr( $title ); ?>"
+                placeholder="<?php echo esc_attr( get_the_title( $post ) ); ?>">
+            <p class="gnh-char-count" id="gnh-title-count">
+                <?php
+                $tlen = mb_strlen( $title ?: get_the_title( $post ) );
+                $cls  = ( $tlen >= 30 && $tlen <= 110 ) ? 'gnh-char-ok' : 'gnh-char-warn';
+                printf( '<span class="%s">%d chars</span> — Google News: 30–110 recommended', esc_attr( $cls ), $tlen );
+                ?>
+            </p>
+        </div>
+
+        <!-- Custom description -->
+        <div class="gnh-meta-section">
+            <label for="gnh-seo-desc"><?php esc_html_e( 'Meta Description Override', 'google-news-helper' ); ?></label>
+            <textarea id="gnh-seo-desc" name="gnh_seo_desc" class="large-text" rows="3"
+                placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from post content', 'google-news-helper' ); ?>"><?php echo esc_textarea( $desc ); ?></textarea>
+            <p class="gnh-char-count" id="gnh-desc-count">
+                <?php
+                $dlen = mb_strlen( $desc );
+                $cls  = ( $dlen === 0 || ( $dlen >= 50 && $dlen <= 160 ) ) ? 'gnh-char-ok' : 'gnh-char-warn';
+                printf( '<span class="%s">%d chars</span> — recommended: 50–160', esc_attr( $cls ), $dlen );
+                ?>
+            </p>
+        </div>
+
+        <script>
+        (function() {
+            function countChars(inputId, countId, min, max) {
+                var el = document.getElementById(inputId);
+                var ct = document.getElementById(countId);
+                if (!el || !ct) return;
+                el.addEventListener('input', function() {
+                    var len = el.value.length;
+                    var ok  = (len === 0 || (len >= min && len <= max));
+                    ct.querySelector('span').className = ok ? 'gnh-char-ok' : 'gnh-char-warn';
+                    ct.querySelector('span').textContent = len + ' chars';
+                });
+            }
+            countChars('gnh-seo-title', 'gnh-title-count', 30, 110);
+            countChars('gnh-seo-desc',  'gnh-desc-count',  50, 160);
+        })();
+        </script>
+        <?php
+    }
+
+    public function save_meta( int $post_id, WP_Post $post ): void {
+        if (
+            ! isset( $_POST['gnh_post_seo_nonce'] ) ||
+            ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['gnh_post_seo_nonce'] ) ), 'gnh_post_seo_save' ) ||
+            defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ||
+            ! current_user_can( 'edit_post', $post_id ) ||
+            $post->post_type !== 'post'
+        ) {
+            return;
+        }
+
+        update_post_meta( $post_id, self::META_NOINDEX,  isset( $_POST['gnh_noindex'] ) ? '1' : '' );
+        update_post_meta( $post_id, self::META_NOFOLLOW, isset( $_POST['gnh_nofollow'] ) ? '1' : '' );
+
+        $title = sanitize_text_field( wp_unslash( $_POST['gnh_seo_title'] ?? '' ) );
+        $desc  = sanitize_textarea_field( wp_unslash( $_POST['gnh_seo_desc'] ?? '' ) );
+
+        update_post_meta( $post_id, self::META_TITLE, $title );
+        update_post_meta( $post_id, self::META_DESC,  $desc );
+    }
+
+    // ── Front-end: output robots meta ─────────────────────────────────────────
+
+    public function output_robots(): void {
+        if ( ! is_singular( 'post' ) ) {
+            return;
+        }
+
+        global $post;
+
+        $noindex  = (bool) get_post_meta( $post->ID, self::META_NOINDEX,  true );
+        $nofollow = (bool) get_post_meta( $post->ID, self::META_NOFOLLOW, true );
+
+        if ( ! $noindex && ! $nofollow ) {
+            return;
+        }
+
+        $directives = [];
+        if ( $noindex )  { $directives[] = 'noindex'; }
+        if ( $nofollow ) { $directives[] = 'nofollow'; }
+
+        printf(
+            '<meta name="robots" content="%s">' . "\n",
+            esc_attr( implode( ', ', $directives ) )
+        );
+    }
+
+    // ── Static helpers used by GNH_Meta_Tags ─────────────────────────────────
+
+    public static function get_title( int $post_id ): string {
+        return (string) get_post_meta( $post_id, self::META_TITLE, true );
+    }
+
+    public static function get_desc( int $post_id ): string {
+        return (string) get_post_meta( $post_id, self::META_DESC, true );
+    }
+
+    public static function is_noindex( int $post_id ): bool {
+        return (bool) get_post_meta( $post_id, self::META_NOINDEX, true );
+    }
+}

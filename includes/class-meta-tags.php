@@ -20,9 +20,18 @@ class GNH_Meta_Tags {
 
         global $post;
 
-        $title       = get_the_title( $post );
+        // Respect per-post noindex — skip all tags if post is set to noindex
+        if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
+            return;
+        }
+
+        // Per-post overrides
+        $custom_title = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_title( $post->ID ) : '';
+        $custom_desc  = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_desc( $post->ID )  : '';
+
+        $title       = $custom_title ?: get_the_title( $post );
         $url         = get_permalink( $post );
-        $excerpt     = $this->get_excerpt( $post );
+        $excerpt     = $custom_desc  ?: $this->get_excerpt( $post );
         $site_name   = get_bloginfo( 'name' );
         $locale      = get_locale();
         $pub_date    = get_the_date( 'c', $post );

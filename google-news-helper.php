@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Google News Helper
  * Description: Optimizes your WordPress site for Google News: adds required meta tags, Open Graph, NewsArticle JSON-LD structured data, and a preview dashboard. Auto-updates from GitHub.
- * Version:     1.0.3
+ * Version:     1.0.4
  * Author:      Ioannis Kokkinis
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GNH_VERSION',     '1.0.3' );
+define( 'GNH_VERSION',     '1.0.4' );
 define( 'GNH_PLUGIN_FILE', __FILE__ );
 define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
 define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
@@ -38,6 +38,8 @@ function gnh_uninstall(): void {
 
 $_gnh_includes = [
     'includes/class-settings.php',
+    'includes/class-post-seo.php',
+    'includes/class-redirects.php',
     'includes/class-meta-tags.php',
     'includes/class-robots.php',
     'includes/class-ad-nosnippet.php',
@@ -60,6 +62,12 @@ unset( $_gnh_includes, $_gnh_file, $path );
 add_action( 'plugins_loaded', static function (): void {
     if ( class_exists( 'GNH_Settings' ) ) {
         new GNH_Settings();
+    }
+    if ( class_exists( 'GNH_Post_SEO' ) ) {
+        new GNH_Post_SEO();
+    }
+    if ( class_exists( 'GNH_Redirects' ) ) {
+        new GNH_Redirects();
     }
     if ( class_exists( 'GNH_Meta_Tags' ) ) {
         new GNH_Meta_Tags();
