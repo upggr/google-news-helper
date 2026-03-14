@@ -14,11 +14,13 @@ class GNH_Redirects {
     const OPTION = 'gnh_redirects';
 
     public function __construct() {
-        add_action( 'template_redirect',          [ $this, 'handle' ], 1 );
-        add_action( 'admin_menu',                 [ $this, 'register_menu' ] );
-        add_action( 'admin_post_gnh_save_redirect',   [ $this, 'handle_save' ] );
-        add_action( 'admin_post_gnh_delete_redirect',  [ $this, 'handle_delete' ] );
-        add_action( 'admin_enqueue_scripts',      [ $this, 'enqueue' ] );
+        add_action( 'template_redirect', [ $this, 'handle' ], 1 );
+
+        if ( is_admin() ) {
+            add_action( 'admin_post_gnh_save_redirect',   [ $this, 'handle_save' ] );
+            add_action( 'admin_post_gnh_delete_redirect', [ $this, 'handle_delete' ] );
+            add_action( 'admin_enqueue_scripts',          [ $this, 'enqueue' ] );
+        }
     }
 
     // ── Front-end: intercept matching requests ────────────────────────────────
@@ -71,13 +73,17 @@ class GNH_Redirects {
     }
 
     public function enqueue( string $hook ): void {
-        if ( $hook !== 'google-news_page_gnh-redirects' ) {
+        if ( strpos( $hook, 'gnh-redirects' ) === false ) {
             return;
         }
         wp_enqueue_style( 'gnh-admin', GNH_PLUGIN_URL . 'assets/css/admin.css', [], GNH_VERSION );
     }
 
     // ── Admin page ────────────────────────────────────────────────────────────
+
+    public static function render_static(): void {
+        ( new self() )->render_page();
+    }
 
     public function render_page(): void {
         $redirects = $this->get_all();

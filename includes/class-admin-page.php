@@ -22,6 +22,24 @@ class GNH_Admin_Page {
             'dashicons-rss',
             80
         );
+
+        add_submenu_page(
+            'google-news-helper',
+            __( 'Google News Helper', 'google-news-helper' ),
+            __( 'Dashboard', 'google-news-helper' ),
+            'manage_options',
+            'google-news-helper',
+            [ $this, 'render_page' ]
+        );
+
+        add_submenu_page(
+            'google-news-helper',
+            __( 'Redirects', 'google-news-helper' ),
+            __( 'Redirects', 'google-news-helper' ),
+            'manage_options',
+            'gnh-redirects',
+            [ GNH_Redirects::class, 'render_static' ]
+        );
     }
 
     public function enqueue_assets( string $hook ): void {
