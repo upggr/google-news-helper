@@ -1,11 +1,13 @@
 <?php
 /**
- * Adds data-nosnippet to advertiser image containers so Google News
- * does not pick ad banners as the article thumbnail.
+ * Fixes ad banners interfering with Google News thumbnail selection.
  *
- * Strategy: on singular post pages, buffer the output and add
- * data-nosnippet to any Elementor image widget whose <a> link points
- * to an external domain (i.e. not this site) — those are ads.
+ * Two things happen on singular post pages:
+ *  1. Any Elementor image widget linking to an EXTERNAL domain (= ad) gets:
+ *       - data-nosnippet on its container
+ *       - fetchpriority="low" forced on its <img> (removes "high" if present)
+ *  2. The actual post featured image gets fetchpriority="high" injected so
+ *     Google News sees it as the most prominent image on the page.
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -14,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GNH_Ad_Nosnippet {
 
     public function __construct() {
-        // Only needed on front-end singular post pages
         add_action( 'template_redirect', [ $this, 'maybe_buffer' ], 1 );
     }
 
@@ -37,39 +38,76 @@ class GNH_Ad_Nosnippet {
             return $html;
         }
 
-        $site_host = wp_parse_url( home_url(), PHP_URL_HOST );
+        $site_host    = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+        $featured_url = $this->get_featured_image_url();
 
-        // Match Elementor image widget containers that contain a link to an external domain.
-        // Pattern: <div class="...elementor-widget-image...">...</div> containing <a href="external">
+        // ── 1. Fix ad banners ─────────────────────────────────────────────────
+        // Match Elementor image widget blocks (3 nested divs deep)
         $html = preg_replace_callback(
             '/<div([^>]*class="[^"]*elementor-widget-image[^"]*"[^>]*)>(.*?)<\/div>\s*<\/div>\s*<\/div>/si',
             static function ( array $m ) use ( $site_host ): string {
                 $block = $m[0];
 
-                // Find the first <a href="..."> inside the block
                 if ( ! preg_match( '/<a\s[^>]*href=["\']([^"\']+)["\']/i', $block, $link_m ) ) {
-                    return $block; // no link — leave alone
+                    return $block;
                 }
 
-                $href      = $link_m[1];
-                $link_host = wp_parse_url( $href, PHP_URL_HOST );
+                $link_host = (string) wp_parse_url( $link_m[1], PHP_URL_HOST );
 
-                // If link goes to an external site → it's an ad
                 if ( $link_host && $link_host !== $site_host && strpos( $link_host, $site_host ) === false ) {
-                    // Add data-nosnippet to the outer elementor-widget-container div
+                    // Mark container as non-snippet
                     $block = preg_replace(
                         '/(<div[^>]*class="[^"]*elementor-widget-container[^"]*"[^>]*)(>)/i',
                         '$1 data-nosnippet$2',
                         $block,
                         1
-                    );
+                    ) ?? $block;
+
+                    // Remove fetchpriority="high" and replace with low
+                    $block = preg_replace( '/\s*fetchpriority=["\']high["\']/i', '', $block ) ?? $block;
+                    $block = preg_replace(
+                        '/(<img\s)/i',
+                        '$1fetchpriority="low" ',
+                        $block,
+                        1
+                    ) ?? $block;
                 }
 
                 return $block;
             },
             $html
-        );
+        ) ?? $html;
 
-        return (string) $html;
+        // ── 2. Boost the actual featured image ────────────────────────────────
+        if ( $featured_url ) {
+            $escaped = preg_quote( $featured_url, '/' );
+
+            // Find the <img> tag that contains the featured image URL and ensure fetchpriority=high
+            $html = preg_replace_callback(
+                '/(<img\s[^>]*src=["\'])(' . $escaped . ')(["\'][^>]*>)/i',
+                static function ( array $m ): string {
+                    $tag = $m[1] . $m[2] . $m[3];
+                    // Remove any existing fetchpriority attr first
+                    $tag = preg_replace( '/\s*fetchpriority=["\'][^"\']*["\']/i', '', $tag ) ?? $tag;
+                    // Inject fetchpriority="high" right after <img
+                    return preg_replace( '/(<img\s)/i', '$1fetchpriority="high" ', $tag, 1 ) ?? $tag;
+                },
+                $html
+            ) ?? $html;
+        }
+
+        return $html;
+    }
+
+    private function get_featured_image_url(): string {
+        $post_id = get_the_ID();
+        if ( ! $post_id || ! has_post_thumbnail( $post_id ) ) {
+            return '';
+        }
+
+        $thumb_id = get_post_thumbnail_id( $post_id );
+        $src      = wp_get_attachment_image_src( (int) $thumb_id, 'full' );
+
+        return ( $src && ! empty( $src[0] ) ) ? (string) $src[0] : '';
     }
 }
