@@ -1,14 +1,18 @@
 <?php
 /**
- * Serves a clean, minimal HTML page to Googlebot on singular post pages.
+ * Two-layer approach to fix Google News thumbnail selection:
  *
- * Instead of trying to strip ads/logos from the full Elementor page (which
- * is unreliable due to page caching bypassing PHP), we detect Googlebot and
- * output a purpose-built minimal HTML that contains only:
- *   - All essential <head> meta tags (OG, JSON-LD, canonical, etc.)
- *   - The post featured image
+ * LAYER 1: Serve clean minimal HTML to Googlebot
+ * When Googlebot crawls, it gets a purpose-built minimal page with only:
+ *   - Essential <head> meta tags (OG, JSON-LD, canonical, etc.)
+ *   - The post featured image with fetchpriority="high"
  *   - The post title and body text
- * This guarantees Google picks the correct thumbnail every time.
+ * No theme stylesheets, ads, or logo distractions.
+ *
+ * LAYER 2: Mark ads with data-nosnippet on full pages
+ * For all pages (including when Google News crawls the full page),
+ * we add data-nosnippet to Elementor image widgets that link to external domains.
+ * This tells Google to ignore ads, so featured image is prioritized.
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -17,9 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GNH_Ad_Nosnippet {
 
     public function __construct() {
-        // Intercept right before template is loaded
-        // This is after the query is parsed but before template rendering
+        // Layer 1: Serve clean page to Googlebot
         add_filter( 'template_include', [ $this, 'maybe_serve_googlebot_via_filter' ], 1 );
+
+        // Layer 2: Mark ads with data-nosnippet as fallback
+        add_action( 'template_redirect', [ $this, 'maybe_buffer_output' ], 2 );
     }
 
     public function maybe_serve_googlebot_via_filter( string $template ): string {
@@ -41,8 +47,102 @@ class GNH_Ad_Nosnippet {
         return $template;
     }
 
+    public function maybe_buffer_output(): void {
+        if ( ! get_option( 'gnh_enabled', true ) ) {
+            return;
+        }
+        if ( is_admin() || wp_doing_ajax() ) {
+            return;
+        }
+        if ( ! is_singular( 'post' ) ) {
+            return;
+        }
+
+        // Start output buffering to add data-nosnippet to ad images
+        ob_start( [ $this, 'process_output_nosnippet' ] );
+    }
+
+    public function process_output_nosnippet( string $html ): string {
+        if ( ! is_string( $html ) || $html === '' ) {
+            return $html;
+        }
+
+        $site_host    = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+        $featured_url = $this->get_featured_image_url();
+
+        // Find Elementor image widget blocks linking to external domains (ads)
+        $html = preg_replace_callback(
+            '/<div([^>]*class="[^"]*elementor-widget-image[^"]*"[^>]*)>(.*?)<\/div>\s*<\/div>\s*<\/div>/si',
+            static function ( array $m ) use ( $site_host ): string {
+                $block = $m[0];
+
+                if ( ! preg_match( '/<a\s[^>]*href=["\']([^"\']+)["\']/i', $block, $link_m ) ) {
+                    return $block;
+                }
+
+                $link_host = (string) wp_parse_url( $link_m[1], PHP_URL_HOST );
+
+                // External link = ad or sponsored content
+                if ( $link_host && $link_host !== $site_host && strpos( $link_host, $site_host ) === false ) {
+                    // Add data-nosnippet to the container
+                    $block = preg_replace(
+                        '/(<div[^>]*class="[^"]*elementor-widget-container[^"]*"[^>]*)(>)/i',
+                        '$1 data-nosnippet$2',
+                        $block,
+                        1
+                    ) ?? $block;
+
+                    // Set fetchpriority="low" on the image
+                    $block = preg_replace( '/\s*fetchpriority=["\']high["\']/i', '', $block ) ?? $block;
+                    $block = preg_replace(
+                        '/(<img\s)/i',
+                        '$1fetchpriority="low" ',
+                        $block,
+                        1
+                    ) ?? $block;
+                }
+
+                return $block;
+            },
+            $html
+        ) ?? $html;
+
+        // Boost the featured image with high priority
+        if ( $featured_url ) {
+            $escaped = preg_quote( $featured_url, '/' );
+            $html = preg_replace_callback(
+                '/(<img\s[^>]*src=["\'])(' . $escaped . ')(["\'][^>]*>)/i',
+                static function ( array $m ): string {
+                    $tag = $m[1] . $m[2] . $m[3];
+                    // Remove any existing fetchpriority
+                    $tag = preg_replace( '/\s*fetchpriority=["\'][^"\']*["\']/i', '', $tag ) ?? $tag;
+                    // Add fetchpriority="high"
+                    return preg_replace( '/(<img\s)/i', '$1fetchpriority="high" ', $tag, 1 ) ?? $tag;
+                },
+                $html
+            ) ?? $html;
+        }
+
+        return $html;
+    }
+
+    private function get_featured_image_url(): string {
+        if ( ! is_singular( 'post' ) ) {
+            return '';
+        }
+        $post_id = get_the_ID();
+        if ( ! $post_id || ! has_post_thumbnail( $post_id ) ) {
+            return '';
+        }
+
+        $thumb_id = get_post_thumbnail_id( $post_id );
+        $src = wp_get_attachment_image_src( (int) $thumb_id, 'full' );
+
+        return ( $src && ! empty( $src[0] ) ) ? (string) $src[0] : '';
+    }
+
     public function maybe_serve_googlebot(): void {
-        // Legacy method kept for compatibility but not used
+        // Legacy method kept for compatibility
         return;
     }
 
