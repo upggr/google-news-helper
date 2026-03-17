@@ -25,8 +25,58 @@ class GNH_Ad_Nosnippet {
         // Use 'wp' hook which fires after query parsing but before other processing
         add_action( 'wp', [ $this, 'maybe_serve_googlebot_early' ], 1 );
 
-        // Layer 2: Add CSS to hide non-featured images from Google
-        add_action( 'wp_footer', [ $this, 'maybe_add_nosnippet_script' ], 999 );
+        // Layer 2: Buffer output to add server-side data-nosnippet tags
+        add_action( 'template_redirect', [ $this, 'start_output_buffer' ], 1 );
+    }
+
+    public function start_output_buffer(): void {
+        if ( ! get_option( 'gnh_enabled', true ) ) {
+            return;
+        }
+        if ( is_admin() || wp_doing_ajax() ) {
+            return;
+        }
+        if ( ! is_singular( 'post' ) ) {
+            return;
+        }
+
+        ob_start( [ $this, 'process_output_buffer' ] );
+    }
+
+    public function process_output_buffer( string $html ): string {
+        if ( ! is_string( $html ) || empty( $html ) ) {
+            return $html;
+        }
+
+        $featured_url = $this->get_featured_image_url();
+        if ( ! $featured_url ) {
+            return $html;
+        }
+
+        // Add data-nosnippet to all images except featured
+        $html = preg_replace_callback(
+            '/<img\s+([^>]*?)src=["\']([^"\']+)["\']([^>]*?)>/i',
+            static function ( $m ) use ( $featured_url ) {
+                $before = $m[1];
+                $src = $m[2];
+                $after = $m[3];
+
+                // Skip featured image
+                if ( strpos( $src, $featured_url ) !== false ) {
+                    return '<img ' . $before . 'src="' . $src . '"' . $after . '>';
+                }
+
+                // Add data-nosnippet to all other images
+                if ( strpos( $after, 'data-nosnippet' ) === false ) {
+                    $after = ' data-nosnippet' . $after;
+                }
+
+                return '<img ' . $before . 'src="' . $src . '"' . $after . '>';
+            },
+            $html
+        );
+
+        return $html;
     }
 
     public function maybe_serve_googlebot_early(): void {
@@ -130,41 +180,6 @@ class GNH_Ad_Nosnippet {
         return implode( "\n", $lines );
     }
 
-    public function maybe_add_nosnippet_script(): void {
-        // Add inline JS to add data-nosnippet to all images except featured
-        if ( ! get_option( 'gnh_enabled', true ) ) {
-            return;
-        }
-        if ( is_admin() || wp_doing_ajax() ) {
-            return;
-        }
-        if ( ! is_singular( 'post' ) ) {
-            return;
-        }
-
-        $featured_url = $this->get_featured_image_url();
-        if ( ! $featured_url ) {
-            return;
-        }
-
-        echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const featured_src = ' . wp_json_encode( $featured_url ) . ';
-            const images = document.querySelectorAll("img");
-            images.forEach(img => {
-                // Skip featured image
-                if (img.src && img.src.includes(featured_src)) {
-                    img.setAttribute("fetchpriority", "high");
-                    return;
-                }
-                // Mark all others with data-nosnippet
-                if (!img.hasAttribute("data-nosnippet")) {
-                    img.setAttribute("data-nosnippet", "true");
-                }
-            });
-        });
-        </script>' . "\n";
-    }
 
     public function process_output_nosnippet( string $html ): string {
         if ( ! is_string( $html ) || $html === '' ) {
