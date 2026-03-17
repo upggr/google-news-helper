@@ -48,9 +48,28 @@ class GNH_Ad_Nosnippet {
 
     private function is_googlebot(): bool {
         $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? strtolower( (string) $_SERVER['HTTP_USER_AGENT'] ) : '';
+        // Detect all Google crawlers that should see clean minimal page:
+        // - Googlebot/2.1 (main crawler)
+        // - Googlebot-News (News indexer)
+        // - Googlebot-Image (Image indexer - important for Google News thumbnails!)
+        // - Google-InspectionTool (Preview tool)
+        // - GoogleOther (Other Google services)
         return strpos( $ua, 'googlebot' ) !== false
             || strpos( $ua, 'google-inspectiontool' ) !== false
             || strpos( $ua, 'googleother' ) !== false;
+    }
+
+    private function get_image_mime( string $url ): string {
+        $ext = strtolower( pathinfo( wp_parse_url( $url, PHP_URL_PATH ) ?? '', PATHINFO_EXTENSION ) );
+        $map = [
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png'  => 'image/png',
+            'webp' => 'image/webp',
+            'gif'  => 'image/gif',
+            'avif' => 'image/avif',
+        ];
+        return $map[ $ext ] ?? 'image/jpeg';
     }
 
     private function serve_clean_page(): void {
@@ -155,8 +174,10 @@ class GNH_Ad_Nosnippet {
         }
         if ( $image_url ) {
             echo '<meta property="og:image" content="' . esc_attr( $image_url ) . '">' . "\n";
+            echo '<meta property="og:image:type" content="' . esc_attr( $this->get_image_mime( $image_url ) ) . '">' . "\n";
             echo '<meta property="og:image:width" content="' . esc_attr( (string) $image_w ) . '">' . "\n";
             echo '<meta property="og:image:height" content="' . esc_attr( (string) $image_h ) . '">' . "\n";
+            echo '<meta property="og:image:alt" content="' . esc_attr( $title ) . '">' . "\n";
         }
 
         // Twitter card
