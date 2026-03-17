@@ -30,29 +30,9 @@ class GNH_Ad_Nosnippet {
     }
 
     public function maybe_serve_googlebot_early(): void {
-        if ( ! get_option( 'gnh_enabled', true ) ) {
-            return;
-        }
-        if ( is_admin() || wp_doing_ajax() ) {
-            return;
-        }
-        if ( ! is_singular( 'post' ) ) {
-            return;
-        }
-
-        $ip = $this->get_client_ip();
-        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
-        $is_crawler = $this->is_crawler_ip() || $this->is_googlebot();
-
-        // Log all crawler traffic for analysis
-        $this->log_crawler_access( $ip, $ua, $is_crawler, false );
-
-        // Serve clean minimal page only to known crawlers (Google, Bing, etc.)
-        // All other users (regular browsers from anywhere) see the full site with ads
-        if ( $is_crawler ) {
-            $this->serve_clean_page();
-            // This function calls exit, so we never reach here
-        }
+        // Disabled: serving clean page doesn't work - Google News still picks logo
+        // Now relying on data-nosnippet marking on full page instead
+        return;
     }
 
 
@@ -151,6 +131,9 @@ class GNH_Ad_Nosnippet {
     }
 
     public function maybe_buffer_output(): void {
+        // DISABLED: Output buffering causing issues with response
+        return;
+
         if ( ! get_option( 'gnh_enabled', true ) ) {
             return;
         }
@@ -162,6 +145,7 @@ class GNH_Ad_Nosnippet {
         }
 
         // Start output buffering to add data-nosnippet to ad images
+        error_log( 'GNH: Starting output buffer for post' );
         ob_start( [ $this, 'process_output_nosnippet' ] );
     }
 
@@ -170,79 +154,47 @@ class GNH_Ad_Nosnippet {
             return $html;
         }
 
-        $site_host    = (string) wp_parse_url( home_url(), PHP_URL_HOST );
         $featured_url = $this->get_featured_image_url();
+        error_log( 'GNH: process_output_nosnippet called. Featured URL: ' . $featured_url );
 
-        // Find Elementor image widget blocks linking to external domains (ads)
-        $html = preg_replace_callback(
-            '/<div([^>]*class="[^"]*elementor-widget-image[^"]*"[^>]*)>(.*?)<\/div>\s*<\/div>\s*<\/div>/si',
-            static function ( array $m ) use ( $site_host ): string {
-                $block = $m[0];
-
-                if ( ! preg_match( '/<a\s[^>]*href=["\']([^"\']+)["\']/i', $block, $link_m ) ) {
-                    return $block;
-                }
-
-                $link_host = (string) wp_parse_url( $link_m[1], PHP_URL_HOST );
-
-                // External link = ad or sponsored content
-                if ( $link_host && $link_host !== $site_host && strpos( $link_host, $site_host ) === false ) {
-                    // Add data-nosnippet to the container
-                    $block = preg_replace(
-                        '/(<div[^>]*class="[^"]*elementor-widget-container[^"]*"[^>]*)(>)/i',
-                        '$1 data-nosnippet$2',
-                        $block,
-                        1
-                    ) ?? $block;
-
-                    // Set fetchpriority="low" on the image
-                    $block = preg_replace( '/\s*fetchpriority=["\']high["\']/i', '', $block ) ?? $block;
-                    $block = preg_replace(
-                        '/(<img\s)/i',
-                        '$1fetchpriority="low" ',
-                        $block,
-                        1
-                    ) ?? $block;
-                }
-
-                return $block;
-            },
-            $html
-        ) ?? $html;
-
-        // Hide logo/branding images from snippets to prevent Google from picking them
-        // Look for img tags with filenames containing LOGO, BRAND, ICON in their src
-        $html = preg_replace_callback(
-            '/(<img\s[^>]*src="[^"]*(?:LOGO|BRAND|ICON|icon|logo|brand)[^"]*"[^>]*>)/i',
-            static function ( array $m ): string {
-                $img_tag = $m[1];
-                // Add data-nosnippet as a data attribute to prevent indexing
-                if ( strpos( $img_tag, 'data-nosnippet' ) === false ) {
-                    // Insert data-nosnippet before the closing >
-                    $img_tag = preg_replace( '/\s*\/>/', ' data-nosnippet />', $img_tag ) ?? $img_tag;
-                    $img_tag = preg_replace( '/\s*>/', ' data-nosnippet >', $img_tag ) ?? $img_tag;
-                }
-                return $img_tag;
-            },
-            $html
-        ) ?? $html;
-
-        // Boost the featured image with high priority
-        if ( $featured_url ) {
-            $escaped = preg_quote( $featured_url, '/' );
+        // Mark ALL images except the featured image with data-nosnippet
+        // This ensures Google can ONLY pick the featured image for the thumbnail
+        try {
+            $img_count = 0;
+            $modified_count = 0;
             $html = preg_replace_callback(
-                '/(<img\s[^>]*src=["\'])(' . $escaped . ')(["\'][^>]*>)/i',
-                static function ( array $m ): string {
-                    $tag = $m[1] . $m[2] . $m[3];
-                    // Remove any existing fetchpriority
-                    $tag = preg_replace( '/\s*fetchpriority=["\'][^"\']*["\']/i', '', $tag ) ?? $tag;
-                    // Add fetchpriority="high"
-                    return preg_replace( '/(<img\s)/i', '$1fetchpriority="high" ', $tag, 1 ) ?? $tag;
+                '/(<img\s[^>]*src=["\']([^"\']+)["\'][^>]*>)/i',
+                static function ( array $m ) use ( $featured_url, &$img_count, &$modified_count ): string {
+                    $img_count++;
+                    $img_tag = $m[1];
+                    $src = $m[2];
+
+                    // Don't mark the featured image - we want Google to see it!
+                    if ( $featured_url && strpos( $src, $featured_url ) !== false ) {
+                        // Boost featured image priority
+                        if ( strpos( $img_tag, 'fetchpriority' ) === false ) {
+                            $img_tag = preg_replace( '/(<img\s)/i', '$1fetchpriority="high" ', $img_tag, 1 ) ?? $img_tag;
+                        }
+                        return $img_tag;
+                    }
+
+                    // Mark everything else with data-nosnippet
+                    if ( strpos( $img_tag, 'data-nosnippet' ) === false ) {
+                        $modified_count++;
+                        $img_tag = preg_replace( '/\s*\/>/', ' data-nosnippet />', $img_tag ) ?? $img_tag;
+                        $img_tag = preg_replace( '/\s*>/', ' data-nosnippet >', $img_tag ) ?? $img_tag;
+                    }
+
+                    return $img_tag;
                 },
                 $html
             ) ?? $html;
+            error_log( "GNH: Found $img_count img tags, modified $modified_count with data-nosnippet" );
+        } catch ( Exception $e ) {
+            error_log( 'GNH: Error in process_output_nosnippet: ' . $e->getMessage() );
         }
 
+        error_log( 'GNH: process_output_nosnippet returning HTML of length: ' . strlen( $html ) );
         return $html;
     }
 
