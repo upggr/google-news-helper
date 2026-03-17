@@ -107,6 +107,23 @@ class GNH_Ad_Nosnippet {
             $html
         ) ?? $html;
 
+        // Hide logo/branding images from snippets to prevent Google from picking them
+        // Look for img tags with filenames containing LOGO, BRAND, ICON in their src
+        $html = preg_replace_callback(
+            '/(<img\s[^>]*src="[^"]*(?:LOGO|BRAND|ICON|icon|logo|brand)[^"]*"[^>]*>)/i',
+            static function ( array $m ): string {
+                $img_tag = $m[1];
+                // Add data-nosnippet as a data attribute to prevent indexing
+                if ( strpos( $img_tag, 'data-nosnippet' ) === false ) {
+                    // Insert data-nosnippet before the closing >
+                    $img_tag = preg_replace( '/\s*\/>/', ' data-nosnippet />', $img_tag ) ?? $img_tag;
+                    $img_tag = preg_replace( '/\s*>/', ' data-nosnippet >', $img_tag ) ?? $img_tag;
+                }
+                return $img_tag;
+            },
+            $html
+        ) ?? $html;
+
         // Boost the featured image with high priority
         if ( $featured_url ) {
             $escaped = preg_quote( $featured_url, '/' );
