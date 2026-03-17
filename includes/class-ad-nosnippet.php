@@ -25,8 +25,32 @@ class GNH_Ad_Nosnippet {
         // Use 'wp' hook which fires after query parsing but before other processing
         add_action( 'wp', [ $this, 'maybe_serve_googlebot_early' ], 1 );
 
-        // Layer 2: Buffer output to add server-side data-nosnippet tags
+        // Layer 2: Add featured image to <head> as first image
+        add_action( 'wp_head', [ $this, 'add_featured_image_to_head' ], 1 );
+
+        // Layer 3: Buffer output to add server-side data-nosnippet tags to all other images
         add_action( 'template_redirect', [ $this, 'start_output_buffer' ], 1 );
+    }
+
+    public function add_featured_image_to_head(): void {
+        if ( ! get_option( 'gnh_enabled', true ) ) {
+            return;
+        }
+        if ( is_admin() || wp_doing_ajax() ) {
+            return;
+        }
+        if ( ! is_singular( 'post' ) ) {
+            return;
+        }
+
+        $featured_url = $this->get_featured_image_url();
+        if ( ! $featured_url ) {
+            return;
+        }
+
+        // Add featured image as hidden img in head - Google crawls head first
+        // This ensures Google encounters the featured image BEFORE any ads/logos
+        echo '<img src="' . esc_url( $featured_url ) . '" alt="Featured image" style="display:none;width:100%;height:auto;" fetchpriority="high" />' . "\n";
     }
 
     public function start_output_buffer(): void {
