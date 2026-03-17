@@ -22,32 +22,72 @@ class GNH_Ad_Nosnippet {
 
     public function __construct() {
         // Layer 1: Serve clean page to Googlebot
-        add_filter( 'template_include', [ $this, 'maybe_serve_googlebot_via_filter' ], 1 );
+        // Use 'wp' hook which fires after query parsing but before other processing
+        add_action( 'wp', [ $this, 'maybe_serve_googlebot_early' ], 1 );
 
         // Layer 2: Mark ads with data-nosnippet as fallback
         add_action( 'template_redirect', [ $this, 'maybe_buffer_output' ], 2 );
     }
 
-    public function maybe_serve_googlebot_via_filter( string $template ): string {
+    public function maybe_serve_googlebot_early(): void {
         if ( ! get_option( 'gnh_enabled', true ) ) {
-            return $template;
+            return;
         }
         if ( is_admin() || wp_doing_ajax() ) {
-            return $template;
+            return;
         }
         if ( ! is_singular( 'post' ) ) {
-            return $template;
+            return;
         }
 
-        // Serve clean page to:
-        // 1. Known Google/Bing crawlers
-        // 2. ALL non-Greek IPs (includes all search engines and crawlers)
-        if ( $this->is_googlebot() || ! $this->is_greek_ip() ) {
+        $ip = $this->get_client_ip();
+        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+        $is_bot = $this->is_googlebot();
+        $is_greek = $this->is_greek_ip();
+
+        // Log all crawler traffic for analysis
+        $this->log_crawler_access( $ip, $ua, $is_bot, $is_greek );
+
+        // Serve clean page only to detected bots (Googlebot, etc.)
+        // Regular users see the full site regardless of geographic location
+        if ( $is_bot ) {
             $this->serve_clean_page();
             // This function calls exit, so we never reach here
         }
+    }
 
-        return $template;
+
+    private function log_crawler_access( string $ip, string $ua, bool $is_bot, bool $is_greek ): void {
+        // Log crawler requests to help identify IP ranges
+        // Only log non-Greek IPs and known bots
+        if ( ! $is_greek || $is_bot ) {
+            $log_entry = sprintf(
+                "[%s] IP: %s | Bot: %s | Greek: %s | UA: %s | URL: %s\n",
+                gmdate( 'Y-m-d H:i:s' ),
+                $ip ?: 'UNKNOWN',
+                $is_bot ? 'YES' : 'NO',
+                $is_greek ? 'YES' : 'NO',
+                substr( $ua, 0, 100 ), // First 100 chars of UA
+                isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : ''
+            );
+
+            $log_file = GNH_PLUGIN_DIR . 'logs/crawler-access.log';
+            $log_dir = dirname( $log_file );
+
+            // Create logs directory if it doesn't exist
+            if ( ! is_dir( $log_dir ) ) {
+                wp_mkdir_p( $log_dir );
+            }
+
+            // Append to log file (with size limit to prevent excessive disk usage)
+            if ( is_writable( $log_dir ) ) {
+                // Keep log under 10MB by rotating if needed
+                if ( file_exists( $log_file ) && filesize( $log_file ) > 10485760 ) {
+                    rename( $log_file, $log_file . '.' . gmdate( 'Y-m-d-His' ) );
+                }
+                file_put_contents( $log_file, $log_entry, FILE_APPEND );
+            }
+        }
     }
 
     private function is_greek_ip(): bool {
@@ -105,6 +145,25 @@ class GNH_Ad_Nosnippet {
         }
 
         return '';
+    }
+
+    public static function get_crawler_logs(): string {
+        $log_file = GNH_PLUGIN_DIR . 'logs/crawler-access.log';
+
+        if ( ! file_exists( $log_file ) ) {
+            return "No crawler logs found yet. They will appear as crawlers access the site.\n";
+        }
+
+        $content = file_get_contents( $log_file );
+        if ( ! $content ) {
+            return "Log file is empty.\n";
+        }
+
+        // Return last 100 lines
+        $lines = explode( "\n", $content );
+        $lines = array_slice( $lines, -100 );
+
+        return implode( "\n", $lines );
     }
 
     public function maybe_buffer_output(): void {

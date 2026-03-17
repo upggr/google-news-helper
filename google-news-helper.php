@@ -43,6 +43,7 @@ $_gnh_includes = [
     'includes/class-meta-tags.php',
     'includes/class-robots.php',
     'includes/class-ad-nosnippet.php',
+    'includes/class-crawler-logs.php',
     'includes/class-admin-page.php',
     'includes/class-updater.php',
 ];
@@ -78,8 +79,13 @@ add_action( 'plugins_loaded', static function (): void {
     if ( class_exists( 'GNH_Ad_Nosnippet' ) ) {
         new GNH_Ad_Nosnippet();
     }
-    if ( is_admin() && class_exists( 'GNH_Admin_Page' ) ) {
-        new GNH_Admin_Page();
+    if ( is_admin() ) {
+        if ( class_exists( 'GNH_Admin_Page' ) ) {
+            new GNH_Admin_Page();
+        }
+        if ( class_exists( 'GNH_Crawler_Logs' ) ) {
+            new GNH_Crawler_Logs();
+        }
     }
 } );
 
