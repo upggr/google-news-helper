@@ -38,13 +38,73 @@ class GNH_Ad_Nosnippet {
         if ( ! is_singular( 'post' ) ) {
             return $template;
         }
-        if ( ! $this->is_googlebot() ) {
-            return $template;
+
+        // Serve clean page to:
+        // 1. Known Google/Bing crawlers
+        // 2. ALL non-Greek IPs (includes all search engines and crawlers)
+        if ( $this->is_googlebot() || ! $this->is_greek_ip() ) {
+            $this->serve_clean_page();
+            // This function calls exit, so we never reach here
         }
 
-        $this->serve_clean_page();
-        // This function calls exit, so we never reach here
         return $template;
+    }
+
+    private function is_greek_ip(): bool {
+        // Get client IP
+        $ip = $this->get_client_ip();
+        if ( ! $ip ) {
+            return true; // Default to serving full page if IP detection fails
+        }
+
+        // Greek IP ranges (simplified - just check for common Greek ISP prefixes)
+        // This is a basic check - in production you'd use GeoIP database
+        $greek_prefixes = [
+            '194.219.',  // Vodafone Greece
+            '195.134.',  // OTE Greece
+            '195.142.',  // Cosmote
+            '195.153.',  // Forthnet
+            '195.154.',  // Netone
+            '195.170.',  // Wind Greece
+            '195.189.',  // Tellas
+            '195.19.', // Various Greek ISPs
+            '195.2.', // Greek ISPs
+            '195.20.', // Greek ISPs
+            '195.31.', // Greek ISPs
+            '195.39.', // Greek ISPs
+            '195.46.', // Greek ISPs
+            '195.5.', // Greek ISPs
+            '195.54.', // Greek ISPs
+            '195.62.', // Greek ISPs
+            '195.7.', // Greek ISPs
+            '195.88.', // Greek ISPs
+            '195.9.', // Greek ISPs
+        ];
+
+        foreach ( $greek_prefixes as $prefix ) {
+            if ( strpos( $ip, $prefix ) === 0 ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function get_client_ip(): string {
+        $ip_keys = [ 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' ];
+
+        foreach ( $ip_keys as $key ) {
+            if ( ! empty( $_SERVER[ $key ] ) ) {
+                $ips = explode( ',', $_SERVER[ $key ] );
+                $ip = trim( $ips[0] );
+                // Validate IP
+                if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+                    return $ip;
+                }
+            }
+        }
+
+        return '';
     }
 
     public function maybe_buffer_output(): void {
