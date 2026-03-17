@@ -25,8 +25,8 @@ class GNH_Ad_Nosnippet {
         // Use 'wp' hook which fires after query parsing but before other processing
         add_action( 'wp', [ $this, 'maybe_serve_googlebot_early' ], 1 );
 
-        // Layer 2: Mark ads with data-nosnippet as fallback
-        add_action( 'template_redirect', [ $this, 'maybe_buffer_output' ], 2 );
+        // Layer 2: Add CSS to hide non-featured images from Google
+        add_action( 'wp_footer', [ $this, 'maybe_add_nosnippet_script' ], 999 );
     }
 
     public function maybe_serve_googlebot_early(): void {
@@ -130,10 +130,8 @@ class GNH_Ad_Nosnippet {
         return implode( "\n", $lines );
     }
 
-    public function maybe_buffer_output(): void {
-        // DISABLED: Output buffering causing issues with response
-        return;
-
+    public function maybe_add_nosnippet_script(): void {
+        // Add inline JS to add data-nosnippet to all images except featured
         if ( ! get_option( 'gnh_enabled', true ) ) {
             return;
         }
@@ -144,9 +142,28 @@ class GNH_Ad_Nosnippet {
             return;
         }
 
-        // Start output buffering to add data-nosnippet to ad images
-        error_log( 'GNH: Starting output buffer for post' );
-        ob_start( [ $this, 'process_output_nosnippet' ] );
+        $featured_url = $this->get_featured_image_url();
+        if ( ! $featured_url ) {
+            return;
+        }
+
+        echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const featured_src = ' . wp_json_encode( $featured_url ) . ';
+            const images = document.querySelectorAll("img");
+            images.forEach(img => {
+                // Skip featured image
+                if (img.src && img.src.includes(featured_src)) {
+                    img.setAttribute("fetchpriority", "high");
+                    return;
+                }
+                // Mark all others with data-nosnippet
+                if (!img.hasAttribute("data-nosnippet")) {
+                    img.setAttribute("data-nosnippet", "true");
+                }
+            });
+        });
+        </script>' . "\n";
     }
 
     public function process_output_nosnippet( string $html ): string {
