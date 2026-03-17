@@ -59,7 +59,6 @@ class GNH_Crawler_Logs {
                         <th>Timestamp</th>
                         <th>IP Address</th>
                         <th>Detected Bot</th>
-                        <th>Greek IP</th>
                         <th>User Agent (truncated)</th>
                     </tr>
                 </thead>
@@ -106,27 +105,25 @@ for ip in sorted(google_ips):
                 break;
             }
 
-            // Parse log line format: [TIME] IP: x.x.x.x | Bot: YES/NO | Greek: YES/NO | UA: ...
-            if ( preg_match( '/\[([^\]]+)\] IP: ([^ ]+) \| Bot: ([^ ]+) \| Greek: ([^ ]+) \| UA: (.+?) \| URL:/', $line, $matches ) ) {
+            // Parse log line format: [TIME] IP: x.x.x.x | Bot: YES/NO | UA: ...
+            if ( preg_match( '/\[([^\]]+)\] IP: ([^ ]+) \| Bot: ([^ ]+) \| UA: (.+?) \| URL:/', $line, $matches ) ) {
                 $timestamp = $matches[1];
                 $ip = $matches[2];
                 $is_bot = $matches[3];
-                $is_greek = $matches[4];
-                $ua = $matches[5];
+                $ua = $matches[4];
 
-                // Highlight Google/Bing IPs
+                // Highlight crawler IPs
                 $ip_class = '';
                 if ( preg_match( '/^(66\.249|66\.102|40\.77|207\.46)/', $ip ) ) {
                     $ip_class = ' style="background-color: #ffffcc; font-weight: bold;"';
                 }
 
                 printf(
-                    '<tr><td>%s</td><td%s>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+                    '<tr><td>%s</td><td%s>%s</td><td>%s</td><td>%s</td></tr>',
                     esc_html( $timestamp ),
                     $ip_class,
                     esc_html( $ip ),
                     esc_html( $is_bot ),
-                    esc_html( $is_greek ),
                     esc_html( substr( $ua, 0, 70 ) ) . ( strlen( $ua ) > 70 ? '...' : '' )
                 );
 

@@ -42,31 +42,29 @@ class GNH_Ad_Nosnippet {
 
         $ip = $this->get_client_ip();
         $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
-        $is_bot = $this->is_googlebot();
-        $is_greek = $this->is_greek_ip();
+        $is_crawler = $this->is_crawler_ip() || $this->is_googlebot();
 
         // Log all crawler traffic for analysis
-        $this->log_crawler_access( $ip, $ua, $is_bot, $is_greek );
+        $this->log_crawler_access( $ip, $ua, $is_crawler, false );
 
-        // Serve clean page only to detected bots (Googlebot, etc.)
-        // Regular users see the full site regardless of geographic location
-        if ( $is_bot ) {
+        // Serve clean minimal page only to known crawlers (Google, Bing, etc.)
+        // All other users (regular browsers from anywhere) see the full site with ads
+        if ( $is_crawler ) {
             $this->serve_clean_page();
             // This function calls exit, so we never reach here
         }
     }
 
 
-    private function log_crawler_access( string $ip, string $ua, bool $is_bot, bool $is_greek ): void {
+    private function log_crawler_access( string $ip, string $ua, bool $is_bot, bool $unused ): void {
         // Log crawler requests to help identify IP ranges
-        // Only log non-Greek IPs and known bots
-        if ( ! $is_greek || $is_bot ) {
+        // Only log detected crawlers
+        if ( $is_bot ) {
             $log_entry = sprintf(
-                "[%s] IP: %s | Bot: %s | Greek: %s | UA: %s | URL: %s\n",
+                "[%s] IP: %s | Bot: %s | UA: %s | URL: %s\n",
                 gmdate( 'Y-m-d H:i:s' ),
                 $ip ?: 'UNKNOWN',
                 $is_bot ? 'YES' : 'NO',
-                $is_greek ? 'YES' : 'NO',
                 substr( $ua, 0, 100 ), // First 100 chars of UA
                 isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : ''
             );
@@ -90,39 +88,25 @@ class GNH_Ad_Nosnippet {
         }
     }
 
-    private function is_greek_ip(): bool {
+    private function is_crawler_ip(): bool {
         // Get client IP
         $ip = $this->get_client_ip();
         if ( ! $ip ) {
-            return true; // Default to serving full page if IP detection fails
+            return false; // Default to showing ads if IP detection fails
         }
 
-        // Greek IP ranges (simplified - just check for common Greek ISP prefixes)
-        // This is a basic check - in production you'd use GeoIP database
-        $greek_prefixes = [
-            '194.219.',  // Vodafone Greece
-            '195.134.',  // OTE Greece
-            '195.142.',  // Cosmote
-            '195.153.',  // Forthnet
-            '195.154.',  // Netone
-            '195.170.',  // Wind Greece
-            '195.189.',  // Tellas
-            '195.19.', // Various Greek ISPs
-            '195.2.', // Greek ISPs
-            '195.20.', // Greek ISPs
-            '195.31.', // Greek ISPs
-            '195.39.', // Greek ISPs
-            '195.46.', // Greek ISPs
-            '195.5.', // Greek ISPs
-            '195.54.', // Greek ISPs
-            '195.62.', // Greek ISPs
-            '195.7.', // Greek ISPs
-            '195.88.', // Greek ISPs
-            '195.9.', // Greek ISPs
+        // Known crawler IP ranges (Google, Bing, etc.)
+        // These crawlers get the clean minimal page to ensure correct thumbnail selection
+        $crawler_ranges = [
+            '66.249.',    // Google Search bot
+            '66.102.',    // Google Ads, Analytics
+            '40.77.',     // Bing Search
+            '207.46.',    // Bing Search
+            '2001:4860:', // Google IPv6 (simplified check)
         ];
 
-        foreach ( $greek_prefixes as $prefix ) {
-            if ( strpos( $ip, $prefix ) === 0 ) {
+        foreach ( $crawler_ranges as $range ) {
+            if ( strpos( $ip, $range ) === 0 ) {
                 return true;
             }
         }
