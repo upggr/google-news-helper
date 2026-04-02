@@ -133,12 +133,34 @@ class GNH_GitHub_Updater {
         }
 
         $data = json_decode( $body, true );
-        if ( ! is_array( $data ) || empty( $data[0] ) || ! is_array( $data[0] ) ) {
+        if ( ! is_array( $data ) || $data === [] ) {
+            return null;
+        }
+
+        $best_name    = null;
+        $best_version = '0';
+
+        foreach ( $data as $row ) {
+            if ( ! is_array( $row ) || empty( $row['name'] ) || ! is_string( $row['name'] ) ) {
+                continue;
+            }
+            $name    = $row['name'];
+            $version = ltrim( $name, 'vV' );
+            if ( $version === '' || ! preg_match( '/^\d+(\.\d+){0,3}/', $version ) ) {
+                continue;
+            }
+            if ( version_compare( $version, $best_version, '>' ) ) {
+                $best_version = $version;
+                $best_name    = $name;
+            }
+        }
+
+        if ( $best_name === null ) {
             return null;
         }
 
         return [
-            'tag_name' => $data[0]['name'] ?? null,
+            'tag_name' => $best_name,
         ];
     }
 }
