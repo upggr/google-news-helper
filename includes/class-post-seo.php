@@ -79,7 +79,7 @@ class GNH_Post_SEO {
 
         <!-- Custom title -->
         <div class="gnh-meta-section">
-            <label for="gnh-seo-title"><?php esc_html_e( 'SEO Title Override', 'google-news-helper' ); ?></label>
+            <label for="gnh-seo-title"><?php esc_html_e( 'SEO title (Google result title)', 'google-news-helper' ); ?></label>
             <input type="text" id="gnh-seo-title" name="gnh_seo_title" class="large-text"
                 value="<?php echo esc_attr( $title ); ?>"
                 placeholder="<?php echo esc_attr( get_the_title( $post ) ); ?>">
@@ -90,19 +90,25 @@ class GNH_Post_SEO {
                 printf( '<span class="%s">%d chars</span> — Google News: 30–110 recommended', esc_attr( $cls ), $tlen );
                 ?>
             </p>
+            <p class="description" style="margin-top:6px;">
+                <?php esc_html_e( 'When filled, overrides the SEO title for this post when a supported SEO plugin is active.', 'google-news-helper' ); ?>
+            </p>
         </div>
 
         <!-- Custom description -->
         <div class="gnh-meta-section">
-            <label for="gnh-seo-desc"><?php esc_html_e( 'Meta Description Override', 'google-news-helper' ); ?></label>
+            <label for="gnh-seo-desc"><?php esc_html_e( 'Meta description (Google snippet text)', 'google-news-helper' ); ?></label>
             <textarea id="gnh-seo-desc" name="gnh_seo_desc" class="large-text" rows="3"
-                placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from post content', 'google-news-helper' ); ?>"><?php echo esc_textarea( $desc ); ?></textarea>
+                placeholder="<?php esc_attr_e( 'Leave blank to use this plugin’s auto excerpt, or your SEO plugin’s description if set there', 'google-news-helper' ); ?>"><?php echo esc_textarea( $desc ); ?></textarea>
             <p class="gnh-char-count" id="gnh-desc-count">
                 <?php
                 $dlen = mb_strlen( $desc );
                 $cls  = ( $dlen === 0 || ( $dlen >= 50 && $dlen <= 160 ) ) ? 'gnh-char-ok' : 'gnh-char-warn';
                 printf( '<span class="%s">%d chars</span> — recommended: 50–160', esc_attr( $cls ), $dlen );
                 ?>
+            </p>
+            <p class="description" style="margin-top:6px;">
+                <?php esc_html_e( 'When this field is filled, it overrides the meta description for this post when a supported SEO plugin is active.', 'google-news-helper' ); ?>
             </p>
         </div>
 

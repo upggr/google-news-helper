@@ -6,7 +6,129 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GNH_Meta_Tags {
 
     public function __construct() {
+        add_action( 'wp_head', [ $this, 'output_front_page_snippet' ], 4 );
         add_action( 'wp_head', [ $this, 'output_tags' ], 5 );
+
+        add_filter( 'pre_get_document_title', [ $this, 'filter_document_title_for_post' ], 15 );
+
+        add_filter( 'wpseo_metadesc', [ $this, 'filter_seo_meta_description' ], 20, 1 );
+        add_filter( 'rank_math/frontend/description', [ $this, 'filter_seo_meta_description' ], 20 );
+        add_filter( 'aioseo_description', [ $this, 'filter_seo_meta_description' ], 20, 1 );
+
+        add_filter( 'wpseo_title', [ $this, 'filter_seo_title' ], 20, 1 );
+        add_filter( 'rank_math/frontend/title', [ $this, 'filter_seo_title' ], 20 );
+        add_filter( 'aioseo_title', [ $this, 'filter_seo_title' ], 20, 1 );
+    }
+
+    /**
+     * Homepage &lt;meta name="description"&gt; and matching Open Graph when no major SEO plugin outputs them.
+     * Major SEO plugins are handled via filters registered in the constructor.
+     */
+    public function output_front_page_snippet(): void {
+        if ( ! get_option( 'gnh_enabled', true ) || ! is_front_page() ) {
+            return;
+        }
+
+        $desc = $this->get_front_meta_description();
+        if ( $desc === '' ) {
+            return;
+        }
+
+        if ( $this->has_major_seo_plugin() ) {
+            return;
+        }
+
+        echo "\n<!-- Google News Helper: front page snippet -->\n";
+        printf(
+            '<meta name="description" content="%s">' . "\n",
+            esc_attr( $desc )
+        );
+        printf(
+            '<meta property="og:description" content="%s">' . "\n",
+            esc_attr( $desc )
+        );
+        echo "<!-- /Google News Helper: front page snippet -->\n";
+    }
+
+    /**
+     * Homepage option + per-post meta description override (metabox) for compatible SEO plugins.
+     *
+     * @param mixed $description Previous meta description from SEO plugin.
+     * @return mixed
+     */
+    public function filter_seo_meta_description( $description ) {
+        if ( ! get_option( 'gnh_enabled', true ) ) {
+            return $description;
+        }
+
+        if ( is_front_page() ) {
+            $custom = $this->get_front_meta_description();
+            return $custom !== '' ? $custom : $description;
+        }
+
+        if ( ! is_singular( 'post' ) ) {
+            return $description;
+        }
+
+        global $post;
+        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+            return $description;
+        }
+
+        if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
+            return $description;
+        }
+
+        $custom = class_exists( 'GNH_Post_SEO' ) ? trim( wp_strip_all_tags( GNH_Post_SEO::get_desc( $post->ID ) ) ) : '';
+        return $custom !== '' ? $custom : $description;
+    }
+
+    /**
+     * Per-post SEO title override for compatible SEO plugins.
+     *
+     * @param mixed $title Previous title from SEO plugin.
+     * @return mixed
+     */
+    public function filter_seo_title( $title ) {
+        if ( ! get_option( 'gnh_enabled', true ) || ! is_singular( 'post' ) ) {
+            return $title;
+        }
+
+        global $post;
+        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+            return $title;
+        }
+
+        if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
+            return $title;
+        }
+
+        $custom = class_exists( 'GNH_Post_SEO' ) ? trim( (string) GNH_Post_SEO::get_title( $post->ID ) ) : '';
+        return $custom !== '' ? $custom : $title;
+    }
+
+    /**
+     * HTML document &lt;title&gt; when no major SEO plugin (they use filter_seo_title instead).
+     *
+     * @param mixed $title WordPress-computed title.
+     * @return mixed
+     */
+    public function filter_document_title_for_post( $title ) {
+        if ( ! get_option( 'gnh_enabled', true ) || $this->has_major_seo_plugin() || ! is_singular( 'post' ) ) {
+            return $title;
+        }
+
+        global $post;
+        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+            return $title;
+        }
+
+        if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
+            return $title;
+        }
+
+        $custom = class_exists( 'GNH_Post_SEO' ) ? trim( (string) GNH_Post_SEO::get_title( $post->ID ) ) : '';
+        return $custom !== '' ? $custom : $title;
     }
 
     public function output_tags(): void {
@@ -82,9 +204,16 @@ class GNH_Meta_Tags {
         }
 
         // Detect other SEO plugins to avoid duplicate og: tags
-        $has_seo_plugin = defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'AIOSEOP_VERSION' );
+        $has_seo_plugin = $this->has_major_seo_plugin();
 
         echo "\n<!-- Google News Helper v" . esc_html( GNH_VERSION ) . " -->\n";
+
+        if ( ! $has_seo_plugin ) {
+            printf(
+                '<meta name="description" content="%s">' . "\n",
+                esc_attr( $excerpt )
+            );
+        }
 
         // ── Open Graph (skip if another SEO plugin already outputs these) ──
         if ( ! $has_seo_plugin ) {
@@ -182,6 +311,19 @@ class GNH_Meta_Tags {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function get_front_meta_description(): string {
+        $raw = get_option( 'gnh_front_meta_description', '' );
+        if ( ! is_string( $raw ) ) {
+            return '';
+        }
+        $raw = trim( wp_strip_all_tags( $raw ) );
+        return $raw;
+    }
+
+    private function has_major_seo_plugin(): bool {
+        return defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'AIOSEOP_VERSION' );
+    }
 
     private function meta( string $attr, string $name, string $content ): void {
         printf(

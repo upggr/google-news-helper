@@ -278,7 +278,7 @@ class GNH_Admin_Page {
                 <span class="gnh-version">v<?php echo esc_html( GNH_VERSION ); ?> &mdash; by <a href="https://buy-it.gr/" target="_blank">Ioannis Kokkinis</a></span>
             </h1>
 
-            <?php if ( isset( $_GET['updated'] ) ): ?>
+            <?php if ( ! empty( $_GET['settings-updated'] ) || isset( $_GET['updated'] ) ) : ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'google-news-helper' ); ?></p></div>
             <?php endif; ?>
 
@@ -301,10 +301,36 @@ class GNH_Admin_Page {
                 </span>
             </div>
 
+            <!-- ── Homepage meta description (Google snippet) ── -->
+            <div class="gnh-card">
+                <h2><?php esc_html_e( 'Homepage search snippet', 'google-news-helper' ); ?></h2>
+                <p class="description">
+                    <?php esc_html_e( 'Text for the meta description on your site’s front page. Google often shows this under the title in results instead of random text from the menu or footer.', 'google-news-helper' ); ?>
+                </p>
+                <form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" class="gnh-front-snippet-form">
+                    <?php settings_fields( 'gnh_options_group' ); ?>
+                    <label for="gnh_front_meta_description" class="screen-reader-text">
+                        <?php esc_html_e( 'Homepage meta description', 'google-news-helper' ); ?>
+                    </label>
+                    <textarea
+                        id="gnh_front_meta_description"
+                        name="gnh_front_meta_description"
+                        class="large-text"
+                        rows="4"
+                        maxlength="320"
+                        placeholder="<?php esc_attr_e( 'e.g. Ζάκυνθος — ειδήσεις, ρεπορτάζ και επικαιρότητα 24/7 από ανεξάρτητη σύνταξη.', 'google-news-helper' ); ?>"
+                    ><?php echo esc_textarea( (string) get_option( 'gnh_front_meta_description', '' ) ); ?></textarea>
+                    <p class="description" style="margin-top:8px;">
+                        <?php esc_html_e( 'Recommended length: about 50–160 characters. Maximum stored: 320. If a supported SEO plugin is active, a filled field here overrides its homepage meta description.', 'google-news-helper' ); ?>
+                    </p>
+                    <?php submit_button( __( 'Save homepage snippet', 'google-news-helper' ), 'primary', 'submit', false ); ?>
+                </form>
+            </div>
+
             <!-- ── Article previews ── -->
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'How Your Latest Posts Appear on Google News', 'google-news-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in Google News.', 'google-news-helper' ); ?></p>
+                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags.', 'google-news-helper' ); ?></p>
 
                 <?php if ( empty( $posts ) ): ?>
                     <p><?php esc_html_e( 'No published posts found.', 'google-news-helper' ); ?></p>
@@ -314,28 +340,9 @@ class GNH_Admin_Page {
                         $this->render_preview_card( $post );
                     endforeach; ?>
                 </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- ── Tag Tester ── -->
-            <div class="gnh-card">
-                <h2><?php esc_html_e( 'Meta Tag Tester', 'google-news-helper' ); ?></h2>
-                <p class="description">
-                    <?php esc_html_e( 'Fetch any post\'s front-end HTML and check which tags are present, missing, or duplicated by another plugin.', 'google-news-helper' ); ?>
-                </p>
-                <div class="gnh-test-row">
-                    <select id="gnh-test-post-select" style="min-width:280px;">
-                        <option value=""><?php esc_html_e( '— Select a recent post —', 'google-news-helper' ); ?></option>
-                        <?php foreach ( $posts as $p ): ?>
-                        <option value="<?php echo esc_attr( $p->ID ); ?>"><?php echo esc_html( get_the_title( $p ) ); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <button id="gnh-run-test" class="button button-primary">
-                        <?php esc_html_e( 'Run Test', 'google-news-helper' ); ?>
-                    </button>
-                    <span class="gnh-test-spinner spinner" style="float:none;visibility:hidden;"></span>
-                </div>
+                <span class="gnh-test-spinner spinner" style="float:none;visibility:hidden;"></span>
                 <div id="gnh-test-results" style="margin-top:16px;display:none;"></div>
+                <?php endif; ?>
             </div>
 
             <!-- ── Info box ── -->
@@ -348,7 +355,11 @@ class GNH_Admin_Page {
                     <li><?php esc_html_e( 'news_keywords meta tag (up to 10 post tags)', 'google-news-helper' ); ?></li>
                     <li><?php esc_html_e( 'robots meta: max-image-preview:large', 'google-news-helper' ); ?></li>
                     <li><?php esc_html_e( 'NewsArticle JSON-LD structured data (Schema.org)', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Google News XML sitemap at /news-sitemap.xml (articles from last 48 hours)', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'RSS feed enclosure tags with image URL, size, and MIME type', 'google-news-helper' ); ?></li>
                     <li><?php esc_html_e( 'OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Per-post SEO title and meta description (post editor metabox); when set, they override the SEO plugin’s values for that post where supported', 'google-news-helper' ); ?></li>
                 </ul>
             </div>
         </div>
@@ -360,14 +371,17 @@ class GNH_Admin_Page {
     /** @return WP_Post[] */
     private function get_recent_posts(): array {
         $query = new WP_Query( [
-            'post_type'      => 'post',
-            'post_status'    => 'publish',
-            'posts_per_page' => 5,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-            'no_found_rows'  => true,
+            'post_type'        => 'post',
+            'post_status'      => 'publish',
+            'posts_per_page'   => 5,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'no_found_rows'    => true,
+            'suppress_filters' => true,
         ] );
-        return $query->posts ?: [];
+        $posts = $query->posts ?: [];
+        usort( $posts, static fn( $a, $b ) => strtotime( $b->post_date ) - strtotime( $a->post_date ) );
+        return $posts;
     }
 
     private function render_preview_card( WP_Post $post ): void {
@@ -377,14 +391,12 @@ class GNH_Admin_Page {
         $site_name  = get_bloginfo( 'name' );
         $cats       = get_the_category( $post->ID );
         $section    = ! empty( $cats ) ? $cats[0]->name : '';
-        $pub_ts     = get_post_time( 'U', false, $post );
+        $pub_ts     = get_post_time( 'U', true, $post );
         $pub_human  = human_time_diff( (int) $pub_ts, time() ) . ' ' . __( 'ago', 'google-news-helper' );
         $pub_iso    = get_the_date( 'c', $post );
 
         // Checks
-        $has_image   = has_post_thumbnail( $post->ID );
-        $has_excerpt = ! empty( $post->post_excerpt ) || ! empty( $post->post_content );
-        $all_good    = $has_image && $has_excerpt;
+        $has_image = has_post_thumbnail( $post->ID );
 
         // Thumbnail
         $thumb_html = '';
@@ -392,15 +404,6 @@ class GNH_Admin_Page {
             $thumb_html = get_the_post_thumbnail( $post->ID, [ 96, 96 ], [ 'class' => 'gnh-card-thumb' ] );
         } else {
             $thumb_html = '<div class="gnh-card-thumb gnh-thumb-placeholder"><span class="dashicons dashicons-format-image"></span></div>';
-        }
-
-        // Status
-        $warnings = [];
-        if ( ! $has_image ) {
-            $warnings[] = __( 'No featured image — Google News may not show a thumbnail.', 'google-news-helper' );
-        }
-        if ( ! $has_excerpt ) {
-            $warnings[] = __( 'No excerpt or content — description will be empty.', 'google-news-helper' );
         }
         ?>
         <div class="gnh-preview-card">
@@ -411,6 +414,9 @@ class GNH_Admin_Page {
                         <span class="gnh-preview-dot">&middot;</span>
                         <span class="gnh-preview-section"><?php echo esc_html( $section ); ?></span>
                     <?php endif; ?>
+                    <button class="gnh-test-icon-btn" data-post-id="<?php echo esc_attr( (string) $post->ID ); ?>" title="<?php esc_attr_e( 'Test meta tags for this post', 'google-news-helper' ); ?>">
+                        <span class="dashicons dashicons-search"></span>
+                    </button>
                 </div>
                 <a href="<?php echo esc_url( $url ); ?>" target="_blank" class="gnh-preview-title">
                     <?php echo esc_html( $headline ); ?>
@@ -420,14 +426,21 @@ class GNH_Admin_Page {
                         <?php echo esc_html( $pub_human ); ?>
                     </span>
                 </div>
-                <div class="gnh-preview-status <?php echo $all_good ? 'gnh-status-good' : 'gnh-status-warn'; ?>">
-                    <?php if ( $all_good ): ?>
+                <div class="gnh-preview-status <?php echo $has_image ? 'gnh-status-good' : 'gnh-status-warn'; ?>">
+                    <?php if ( $has_image ): ?>
                         <span class="dashicons dashicons-yes-alt"></span>
-                        <?php esc_html_e( 'Ready for Google News', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'Has featured image', 'google-news-helper' ); ?>
                     <?php else: ?>
                         <span class="dashicons dashicons-warning"></span>
-                        <?php echo esc_html( implode( ' ', $warnings ) ); ?>
+                        <?php esc_html_e( 'No featured image', 'google-news-helper' ); ?>
                     <?php endif; ?>
+                </div>
+                <div class="gnh-preview-links">
+                    <a href="https://search.google.com/test/rich-results?url=<?php echo urlencode( $url ); ?>" target="_blank">Google Rich Results</a>
+                    <a href="https://developers.facebook.com/tools/debug/?q=<?php echo urlencode( $url ); ?>" target="_blank">Facebook</a>
+                    <a href="https://cards-dev.twitter.com/validator" target="_blank">X/Twitter</a>
+                    <a href="https://www.linkedin.com/post-inspector/inspect/<?php echo urlencode( $url ); ?>" target="_blank">LinkedIn</a>
+                    <a href="https://metatags.io/?url=<?php echo urlencode( $url ); ?>" target="_blank">MetaTags.io</a>
                 </div>
             </div>
             <div class="gnh-preview-thumb">

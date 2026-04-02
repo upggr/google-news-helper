@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Google News Helper
- * Description: Optimizes your WordPress site for Google News: adds required meta tags, Open Graph, NewsArticle JSON-LD structured data, and a preview dashboard. Auto-updates from GitHub.
- * Version:     1.0.8
+ * Description: Optimizes your WordPress site for Google News: generates Google News sitemap, adds required meta tags, Open Graph, NewsArticle JSON-LD structured data, RSS enclosure tags, and a preview dashboard. Auto-updates from GitHub.
+ * Version:     1.0.10
  * Author:      Ioannis Kokkinis
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GNH_VERSION',     '1.0.8' );
+define( 'GNH_VERSION',     '1.0.10' );
 define( 'GNH_PLUGIN_FILE', __FILE__ );
 define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
 define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
@@ -32,6 +32,7 @@ function gnh_deactivate(): void {}
 register_uninstall_hook( __FILE__, 'gnh_uninstall' );
 function gnh_uninstall(): void {
     delete_option( 'gnh_enabled' );
+    delete_option( 'gnh_front_meta_description' );
 }
 
 // ── Load includes ─────────────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ $_gnh_includes = [
     'includes/class-robots.php',
     'includes/class-ad-nosnippet.php',
     'includes/class-crawler-logs.php',
+    'includes/class-news-sitemap.php',
     'includes/class-admin-page.php',
     'includes/class-updater.php',
 ];
@@ -78,6 +80,9 @@ add_action( 'plugins_loaded', static function (): void {
     }
     if ( class_exists( 'GNH_Ad_Nosnippet' ) ) {
         new GNH_Ad_Nosnippet();
+    }
+    if ( class_exists( 'GNH_News_Sitemap' ) ) {
+        new GNH_News_Sitemap();
     }
     if ( is_admin() ) {
         if ( class_exists( 'GNH_Admin_Page' ) ) {

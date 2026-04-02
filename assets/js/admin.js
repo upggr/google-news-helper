@@ -37,18 +37,23 @@
 
     // ── Tag tester ───────────────────────────────────────────────────────────
 
-    $('#gnh-run-test').on('click', function () {
-        var postId = $('#gnh-test-post-select').val();
+    $(document).on('click', '.gnh-test-icon-btn', function (e) {
+        e.preventDefault();
+        var postId = $(this).data('post-id');
         if (!postId) {
-            alert('Please select a post first.');
+            alert('Post ID not found.');
             return;
         }
+        runTagTest(postId, $(this));
+    });
 
-        var $btn     = $(this);
+    function runTagTest(postId, $btn) {
         var $spinner = $('.gnh-test-spinner');
         var $results = $('#gnh-test-results');
 
-        $btn.prop('disabled', true);
+        if ($btn) {
+            $btn.prop('disabled', true);
+        }
         $spinner.css('visibility', 'visible');
         $results.hide().empty();
 
@@ -76,7 +81,7 @@
                 conflicts.forEach(function (c) {
                     html += '<li><strong>' + escHtml(c.name) + '</strong> <span style="color:#888;">(' + escHtml(c.type) + ': ' + escHtml(c.file) + ')</span> — this plugin may output its own og: / structured-data tags.</li>';
                 });
-                html += '</ul><p>Duplicate og: tags are skipped automatically by Google News Helper when Yoast, Rank Math, or AIOSEO is detected. Check for duplicates in the tag list below.</p></div>';
+                html += '</ul><p>Duplicate og: tags are skipped automatically when a known SEO plugin is active. Check for duplicates in the tag list below.</p></div>';
             }
 
             // ── SEO plugin badges (detected from HTML)
@@ -176,10 +181,12 @@
             $results.html('<div class="notice notice-error inline"><p>Request failed. Please try again.</p></div>').show();
         })
         .always(function () {
-            $btn.prop('disabled', false);
+            if ($btn) {
+                $btn.prop('disabled', false);
+            }
             $spinner.css('visibility', 'hidden');
         });
-    });
+    }
 
     function escHtml(str) {
         if (typeof str !== 'string') { return str; }
