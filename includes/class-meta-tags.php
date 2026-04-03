@@ -7,7 +7,8 @@ class GNH_Meta_Tags {
 
     public function __construct() {
         add_action( 'wp_head', [ $this, 'output_front_page_snippet' ], 4 );
-        add_action( 'wp_head', [ $this, 'output_tags' ], 5 );
+        // Early priority so our og:title / Twitter title win the “first tag in document” race (Facebook uses the first og:title).
+        add_action( 'wp_head', [ $this, 'output_tags' ], 2 );
 
         add_filter( 'pre_get_document_title', [ $this, 'filter_document_title_for_post' ], 15 );
 
@@ -140,7 +141,13 @@ class GNH_Meta_Tags {
             return;
         }
 
-        global $post;
+        $post = get_queried_object();
+        if ( ! $post instanceof WP_Post || $post->post_type !== 'post' ) {
+            global $post;
+            if ( ! $post instanceof WP_Post || $post->post_type !== 'post' ) {
+                return;
+            }
+        }
 
         // Respect per-post noindex — skip all tags if post is set to noindex
         if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
@@ -151,7 +158,7 @@ class GNH_Meta_Tags {
         $custom_title = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_title( $post->ID ) : '';
         $custom_desc  = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_desc( $post->ID )  : '';
 
-        $title       = $custom_title ?: get_the_title( $post );
+        $title = $this->resolve_post_og_title( $post, $custom_title );
         $url         = get_permalink( $post );
         $excerpt     = $custom_desc  ?: $this->get_excerpt( $post );
         $site_name   = get_bloginfo( 'name' );
@@ -311,6 +318,43 @@ class GNH_Meta_Tags {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Stable headline for Open Graph / Twitter (never empty when the post exists).
+     *
+     * @param WP_Post $post           Queried post.
+     * @param string  $custom_title   Raw value from GNH metabox (may be empty).
+     */
+    private function resolve_post_og_title( WP_Post $post, string $custom_title ): string {
+        $custom_title = trim( wp_strip_all_tags( $custom_title ) );
+        if ( $custom_title !== '' ) {
+            $title = $custom_title;
+        } else {
+            $title = trim( wp_strip_all_tags( get_the_title( $post ) ) );
+        }
+        if ( $title === '' && trim( (string) $post->post_title ) !== '' ) {
+            $title = trim( wp_strip_all_tags( (string) $post->post_title ) );
+        }
+        if ( $title === '' ) {
+            $text = wp_strip_all_tags( (string) $post->post_content );
+            $text = preg_replace( '/\s+/', ' ', $text );
+            $text = trim( (string) $text );
+            if ( $text !== '' ) {
+                $title = mb_strlen( $text ) > 110 ? mb_substr( $text, 0, 107 ) . '...' : $text;
+            }
+        }
+        if ( $title === '' ) {
+            $title = get_bloginfo( 'name' );
+        }
+
+        /**
+         * Filter the Open Graph / Twitter title for singular posts.
+         *
+         * @param string  $title Resolved title.
+         * @param WP_Post $post  Post object.
+         */
+        return (string) apply_filters( 'gnh_open_graph_title', $title, $post );
+    }
 
     private function get_front_meta_description(): string {
         $raw = get_option( 'gnh_front_meta_description', '' );
