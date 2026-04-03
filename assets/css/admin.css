@@ -366,3 +366,74 @@
     color: #3c434a;
     word-break: break-all;
 }
+
+/* ── robots.txt health screen ─────────────────────────────── */
+
+.gnh-robots-summary .gnh-robots-overall {
+    margin: 12px 0;
+}
+
+.gnh-robots-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.gnh-robots-badge--good {
+    background: #edfaee;
+    color: #1e4620;
+}
+
+.gnh-robots-badge--warn {
+    background: #fff8e5;
+    color: #614200;
+}
+
+.gnh-robots-badge--bad {
+    background: #fef2f2;
+    color: #6b1a1a;
+}
+
+.gnh-robots-table td {
+    vertical-align: top;
+}
+
+.gnh-robots-status--pass {
+    color: #1e7e34;
+    font-weight: 600;
+}
+
+.gnh-robots-status--warn {
+    color: #996800;
+    font-weight: 600;
+}
+
+.gnh-robots-status--fail {
+    color: #b32d2e;
+    font-weight: 600;
+}
+
+.gnh-robots-preview {
+    width: 100%;
+    max-width: 860px;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.gnh-robots-opt-list {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.gnh-robots-opt-list li {
+    margin-bottom: 10px;
+    color: #3c434a;
+}
+
+.gnh-robots-fetch-error {
+    color: #b32d2e;
+    font-weight: 600;
+}

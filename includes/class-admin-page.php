@@ -40,10 +40,23 @@ class GNH_Admin_Page {
             'gnh-redirects',
             [ GNH_Redirects::class, 'render_static' ]
         );
+
+        add_submenu_page(
+            'google-news-helper',
+            __( 'robots.txt', 'google-news-helper' ),
+            __( 'robots.txt', 'google-news-helper' ),
+            'manage_options',
+            'gnh-robots',
+            [ GNH_Robots_Admin::class, 'render_static' ]
+        );
     }
 
     public function enqueue_assets( string $hook ): void {
-        if ( $hook !== 'toplevel_page_google-news-helper' ) {
+        $gnh_pages = [
+            'toplevel_page_google-news-helper',
+            'google-news-helper_page_gnh-robots',
+        ];
+        if ( ! in_array( $hook, $gnh_pages, true ) ) {
             return;
         }
 
