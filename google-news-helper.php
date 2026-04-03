@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Google News Helper
  * Description: Optimizes your WordPress site for Google News: generates Google News sitemap, adds required meta tags, Open Graph, NewsArticle JSON-LD structured data, RSS enclosure tags, and a preview dashboard. Auto-updates from GitHub.
- * Version:     1.0.13
+ * Version:     1.0.14
  * Author:      Ioannis Kokkinis
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GNH_VERSION',     '1.0.13' );
+define( 'GNH_VERSION',     '1.0.14' );
 define( 'GNH_PLUGIN_FILE', __FILE__ );
 define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
 define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );

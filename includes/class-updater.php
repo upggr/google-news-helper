@@ -50,9 +50,10 @@ class GNH_GitHub_Updater {
             return $transient;
         }
 
+        // Do not rawurlencode $this->repo — slashes must stay as path separators (encoding breaks GitHub URLs).
         $package = sprintf(
             'https://github.com/%s/archive/refs/tags/%s.zip',
-            rawurlencode( $this->repo ),
+            $this->repo,
             rawurlencode( $release['tag_name'] )
         );
 
@@ -89,7 +90,7 @@ class GNH_GitHub_Updater {
         $info->homepage     = sprintf( 'https://github.com/%s', $this->repo );
         $info->download_link = sprintf(
             'https://github.com/%s/archive/refs/tags/v%s.zip',
-            rawurlencode( $this->repo ),
+            $this->repo,
             rawurlencode( (string) GNH_VERSION )
         );
         $info->sections     = [
@@ -105,7 +106,7 @@ class GNH_GitHub_Updater {
      * @return array<string,mixed>|null
      */
     private function get_latest_tag(): ?array {
-        $url = sprintf( 'https://api.github.com/repos/%s/tags', $this->repo );
+        $url = sprintf( 'https://api.github.com/repos/%s/tags?per_page=100', $this->repo );
 
         $response = wp_remote_get(
             $url,
