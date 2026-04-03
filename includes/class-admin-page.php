@@ -372,7 +372,7 @@ class GNH_Admin_Page {
                     <li><?php esc_html_e( 'RSS feed enclosure tags with image URL, size, and MIME type', 'google-news-helper' ); ?></li>
                     <li><?php esc_html_e( 'OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)', 'google-news-helper' ); ?></li>
                     <li><?php esc_html_e( 'Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Per-post SEO title and meta description (post editor metabox); when set, they override the SEO plugin’s values for that post where supported', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Per-post and per-page SEO title and meta description (editor metabox); when set, they override the SEO plugin’s values for that content where supported', 'google-news-helper' ); ?></li>
                 </ul>
             </div>
         </div>

@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * GNH_Post_SEO — per-post SEO controls.
+ * GNH_Post_SEO — per-content SEO controls (posts and pages).
  *
- * Adds a metabox on post edit screens with:
+ * Adds a metabox on supported edit screens with:
  *  - noindex / nofollow toggles
  *  - Custom SEO title override
  *  - Custom meta description override
@@ -24,17 +24,31 @@ class GNH_Post_SEO {
         add_action( 'wp_head',        [ $this, 'output_robots' ], 1 );
     }
 
+    /**
+     * Post types that get the SEO metabox and front-end meta/OG integration.
+     *
+     * @return string[]
+     */
+    public static function seo_post_types(): array {
+        return (array) apply_filters( 'gnh_seo_post_types', [ 'post', 'page' ] );
+    }
+
     // ── Metabox ───────────────────────────────────────────────────────────────
 
     public function add_metabox(): void {
-        add_meta_box(
-            'gnh-post-seo',
-            '<span class="dashicons dashicons-rss" style="color:#e8612d;vertical-align:middle;margin-right:4px;"></span> ' . esc_html__( 'Google News Helper — SEO', 'google-news-helper' ),
-            [ $this, 'render_metabox' ],
-            'post',
-            'normal',
-            'high'
-        );
+        foreach ( self::seo_post_types() as $post_type ) {
+            if ( ! post_type_exists( $post_type ) ) {
+                continue;
+            }
+            add_meta_box(
+                'gnh-post-seo',
+                '<span class="dashicons dashicons-rss" style="color:#e8612d;vertical-align:middle;margin-right:4px;"></span> ' . esc_html__( 'Google News Helper — SEO', 'google-news-helper' ),
+                [ $this, 'render_metabox' ],
+                $post_type,
+                'normal',
+                'high'
+            );
+        }
     }
 
     public function render_metabox( WP_Post $post ): void {
@@ -61,18 +75,36 @@ class GNH_Post_SEO {
             <div class="gnh-meta-row">
                 <input type="checkbox" id="gnh-noindex" name="gnh_noindex" value="1" <?php checked( $noindex ); ?>>
                 <label for="gnh-noindex" style="font-weight:400;">
-                    <?php esc_html_e( 'noindex — hide this post from Google (and Google News)', 'google-news-helper' ); ?>
+                    <?php
+                    if ( $post->post_type === 'post' ) {
+                        esc_html_e( 'noindex — hide this post from Google (and Google News)', 'google-news-helper' );
+                    } else {
+                        esc_html_e( 'noindex — hide this page from Google search', 'google-news-helper' );
+                    }
+                    ?>
                 </label>
             </div>
             <div class="gnh-meta-row">
                 <input type="checkbox" id="gnh-nofollow" name="gnh_nofollow" value="1" <?php checked( $nofollow ); ?>>
                 <label for="gnh-nofollow" style="font-weight:400;">
-                    <?php esc_html_e( 'nofollow — tell Google not to follow links in this post', 'google-news-helper' ); ?>
+                    <?php
+                    if ( $post->post_type === 'post' ) {
+                        esc_html_e( 'nofollow — tell Google not to follow links in this post', 'google-news-helper' );
+                    } else {
+                        esc_html_e( 'nofollow — tell Google not to follow links on this page', 'google-news-helper' );
+                    }
+                    ?>
                 </label>
             </div>
-            <?php if ( $noindex ): ?>
+            <?php if ( $noindex ) : ?>
             <p style="margin:4px 0 0;padding:6px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-size:12px;color:#7f1d1d;">
-                <?php esc_html_e( 'This post is set to noindex and will not appear in Google or Google News.', 'google-news-helper' ); ?>
+                <?php
+                if ( $post->post_type === 'post' ) {
+                    esc_html_e( 'This post is set to noindex and will not appear in Google or Google News.', 'google-news-helper' );
+                } else {
+                    esc_html_e( 'This page is set to noindex and should not appear in Google search.', 'google-news-helper' );
+                }
+                ?>
             </p>
             <?php endif; ?>
         </div>
@@ -86,12 +118,19 @@ class GNH_Post_SEO {
             <p class="gnh-char-count" id="gnh-title-count">
                 <?php
                 $tlen = mb_strlen( $title ?: get_the_title( $post ) );
-                $cls  = ( $tlen >= 30 && $tlen <= 110 ) ? 'gnh-char-ok' : 'gnh-char-warn';
-                printf( '<span class="%s">%d chars</span> — Google News: 30–110 recommended', esc_attr( $cls ), $tlen );
+                if ( $post->post_type === 'post' ) {
+                    $cls = ( $tlen >= 30 && $tlen <= 110 ) ? 'gnh-char-ok' : 'gnh-char-warn';
+                    /* translators: %d: character count */
+                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Google News: 30–110 recommended', 'google-news-helper' ) );
+                } else {
+                    $cls = ( $tlen >= 0 && $tlen <= 70 ) ? 'gnh-char-ok' : 'gnh-char-warn';
+                    /* translators: %d: character count */
+                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Pages: ~50–60 characters typical', 'google-news-helper' ) );
+                }
                 ?>
             </p>
             <p class="description" style="margin-top:6px;">
-                <?php esc_html_e( 'When filled, overrides the SEO title for this post when a supported SEO plugin is active.', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'When filled, overrides the SEO title when a supported SEO plugin is active.', 'google-news-helper' ); ?>
             </p>
         </div>
 
@@ -108,12 +147,13 @@ class GNH_Post_SEO {
                 ?>
             </p>
             <p class="description" style="margin-top:6px;">
-                <?php esc_html_e( 'When this field is filled, it overrides the meta description for this post when a supported SEO plugin is active.', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'When this field is filled, it overrides the meta description when a supported SEO plugin is active.', 'google-news-helper' ); ?>
             </p>
         </div>
 
         <script>
         (function() {
+            var gnhIsPost = <?php echo $post->post_type === 'post' ? 'true' : 'false'; ?>;
             function countChars(inputId, countId, min, max) {
                 var el = document.getElementById(inputId);
                 var ct = document.getElementById(countId);
@@ -125,7 +165,7 @@ class GNH_Post_SEO {
                     ct.querySelector('span').textContent = len + ' chars';
                 });
             }
-            countChars('gnh-seo-title', 'gnh-title-count', 30, 110);
+            countChars('gnh-seo-title', 'gnh-title-count', gnhIsPost ? 30 : 0, gnhIsPost ? 110 : 70);
             countChars('gnh-seo-desc',  'gnh-desc-count',  50, 160);
         })();
         </script>
@@ -138,7 +178,7 @@ class GNH_Post_SEO {
             ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['gnh_post_seo_nonce'] ) ), 'gnh_post_seo_save' ) ||
             defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ||
             ! current_user_can( 'edit_post', $post_id ) ||
-            $post->post_type !== 'post'
+            ! in_array( $post->post_type, self::seo_post_types(), true )
         ) {
             return;
         }
@@ -156,11 +196,14 @@ class GNH_Post_SEO {
     // ── Front-end: output robots meta ─────────────────────────────────────────
 
     public function output_robots(): void {
-        if ( ! is_singular( 'post' ) ) {
+        if ( ! is_singular( self::seo_post_types() ) ) {
             return;
         }
 
         global $post;
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, self::seo_post_types(), true ) ) {
+            return;
+        }
 
         $noindex  = (bool) get_post_meta( $post->ID, self::META_NOINDEX,  true );
         $nofollow = (bool) get_post_meta( $post->ID, self::META_NOFOLLOW, true );

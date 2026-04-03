@@ -67,12 +67,12 @@ class GNH_Meta_Tags {
             return $custom !== '' ? $custom : $description;
         }
 
-        if ( ! is_singular( 'post' ) ) {
+        if ( ! is_singular( GNH_Post_SEO::seo_post_types() ) ) {
             return $description;
         }
 
         global $post;
-        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, GNH_Post_SEO::seo_post_types(), true ) || (int) get_queried_object_id() !== (int) $post->ID ) {
             return $description;
         }
 
@@ -91,12 +91,12 @@ class GNH_Meta_Tags {
      * @return mixed
      */
     public function filter_seo_title( $title ) {
-        if ( ! get_option( 'gnh_enabled', true ) || ! is_singular( 'post' ) ) {
+        if ( ! get_option( 'gnh_enabled', true ) || ! is_singular( GNH_Post_SEO::seo_post_types() ) ) {
             return $title;
         }
 
         global $post;
-        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, GNH_Post_SEO::seo_post_types(), true ) || (int) get_queried_object_id() !== (int) $post->ID ) {
             return $title;
         }
 
@@ -115,12 +115,12 @@ class GNH_Meta_Tags {
      * @return mixed
      */
     public function filter_document_title_for_post( $title ) {
-        if ( ! get_option( 'gnh_enabled', true ) || $this->has_major_seo_plugin() || ! is_singular( 'post' ) ) {
+        if ( ! get_option( 'gnh_enabled', true ) || $this->has_major_seo_plugin() || ! is_singular( GNH_Post_SEO::seo_post_types() ) ) {
             return $title;
         }
 
         global $post;
-        if ( ! $post instanceof WP_Post || (int) get_queried_object_id() !== (int) $post->ID ) {
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, GNH_Post_SEO::seo_post_types(), true ) || (int) get_queried_object_id() !== (int) $post->ID ) {
             return $title;
         }
 
@@ -137,24 +137,26 @@ class GNH_Meta_Tags {
             return;
         }
 
-        if ( ! is_singular( 'post' ) ) {
+        if ( ! is_singular( GNH_Post_SEO::seo_post_types() ) ) {
             return;
         }
 
         $post = get_queried_object();
-        if ( ! $post instanceof WP_Post || $post->post_type !== 'post' ) {
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, GNH_Post_SEO::seo_post_types(), true ) ) {
             global $post;
-            if ( ! $post instanceof WP_Post || $post->post_type !== 'post' ) {
+            if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, GNH_Post_SEO::seo_post_types(), true ) ) {
                 return;
             }
         }
 
-        // Respect per-post noindex — skip all tags if post is set to noindex
+        $is_post = ( $post->post_type === 'post' );
+
+        // Respect per-content noindex — skip all tags if set to noindex
         if ( class_exists( 'GNH_Post_SEO' ) && GNH_Post_SEO::is_noindex( $post->ID ) ) {
             return;
         }
 
-        // Per-post overrides
+        // Per-content overrides (same meta keys for posts and pages)
         $custom_title = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_title( $post->ID ) : '';
         $custom_desc  = class_exists( 'GNH_Post_SEO' ) ? GNH_Post_SEO::get_desc( $post->ID )  : '';
 
@@ -166,10 +168,10 @@ class GNH_Meta_Tags {
         $pub_date    = get_the_date( 'c', $post );
         $mod_date    = get_the_modified_date( 'c', $post );
         $author      = get_the_author_meta( 'display_name', $post->post_author );
-        $categories  = get_the_category( $post->ID );
+        $categories  = $is_post ? get_the_category( $post->ID ) : [];
         $section     = ! empty( $categories ) ? esc_html( $categories[0]->name ) : '';
-        $tags        = get_the_tags( $post->ID );
-        $keywords    = $this->get_keywords( $tags );
+        $tags        = $is_post ? get_the_tags( $post->ID ) : false;
+        $keywords    = $is_post ? $this->get_keywords( $tags ) : '';
         $headline    = mb_substr( $title, 0, 110 );
 
         // Featured image
@@ -224,7 +226,7 @@ class GNH_Meta_Tags {
 
         // ── Open Graph (skip if another SEO plugin already outputs these) ──
         if ( ! $has_seo_plugin ) {
-            $this->meta( 'property', 'og:type',        'article' );
+            $this->meta( 'property', 'og:type',        $is_post ? 'article' : 'website' );
             $this->meta( 'property', 'og:title',       $title );
             $this->meta( 'property', 'og:url',         $url );
             $this->meta( 'property', 'og:description', $excerpt );
@@ -241,16 +243,17 @@ class GNH_Meta_Tags {
                 }
             }
 
-            // Article tags
-            $this->meta( 'property', 'article:published_time', $pub_date );
-            $this->meta( 'property', 'article:modified_time',  $mod_date );
-            $this->meta( 'property', 'article:author',         $author );
-            if ( $section ) {
-                $this->meta( 'property', 'article:section', $section );
-            }
-            if ( is_array( $tags ) ) {
-                foreach ( $tags as $tag ) {
-                    $this->meta( 'property', 'article:tag', $tag->name );
+            if ( $is_post ) {
+                $this->meta( 'property', 'article:published_time', $pub_date );
+                $this->meta( 'property', 'article:modified_time',  $mod_date );
+                $this->meta( 'property', 'article:author',         $author );
+                if ( $section ) {
+                    $this->meta( 'property', 'article:section', $section );
+                }
+                if ( is_array( $tags ) ) {
+                    foreach ( $tags as $tag ) {
+                        $this->meta( 'property', 'article:tag', $tag->name );
+                    }
                 }
             }
 
@@ -263,52 +266,89 @@ class GNH_Meta_Tags {
             }
         }
 
-        // ── Google News-specific meta (always output) ──────────────────────
-        if ( $keywords ) {
+        // ── Google News-specific meta (posts only) ───────────────────────────
+        if ( $is_post && $keywords ) {
             $this->meta( 'name', 'news_keywords', $keywords );
         }
         $this->meta( 'name', 'author', $author );
         echo '<meta name="robots" content="max-image-preview:large">' . "\n";
 
-        // ── NewsArticle JSON-LD ────────────────────────────────────────────
-        $schema = [
-            '@context'        => 'https://schema.org',
-            '@type'           => 'NewsArticle',
-            'headline'        => $headline,
-            'datePublished'   => $pub_date,
-            'dateModified'    => $mod_date,
-            'author'          => [
-                '@type' => 'Person',
-                'name'  => $author,
-            ],
-            'publisher'       => [
-                '@type' => 'Organization',
-                'name'  => $site_name,
-            ],
-            'description'     => $excerpt,
-            'mainEntityOfPage' => [
-                '@type' => 'WebPage',
-                '@id'   => $url,
-            ],
-        ];
-
-        if ( $image_url ) {
-            $schema['image'] = [ $image_url ];
-        }
-
-        if ( $publisher_logo ) {
-            $schema['publisher']['logo'] = [
-                '@type' => 'ImageObject',
-                'url'   => $publisher_logo,
+        // ── JSON-LD: NewsArticle (posts) or WebPage (pages) ─────────────────
+        if ( $is_post ) {
+            $schema = [
+                '@context'        => 'https://schema.org',
+                '@type'           => 'NewsArticle',
+                'headline'        => $headline,
+                'datePublished'   => $pub_date,
+                'dateModified'    => $mod_date,
+                'author'          => [
+                    '@type' => 'Person',
+                    'name'  => $author,
+                ],
+                'publisher'       => [
+                    '@type' => 'Organization',
+                    'name'  => $site_name,
+                ],
+                'description'     => $excerpt,
+                'mainEntityOfPage' => [
+                    '@type' => 'WebPage',
+                    '@id'   => $url,
+                ],
             ];
-        }
 
-        if ( $section ) {
-            $schema['articleSection'] = $section;
-        }
+            if ( $image_url ) {
+                $schema['image'] = [ $image_url ];
+            }
 
-        if ( $keywords ) {
-            $schema['keywords'] = $keywords;
+            if ( $publisher_logo ) {
+                $schema['publisher']['logo'] = [
+                    '@type' => 'ImageObject',
+                    'url'   => $publisher_logo,
+                ];
+            }
+
+            if ( $section ) {
+                $schema['articleSection'] = $section;
+            }
+
+            if ( $keywords ) {
+                $schema['keywords'] = $keywords;
+            }
+        } else {
+            $schema = [
+                '@context'    => 'https://schema.org',
+                '@type'       => 'WebPage',
+                'name'        => $title,
+                'url'         => $url,
+                'description' => $excerpt,
+                'datePublished' => $pub_date,
+                'dateModified'  => $mod_date,
+                'isPartOf'    => [
+                    '@type' => 'WebSite',
+                    'name'  => $site_name,
+                    'url'   => home_url( '/' ),
+                ],
+            ];
+            if ( $image_url ) {
+                $schema['primaryImageOfPage'] = [
+                    '@type' => 'ImageObject',
+                    'url'   => $image_url,
+                ];
+                if ( $image_w && $image_h ) {
+                    $schema['primaryImageOfPage']['width']  = $image_w;
+                    $schema['primaryImageOfPage']['height'] = $image_h;
+                }
+            }
+            if ( $publisher_logo ) {
+                $schema['publisher'] = [
+                    '@type' => 'Organization',
+                    'name'  => $site_name,
+                    'logo'  => [
+                        '@type' => 'ImageObject',
+                        'url'   => $publisher_logo,
+                    ],
+                ];
+            }
         }
 
         echo '<script type="application/ld+json">' . "\n";
@@ -320,9 +360,9 @@ class GNH_Meta_Tags {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
-     * Stable headline for Open Graph / Twitter (never empty when the post exists).
+     * Stable headline for Open Graph / Twitter (never empty when the content exists).
      *
-     * @param WP_Post $post           Queried post.
+     * @param WP_Post $post           Queried post or page.
      * @param string  $custom_title   Raw value from GNH metabox (may be empty).
      */
     private function resolve_post_og_title( WP_Post $post, string $custom_title ): string {
@@ -348,10 +388,10 @@ class GNH_Meta_Tags {
         }
 
         /**
-         * Filter the Open Graph / Twitter title for singular posts.
+         * Filter the Open Graph / Twitter title for singular posts and pages.
          *
          * @param string  $title Resolved title.
-         * @param WP_Post $post  Post object.
+         * @param WP_Post $post  Post or page object.
          */
         return (string) apply_filters( 'gnh_open_graph_title', $title, $post );
     }
