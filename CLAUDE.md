@@ -38,6 +38,16 @@ The updater reads GitHub tags, so a change is not live until it is tagged.
 
 The updater picks the **highest semver tag**, so never tag out of order.
 
+**After updating a site, confirm the plugin is still active and the folder is still
+named `google-news-helper`.** GitHub tag archives unpack as `google-news-helper-<tag>`,
+and before v1.0.18 the updater had no `upgrader_source_selection` filter — so every
+update renamed the plugin folder and silently deactivated the plugin, taking all SEO
+tags offline. v1.0.18 renames the folder back and reactivates if needed, but verify:
+
+```bash
+wp --allow-root plugin list --name=google-news-helper
+```
+
 ## Linting
 
 `./bin/lint.sh` syntax-checks every PHP file. It uses local `php` when present and

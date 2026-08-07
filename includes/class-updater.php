@@ -25,6 +25,77 @@ class GNH_GitHub_Updater {
 
         add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_update' ] );
         add_filter( 'plugins_api', [ $this, 'plugins_api' ], 10, 3 );
+        add_filter( 'upgrader_source_selection', [ $this, 'fix_source_folder' ], 10, 4 );
+        add_filter( 'upgrader_post_install', [ $this, 'reactivate_after_install' ], 10, 3 );
+    }
+
+    /**
+     * GitHub tag archives unpack as "<repo>-<tag>" rather than the plugin slug, so
+     * WordPress installs the update into a new folder, leaves the old one behind and
+     * silently deactivates the plugin. Rename the unpacked folder back to the slug.
+     *
+     * @param  string      $source        Directory the update was unpacked into.
+     * @param  string      $remote_source Top-level upgrade working directory.
+     * @param  WP_Upgrader $upgrader
+     * @param  array       $args
+     * @return string|WP_Error
+     */
+    public function fix_source_folder( $source, $remote_source, $upgrader = null, $args = [] ) {
+        if ( ! is_string( $source ) || ! is_string( $remote_source ) ) {
+            return $source;
+        }
+
+        // Only touch our own update.
+        $plugin = is_array( $args ) && isset( $args['plugin'] ) ? (string) $args['plugin'] : '';
+        if ( $plugin !== $this->plugin_basename ) {
+            return $source;
+        }
+
+        $desired = trailingslashit( $remote_source ) . $this->slug;
+
+        if ( untrailingslashit( $source ) === untrailingslashit( $desired ) ) {
+            return $source;
+        }
+
+        global $wp_filesystem;
+        if ( ! $wp_filesystem ) {
+            return $source;
+        }
+
+        // A leftover target from an interrupted run would make move() fail.
+        if ( $wp_filesystem->exists( $desired ) ) {
+            $wp_filesystem->delete( $desired, true );
+        }
+
+        if ( ! $wp_filesystem->move( $source, $desired ) ) {
+            return new WP_Error(
+                'gnh_rename_failed',
+                __( 'Could not rename the downloaded plugin folder to its expected name.', 'google-news-helper' )
+            );
+        }
+
+        return trailingslashit( $desired );
+    }
+
+    /**
+     * Restore the active state if an earlier broken update left the plugin deactivated.
+     *
+     * @param  bool  $response
+     * @param  array $hook_extra
+     * @param  array $result
+     * @return mixed
+     */
+    public function reactivate_after_install( $response, $hook_extra, $result ) {
+        $plugin = is_array( $hook_extra ) && isset( $hook_extra['plugin'] ) ? (string) $hook_extra['plugin'] : '';
+        if ( $plugin !== $this->plugin_basename ) {
+            return $response;
+        }
+
+        if ( function_exists( 'is_plugin_active' ) && ! is_plugin_active( $this->plugin_basename ) ) {
+            activate_plugin( $this->plugin_basename );
+        }
+
+        return $response;
     }
 
     /**
