@@ -34,6 +34,15 @@ class GNH_Admin_Page {
 
         add_submenu_page(
             'google-news-helper',
+            __( 'Category descriptions', 'google-news-helper' ),
+            __( 'Category descriptions', 'google-news-helper' ),
+            'manage_categories',
+            'gnh-term-descriptions',
+            [ GNH_Term_SEO_Admin::class, 'render_static' ]
+        );
+
+        add_submenu_page(
+            'google-news-helper',
             __( 'Redirects', 'google-news-helper' ),
             __( 'Redirects', 'google-news-helper' ),
             'manage_options',
@@ -340,6 +349,38 @@ class GNH_Admin_Page {
                 </form>
             </div>
 
+            <!-- ── Category search descriptions ── -->
+            <?php
+            $gnh_missing = $this->count_terms_without_desc();
+            ?>
+            <div class="gnh-card">
+                <h2><?php esc_html_e( 'Category search snippets', 'google-news-helper' ); ?></h2>
+                <p class="description">
+                    <?php esc_html_e( 'Text shown under each category title in Google results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category.', 'google-news-helper' ); ?>
+                </p>
+                <p style="margin:12px 0;">
+                    <?php if ( $gnh_missing > 0 ) : ?>
+                        <span style="color:#b32d2e;font-weight:600;">
+                            &#9888;
+                            <?php
+                            printf(
+                                /* translators: %d: number of categories missing a description. */
+                                esc_html( _n( '%d category has no search description.', '%d categories have no search description.', $gnh_missing, 'google-news-helper' ) ),
+                                (int) $gnh_missing
+                            );
+                            ?>
+                        </span>
+                    <?php else : ?>
+                        <span style="color:#00794b;font-weight:600;">
+                            &#10003; <?php esc_html_e( 'Every category has a search description.', 'google-news-helper' ); ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=gnh-term-descriptions' ) ); ?>" class="button button-primary">
+                    <?php esc_html_e( 'Edit category descriptions', 'google-news-helper' ); ?>
+                </a>
+            </div>
+
             <!-- ── Article previews ── -->
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'How Your Latest Posts Appear on Google News', 'google-news-helper' ); ?></h2>
@@ -395,6 +436,41 @@ class GNH_Admin_Page {
         $posts = $query->posts ?: [];
         usort( $posts, static fn( $a, $b ) => strtotime( $b->post_date ) - strtotime( $a->post_date ) );
         return $posts;
+    }
+
+    /**
+     * Categories with neither a Google News Helper description nor a taxonomy description,
+     * i.e. the ones Google will build a snippet for on its own.
+     */
+    private function count_terms_without_desc(): int {
+        if ( ! class_exists( 'GNH_Term_SEO' ) ) {
+            return 0;
+        }
+
+        $missing = 0;
+
+        foreach ( GNH_Term_SEO::seo_taxonomies() as $taxonomy ) {
+            if ( $taxonomy !== 'category' || ! taxonomy_exists( $taxonomy ) ) {
+                continue;
+            }
+
+            $terms = get_terms( [
+                'taxonomy'   => $taxonomy,
+                'hide_empty' => false,
+            ] );
+
+            if ( is_wp_error( $terms ) ) {
+                continue;
+            }
+
+            foreach ( $terms as $term ) {
+                if ( GNH_Term_SEO::get_desc( $term->term_id ) === '' ) {
+                    $missing++;
+                }
+            }
+        }
+
+        return $missing;
     }
 
     private function render_preview_card( WP_Post $post ): void {
