@@ -183,7 +183,7 @@ class GNH_Image_Metadata_Admin {
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'Remove AI / provenance metadata from images', 'google-news-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Photoshop and other Adobe tools embed C2PA “Content Credentials” and XMP provenance data inside image files. Facebook reads this data when a link is shared, which can stop the image from appearing in the post preview and can attach an “AI Info” label.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Photoshop and other image editors embed C2PA “Content Credentials” and XMP provenance data inside image files. Some platforms read this data when a link is shared, which can affect whether the image appears in the post preview and can attach an AI-related label to the post.', 'google-news-helper' ); ?>
                 </p>
                 <p class="description">
                     <?php esc_html_e( 'When enabled, this data is removed from every image as it is uploaded. The picture itself is untouched — the image data is copied across unchanged, so there is no re-compression and no loss of quality. Colour profiles are preserved.', 'google-news-helper' ); ?>

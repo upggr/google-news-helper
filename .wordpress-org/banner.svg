@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1544" height="500" viewBox="0 0 1544 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"    stop-color="#1f2933"/>
+      <stop offset="0.55" stop-color="#2b3947"/>
+      <stop offset="1"    stop-color="#3a2a22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"    stop-color="#e8612d" stop-opacity="0.22"/>
+      <stop offset="0.6"  stop-color="#e8612d" stop-opacity="0.08"/>
+      <stop offset="1"    stop-color="#e8612d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0783f"/>
+      <stop offset="1" stop-color="#d94f18"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1544" height="500" fill="url(#bg)"/>
+  <!-- warm glow behind the artwork -->
+  <circle cx="1240" cy="250" r="330" fill="url(#glow)"/>
+
+  <!-- icon mark -->
+  <g transform="translate(96,140)">
+    <rect width="220" height="220" rx="48" fill="url(#accent)"/>
+    <g transform="translate(40,45)">
+      <rect x="0" y="0" width="130" height="132" rx="9" fill="#ffffff"/>
+      <rect x="16" y="17" width="98" height="13" rx="4" fill="#d94f18"/>
+      <rect x="16" y="42" width="45" height="36" rx="5" fill="#f5b79b"/>
+      <rect x="69" y="42" width="45" height="7" rx="3.5" fill="#c9ced3"/>
+      <rect x="69" y="57" width="45" height="7" rx="3.5" fill="#c9ced3"/>
+      <rect x="69" y="72" width="31" height="7" rx="3.5" fill="#c9ced3"/>
+      <rect x="16" y="90"  width="98" height="7" rx="3.5" fill="#dfe3e7"/>
+      <rect x="16" y="105" width="76" height="7" rx="3.5" fill="#dfe3e7"/>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <text x="376" y="228" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="76" font-weight="700" fill="#ffffff" letter-spacing="-1.5">Google News Helper</text>
+  <text x="378" y="284" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="31" font-weight="400" fill="#b8c2cc">News sitemap, structured data, and social tags for WordPress</text>
+
+  <!-- feature chips -->
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="23" font-weight="600">
+    <g transform="translate(378,322)">
+      <rect width="250" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
+      <text x="26" y="34" fill="#e8ecf0">Google News sitemap</text>
+    </g>
+    <g transform="translate(646,322)">
+      <rect width="250" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
+      <text x="26" y="34" fill="#e8ecf0">NewsArticle JSON-LD</text>
+    </g>
+    <g transform="translate(914,322)">
+      <rect width="214" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
+      <text x="26" y="34" fill="#e8ecf0">Open Graph tags</text>
+    </g>
+  </g>
+</svg>

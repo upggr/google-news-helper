@@ -3,7 +3,20 @@
 These files are uploaded to the SVN `assets/` folder by `bin/svn-deploy.sh`.
 They are **not** part of the plugin ZIP.
 
-Required before the plugin page looks finished:
+All required files are present. `icon.svg` and `banner.svg` are the sources —
+edit those and re-run:
+
+```bash
+rsvg-convert -w 256 -h 256 icon.svg   -o icon-256x256.png
+rsvg-convert -w 128 -h 128 icon.svg   -o icon-128x128.png
+rsvg-convert -w 1544 -h 500 banner.svg -o banner-1544x500.png
+rsvg-convert -w 772  -h 250 banner.svg -o banner-772x250.png
+```
+
+Screenshots were captured from a scratch WordPress install running the plugin,
+not mocked up, so they must be retaken when the admin screens change.
+
+Files:
 
 | File | Size | Purpose |
 |---|---|---|

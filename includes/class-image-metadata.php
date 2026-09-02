@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Strips XMP / C2PA provenance metadata from uploaded images.
  *
- * Adobe tools (and most generative AI tools) embed a C2PA "Content Credentials"
- * manifest plus an XMP packet carrying dcterms:provenance. Meta reads those on
- * upload and attaches an "AI Info" label to the post, which is not what a news
- * site wants on its photos.
+ * Image editors (and most generative AI tools) embed a C2PA "Content Credentials"
+ * manifest plus an XMP packet carrying dcterms:provenance. Some platforms read
+ * those when a link is shared, which can affect whether the image appears in the
+ * preview and can attach an AI-related label to the post.
  *
  * The metadata carries no SEO value — Google reads the page, not the file — so
  * removing it is safe, and it makes files smaller.

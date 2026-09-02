@@ -2,7 +2,7 @@
 Contributors: ielko
 Tags: google news, seo, open graph, structured data, sitemap
 Requires at least: 5.6
-Tested up to: 6.7
+Tested up to: 7.1
 Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPL-2.0-or-later
