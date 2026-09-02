@@ -70,6 +70,8 @@ There is no test suite. Lint plus a manual check on the live site is the bar.
 | `class-post-seo.php` | SEO metabox on posts and pages; per-post title/desc/noindex |
 | `class-term-seo.php` | Category/tag search descriptions — front-end output + term field |
 | `class-term-seo-admin.php` | Bulk editor for all category descriptions |
+| `class-image-metadata.php` | Strips XMP/C2PA provenance from uploads |
+| `class-image-metadata-admin.php` | Toggle + batched cleaner for existing images |
 | `class-meta-tags.php` | Homepage + singular meta, Open Graph, Twitter, JSON-LD |
 | `class-robots.php` / `class-robots-admin.php` | robots.txt management and health checks |
 | `class-redirects.php` | Redirect manager |
@@ -93,6 +95,13 @@ actual sites, because the filters have nothing to hook into.
 `wp_head` priorities are deliberately low (2–4): Facebook reads the *first* `og:title`
 in the document, so ours has to come before the theme's.
 
+## Settings groups
+
+`gnh_options_group` holds the general options. **A settings form submits every option
+registered in its group**, so a form that omits a field resets that field. Anything with
+its own screen needs its own group — image stripping uses `gnh_image_options_group` for
+exactly this reason.
+
 ## Gotchas
 
 - **Missing description ⇒ Google invents one.** It scrapes the first text on the page.
@@ -104,5 +113,14 @@ in the document, so ours has to come before the theme's.
   (`/zakinthos/`). Never hardcode the prefix; use `get_term_link()`.
 - **Pages are not categories.** A "category-looking" nav item may be a Page, in which
   case it needs the per-post SEO metabox, not the term description.
+- **Image provenance metadata breaks Facebook sharing.** Adobe tools embed a C2PA
+  manifest plus an XMP packet (`dcterms:provenance` pointing at
+  `cai-manifests.adobe.com`). With it present, the client saw shared articles render
+  with no image even though the Sharing Debugger reported no errors; stripping it
+  fixed the render. `class-image-metadata.php` removes it on upload (off by default —
+  turn it on under Google News → Image metadata).
+  The stripper rewrites container structure only (JPEG APP segments, WebP RIFF chunks,
+  PNG ancillary chunks) and never re-encodes, so pixels stay bit-identical and the ICC
+  colour profile is preserved. Verified against real C2PA files from the site.
 - Snippet changes take **days to weeks** to surface in Google, and Google may still
   substitute its own text for a given query. Set that expectation with clients.

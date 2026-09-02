@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Google News Helper
- * Description: Optimizes your WordPress site for Google News: generates Google News sitemap, adds required meta tags, Open Graph, NewsArticle JSON-LD for posts (WebPage for pages), RSS enclosure tags, SEO metabox on posts and pages, editable Google search descriptions for categories, and a preview dashboard. Auto-updates from GitHub.
- * Version:     1.0.18
+ * Description: Optimizes your WordPress site for Google News: generates Google News sitemap, adds required meta tags, Open Graph, NewsArticle JSON-LD for posts (WebPage for pages), RSS enclosure tags, SEO metabox on posts and pages, editable Google search descriptions for categories, removal of XMP/C2PA provenance metadata from uploaded images, and a preview dashboard. Auto-updates from GitHub.
+ * Version:     1.0.19
  * Author:      Ioannis Kokkinis
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GNH_VERSION',     '1.0.18' );
+define( 'GNH_VERSION',     '1.0.19' );
 define( 'GNH_PLUGIN_FILE', __FILE__ );
 define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
 define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
@@ -33,6 +33,7 @@ register_uninstall_hook( __FILE__, 'gnh_uninstall' );
 function gnh_uninstall(): void {
     delete_option( 'gnh_enabled' );
     delete_option( 'gnh_front_meta_description' );
+    delete_option( 'gnh_strip_image_metadata' );
 
     if ( class_exists( 'GNH_Term_SEO' ) ) {
         delete_metadata( 'term', 0, GNH_Term_SEO::META_DESC, '', true );
@@ -44,6 +45,8 @@ function gnh_uninstall(): void {
 $_gnh_includes = [
     'includes/class-settings.php',
     'includes/class-post-seo.php',
+    'includes/class-image-metadata.php',
+    'includes/class-image-metadata-admin.php',
     'includes/class-term-seo.php',
     'includes/class-term-seo-admin.php',
     'includes/class-redirects.php',
@@ -79,6 +82,9 @@ add_action( 'plugins_loaded', static function (): void {
     if ( class_exists( 'GNH_Term_SEO' ) ) {
         new GNH_Term_SEO();
     }
+    if ( class_exists( 'GNH_Image_Metadata' ) ) {
+        new GNH_Image_Metadata();
+    }
     if ( class_exists( 'GNH_Redirects' ) ) {
         new GNH_Redirects();
     }
@@ -108,6 +114,9 @@ add_action( 'plugins_loaded', static function (): void {
         }
         if ( class_exists( 'GNH_Term_SEO_Admin' ) ) {
             new GNH_Term_SEO_Admin();
+        }
+        if ( class_exists( 'GNH_Image_Metadata_Admin' ) ) {
+            new GNH_Image_Metadata_Admin();
         }
     }
 } );

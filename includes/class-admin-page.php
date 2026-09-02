@@ -43,6 +43,15 @@ class GNH_Admin_Page {
 
         add_submenu_page(
             'google-news-helper',
+            __( 'Image metadata', 'google-news-helper' ),
+            __( 'Image metadata', 'google-news-helper' ),
+            'manage_options',
+            'gnh-image-metadata',
+            [ GNH_Image_Metadata_Admin::class, 'render_static' ]
+        );
+
+        add_submenu_page(
+            'google-news-helper',
             __( 'Redirects', 'google-news-helper' ),
             __( 'Redirects', 'google-news-helper' ),
             'manage_options',

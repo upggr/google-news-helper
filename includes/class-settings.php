@@ -20,6 +20,19 @@ class GNH_Settings {
             ]
         );
 
+        // Its own group: options.php writes every option registered in a group,
+        // so sharing gnh_options_group would let the dashboard form (which has no
+        // checkbox for this) silently switch it back off on every save.
+        register_setting(
+            'gnh_image_options_group',
+            GNH_Image_Metadata::OPTION,
+            [
+                'type'              => 'boolean',
+                'default'           => false,
+                'sanitize_callback' => 'rest_sanitize_boolean',
+            ]
+        );
+
         register_setting(
             'gnh_options_group',
             'gnh_front_meta_description',
