@@ -322,8 +322,8 @@ class GNH_Admin_Page {
 
             <!-- ── Enable toggle ── -->
             <div class="gnh-card gnh-toggle-card">
-                <h2><?php esc_html_e( 'Enable Google News Optimization', 'news-seo-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'When enabled, the plugin adds Google News meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post.', 'news-seo-helper' ); ?></p>
+                <h2><?php esc_html_e( 'Enable news SEO optimization', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'When enabled, the plugin adds news meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post.', 'news-seo-helper' ); ?></p>
                 <label class="gnh-switch" for="gnh-enable-toggle">
                     <input type="checkbox" id="gnh-enable-toggle" <?php checked( $enabled ); ?>>
                     <span class="gnh-slider"></span>
@@ -343,7 +343,7 @@ class GNH_Admin_Page {
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'Homepage search snippet', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Text for the meta description on your site’s front page. Google often shows this under the title in results instead of random text from the menu or footer.', 'news-seo-helper' ); ?>
+                    <?php esc_html_e( 'Text for the meta description on your site’s front page. Search engines often show this under the title in results instead of random text from the menu or footer.', 'news-seo-helper' ); ?>
                 </p>
                 <form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" class="gnh-front-snippet-form">
                     <?php settings_fields( 'gnh_options_group' ); ?>
@@ -372,7 +372,7 @@ class GNH_Admin_Page {
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'Category search snippets', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Text shown under each category title in Google results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category.', 'news-seo-helper' ); ?>
+                    <?php esc_html_e( 'Text shown under each category title in search results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category.', 'news-seo-helper' ); ?>
                 </p>
                 <p style="margin:12px 0;">
                     <?php if ( $gnh_missing > 0 ) : ?>
@@ -399,8 +399,8 @@ class GNH_Admin_Page {
 
             <!-- ── Article previews ── -->
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'How Your Latest Posts Appear on Google News', 'news-seo-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags.', 'news-seo-helper' ); ?></p>
+                <h2><?php esc_html_e( 'How Your Latest Posts Appear in Search Results', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in search results. Click the test icon to check meta tags.', 'news-seo-helper' ); ?></p>
 
                 <?php if ( empty( $posts ) ): ?>
                     <p><?php esc_html_e( 'No published posts found.', 'news-seo-helper' ); ?></p>
@@ -425,10 +425,10 @@ class GNH_Admin_Page {
                     <li><?php esc_html_e( 'news_keywords meta tag (up to 10 post tags)', 'news-seo-helper' ); ?></li>
                     <li><?php esc_html_e( 'robots meta: max-image-preview:large', 'news-seo-helper' ); ?></li>
                     <li><?php esc_html_e( 'NewsArticle JSON-LD structured data (Schema.org)', 'news-seo-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Google News XML sitemap at /news-sitemap.xml (articles from last 48 hours)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'News XML sitemap at /news-sitemap.xml (articles from last 48 hours)', 'news-seo-helper' ); ?></li>
                     <li><?php esc_html_e( 'RSS feed enclosure tags with image URL, size, and MIME type', 'news-seo-helper' ); ?></li>
                     <li><?php esc_html_e( 'OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)', 'news-seo-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Optional homepage meta description so search engines show your chosen text instead of navigation menus', 'news-seo-helper' ); ?></li>
                     <li><?php esc_html_e( 'Per-post and per-page SEO title and meta description (editor metabox); when set, they override the SEO plugin’s values for that content where supported', 'news-seo-helper' ); ?></li>
                 </ul>
             </div>

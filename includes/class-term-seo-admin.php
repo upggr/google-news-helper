@@ -130,10 +130,10 @@ class GNH_Term_SEO_Admin {
 
             <div class="gnh-card">
                 <p class="description" style="margin-bottom:4px;">
-                    <?php esc_html_e( 'This is the text Google shows under the category title in search results. Without it, Google invents a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category.', 'news-seo-helper' ); ?>
+                    <?php esc_html_e( 'This is the text shown under the category title in search results. Without it, search engines invent a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category.', 'news-seo-helper' ); ?>
                 </p>
                 <p class="description">
-                    <?php esc_html_e( 'Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear in Google, and Google may still choose its own text for some searches.', 'news-seo-helper' ); ?>
+                    <?php esc_html_e( 'Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear, and search engines may still choose their own text for some searches.', 'news-seo-helper' ); ?>
                 </p>
             </div>
 
@@ -154,7 +154,7 @@ class GNH_Term_SEO_Admin {
                                 <thead>
                                     <tr>
                                         <th style="width:22%;"><?php esc_html_e( 'Category', 'news-seo-helper' ); ?></th>
-                                        <th><?php esc_html_e( 'Google search description', 'news-seo-helper' ); ?></th>
+                                        <th><?php esc_html_e( 'Search description', 'news-seo-helper' ); ?></th>
                                         <th style="width:70px;text-align:right;"><?php esc_html_e( 'Chars', 'news-seo-helper' ); ?></th>
                                     </tr>
                                 </thead>

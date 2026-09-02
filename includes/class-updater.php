@@ -188,7 +188,7 @@ class GNH_GitHub_Updater {
             rawurlencode( (string) GNH_VERSION )
         );
         $info->sections     = [
-            'description' => 'Optimizes your WordPress site for Google News. Adds Open Graph tags, NewsArticle JSON-LD structured data, and a preview dashboard. Created by <a href="https://buy-it.gr">Ioannis Kokkinis</a>.',
+            'description' => 'SEO for news publishers. Adds Open Graph tags, NewsArticle JSON-LD structured data, and a preview dashboard. Created by <a href="https://buy-it.gr">Ioannis Kokkinis</a>.',
         ];
 
         return $info;

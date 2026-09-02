@@ -12,19 +12,19 @@ SEO for news publishers: news sitemap, NewsArticle structured data, Open Graph t
 
 == Description ==
 
-News SEO Helper prepares a WordPress news site for Google News and social sharing. It fills the gaps a general SEO plugin leaves for publishers, and works either on its own or alongside Yoast SEO, Rank Math, or All in One SEO.
+News SEO Helper prepares a WordPress news site for news aggregators and social sharing. It fills the gaps a general SEO plugin leaves for publishers, and works either on its own or alongside Yoast SEO, Rank Math, or All in One SEO.
 
 **What it does**
 
-* **Google News sitemap** at `/news-sitemap.xml`, listing recent posts in the format Google News expects
+* **News sitemap** at `/news-sitemap.xml`, listing recent posts in the format news aggregators expect
 * **NewsArticle JSON-LD** structured data on posts, WebPage on pages, with publisher and image data
 * **Open Graph and Twitter Card tags** so articles shared to Facebook, X, and messaging apps show the right title, description, and image
-* **Search descriptions for categories and tags** — without one, Google writes its own snippet from whatever text appears first on the archive, which is often a banner alt text repeated across every category
+* **Search descriptions for categories and tags** — without one, search engines write their own snippet from whatever text appears first on the archive, which is often a banner alt text repeated across every category
 * **Per-post SEO fields** for title, description, and noindex/nofollow, on posts and pages
 * **Removal of AI and provenance metadata from images** (see below)
 * **Redirect manager** for moved or retired URLs
 * **robots.txt editor** with checks for rules that would block news crawlers
-* **Preview dashboard** showing how recent posts appear, with a tag tester
+* **Preview dashboard** showing how recent posts appear in search results, with a tag tester
 
 **Removing AI / provenance metadata from images**
 
@@ -42,9 +42,9 @@ If Yoast SEO, Rank Math, or All in One SEO is active, the plugin passes its valu
 
 1. Upload the plugin to `/wp-content/plugins/news-seo-helper`, or install it through **Plugins → Add New**.
 2. Activate it through the **Plugins** menu.
-3. Visit **Google News** in the admin menu to set your homepage description and review the dashboard.
-4. Optionally visit **Google News → Category descriptions** to write a search description for each category.
-5. Optionally visit **Google News → Image metadata** to turn on metadata removal for new uploads.
+3. Visit **News SEO** in the admin menu to set your homepage description and review the dashboard.
+4. Optionally visit **News SEO → Category descriptions** to write a search description for each category.
+5. Optionally visit **News SEO → Image metadata** to turn on metadata removal for new uploads.
 
 == Frequently Asked Questions ==
 
@@ -52,13 +52,13 @@ If Yoast SEO, Rank Math, or All in One SEO is active, the plugin passes its valu
 
 No. News SEO Helper can output meta descriptions, Open Graph, and structured data on its own. If you already use Yoast SEO, Rank Math, or All in One SEO, it defers to them and fills in what they do not cover.
 
-= Why do all my category pages show the same text in Google? =
+= Why do all my category pages show the same text in search results? =
 
-Because they have no meta description. Google then builds a snippet from the first text it finds on the page, which is frequently a banner image's alt text or a menu label — identical on every category. Set a description under **Google News → Category descriptions**.
+Because they have no meta description. Search engines then build a snippet from the first text they find on the page, which is frequently a banner image's alt text or a menu label — identical on every category. Set a description under **News SEO → Category descriptions**.
 
-= How long until changes appear in Google? =
+= How long until changes appear in search results? =
 
-Google re-crawls on its own schedule, so expect days to a few weeks. Google may also choose to show its own text instead of your description for some searches.
+Search engines re-crawl on their own schedule, so expect days to a few weeks. They may also choose to show their own text instead of your description for some searches.
 
 = Does removing image metadata reduce image quality? =
 
@@ -70,11 +70,11 @@ No. The bulk cleaner rewrites files in the media library in place. Back up `wp-c
 
 = Where is the news sitemap? =
 
-At `/news-sitemap.xml` on your site. Submit that URL in Google Search Console.
+At `/news-sitemap.xml` on your site. Submit that URL in your search engine's webmaster tools.
 
 == Screenshots ==
 
-1. Dashboard with Google News previews of recent posts
+1. Dashboard with search result previews of recent posts
 2. Bulk editor for category search descriptions
 3. Image metadata settings and library cleaner
 4. Per-post SEO fields on the post editor

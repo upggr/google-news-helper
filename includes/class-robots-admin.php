@@ -76,7 +76,7 @@ class GNH_Robots_Admin {
 
             <div class="gnh-card">
                 <h2><?php esc_html_e( 'Optimization', 'news-seo-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass.', 'news-seo-helper' ); ?></p>
+                <p class="description"><?php esc_html_e( 'News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds news sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass.', 'news-seo-helper' ); ?></p>
                 <ul class="gnh-robots-opt-list">
                     <?php foreach ( $report['optimizations'] as $item ) : ?>
                     <li>

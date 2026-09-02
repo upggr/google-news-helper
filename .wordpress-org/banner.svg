@@ -39,19 +39,19 @@
   <text x="376" y="228" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
         font-size="82" font-weight="700" fill="#ffffff" letter-spacing="-1.5">News SEO Helper</text>
   <text x="378" y="284" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
-        font-size="31" font-weight="400" fill="#b8c2cc">Google News sitemap, structured data and social tags for WordPress</text>
+        font-size="31" font-weight="400" fill="#b8c2cc">News sitemaps, structured data and social tags for WordPress</text>
 
   <!-- feature chips -->
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="23" font-weight="600">
     <g transform="translate(378,322)">
-      <rect width="250" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
-      <text x="26" y="34" fill="#e8ecf0">Google News sitemap</text>
+      <rect width="188" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
+      <text x="26" y="34" fill="#e8ecf0">News sitemap</text>
     </g>
-    <g transform="translate(646,322)">
+    <g transform="translate(584,322)">
       <rect width="250" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
       <text x="26" y="34" fill="#e8ecf0">NewsArticle JSON-LD</text>
     </g>
-    <g transform="translate(914,322)">
+    <g transform="translate(852,322)">
       <rect width="214" height="52" rx="26" fill="#ffffff" opacity="0.10"/>
       <text x="26" y="34" fill="#e8ecf0">Open Graph tags</text>
     </g>

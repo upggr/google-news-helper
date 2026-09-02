@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: News SEO Helper 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/upggr/google-news-helper/issues\n"
-"POT-Creation-Date: 2026-09-02 21:08+0000\n"
+"POT-Creation-Date: 2026-09-02 21:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Domain: news-seo-helper\n"
 
 
-#: includes/class-admin-page.php:378
+#: includes/class-admin-page.php:384
 msgid "%d category has no search description."
 msgid_plural "%d categories have no search description."
 msgstr[0] ""
@@ -30,8 +30,8 @@ msgstr ""
 msgid "A physical file exists; the web server may serve it instead of WordPress (plugin rules would not apply)."
 msgstr ""
 
-#: includes/class-admin-page.php:397
-msgid "A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags."
+#: includes/class-admin-page.php:403
+msgid "A preview of the last 5 published posts as they would appear in search results. Click the test icon to check meta tags."
 msgstr ""
 
 #: includes/class-robots.php:345
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: includes/class-admin-page.php:327
+#: includes/class-admin-page.php:333
 msgid "Active"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgid "Adds Googlebot-News allow rules and a Sitemap line for news-sitemap.xml."
 msgstr ""
 
 #: includes/class-term-seo-admin.php:136
-msgid "Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear in Google, and Google may still choose its own text for some searches."
+msgid "Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear, and search engines may still choose their own text for some searches."
 msgstr ""
 
 #: includes/class-robots.php:162
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Allow social crawlers"
 msgstr ""
 
-#: includes/class-admin-page.php:417
+#: includes/class-admin-page.php:423
 msgid "Article Open Graph tags (published time, modified time, author, section, tags)"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Category search descriptions"
 msgstr ""
 
-#: includes/class-admin-page.php:367
+#: includes/class-admin-page.php:373
 msgid "Category search snippets"
 msgstr ""
 
@@ -166,19 +166,19 @@ msgstr ""
 msgid "Done —"
 msgstr ""
 
-#: includes/class-admin-page.php:390
+#: includes/class-admin-page.php:396
 msgid "Edit category descriptions"
 msgstr ""
 
-#: includes/class-admin-page.php:319
-msgid "Enable Google News Optimization"
+#: includes/class-admin-page.php:325
+msgid "Enable news SEO optimization"
 msgstr ""
 
 #: includes/class-robots.php:194
 msgid "Ensure /robots.txt is not blocked by the server, a security plugin, or a CDN rule."
 msgstr ""
 
-#: includes/class-admin-page.php:385
+#: includes/class-admin-page.php:391
 msgid "Every category has a search description."
 msgstr ""
 
@@ -210,31 +210,11 @@ msgstr ""
 msgid "From (path)"
 msgstr ""
 
-#: includes/class-admin-page.php:18 includes/class-robots.php:391
-msgid "Google News"
-msgstr ""
-
-#: includes/class-admin-page.php:422
-msgid "Google News XML sitemap at /news-sitemap.xml (articles from last 48 hours)"
-msgstr ""
-
-#: includes/class-robots.php:273 includes/class-robots.php:280
-msgid "Google News sitemap"
-msgstr ""
-
-#: includes/class-post-seo.php:124
-msgid "Google News: 30–110 recommended"
-msgstr ""
-
-#: includes/class-term-seo-admin.php:157 includes/class-term-seo.php:101
-msgid "Google search description"
-msgstr ""
-
 #: includes/class-robots.php:186 includes/class-robots.php:198
 msgid "HTTP status"
 msgstr ""
 
-#: includes/class-admin-page.php:531
+#: includes/class-admin-page.php:537
 msgid "Has featured image"
 msgstr ""
 
@@ -254,23 +234,23 @@ msgstr ""
 msgid "Hits"
 msgstr ""
 
-#: includes/class-admin-page.php:345
+#: includes/class-admin-page.php:351
 msgid "Homepage meta description"
 msgstr ""
 
-#: includes/class-admin-page.php:338
+#: includes/class-admin-page.php:344
 msgid "Homepage search snippet"
 msgstr ""
 
-#: includes/class-admin-page.php:396
-msgid "How Your Latest Posts Appear on Google News"
+#: includes/class-admin-page.php:402
+msgid "How Your Latest Posts Appear in Search Results"
 msgstr ""
 
 #: includes/class-admin-page.php:46 includes/class-admin-page.php:47 includes/class-image-metadata-admin.php:180
 msgid "Image metadata"
 msgstr ""
 
-#: includes/class-admin-page.php:328
+#: includes/class-admin-page.php:334
 msgid "Inactive"
 msgstr ""
 
@@ -295,14 +275,18 @@ msgid "Live robots.txt fetch"
 msgstr ""
 
 #: includes/class-post-seo.php:139
-msgid "Meta description (Google snippet text)"
+msgid "Meta description (search snippet text)"
 msgstr ""
 
 #: includes/class-robots.php:370
 msgid "Needs attention"
 msgstr ""
 
-#: includes/class-admin-page.php:17 includes/class-admin-page.php:28 includes/class-admin-page.php:308
+#: includes/class-admin-page.php:18
+msgid "News SEO"
+msgstr ""
+
+#: includes/class-admin-page.php:17 includes/class-admin-page.php:28 includes/class-admin-page.php:314
 msgid "News SEO Helper"
 msgstr ""
 
@@ -311,14 +295,30 @@ msgid "News SEO Helper block is present."
 msgstr ""
 
 #: includes/class-robots-admin.php:79
-msgid "News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass."
+msgid "News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds news sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass."
 msgstr ""
 
 #: includes/class-post-seo.php:45
 msgid "News SEO Helper — SEO"
 msgstr ""
 
-#: includes/class-admin-page.php:421
+#: includes/class-admin-page.php:428
+msgid "News XML sitemap at /news-sitemap.xml (articles from last 48 hours)"
+msgstr ""
+
+#: includes/class-robots.php:391
+msgid "News crawlers"
+msgstr ""
+
+#: includes/class-robots.php:273 includes/class-robots.php:280
+msgid "News sitemap"
+msgstr ""
+
+#: includes/class-post-seo.php:124
+msgid "News: 30–110 recommended"
+msgstr ""
+
+#: includes/class-admin-page.php:427
 msgid "NewsArticle JSON-LD structured data (Schema.org)"
 msgstr ""
 
@@ -330,7 +330,7 @@ msgstr ""
 msgid "No description"
 msgstr ""
 
-#: includes/class-admin-page.php:534
+#: includes/class-admin-page.php:540
 msgid "No featured image"
 msgstr ""
 
@@ -342,7 +342,7 @@ msgstr ""
 msgid "No full-site block detected for common preview bots."
 msgstr ""
 
-#: includes/class-admin-page.php:400
+#: includes/class-admin-page.php:406
 msgid "No published posts found."
 msgstr ""
 
@@ -362,7 +362,7 @@ msgstr ""
 msgid "Not verified: a static robots.txt may be served instead of WordPress — confirm the file includes your sitemap and crawler rules."
 msgstr ""
 
-#: includes/class-admin-page.php:424
+#: includes/class-admin-page.php:430
 msgid "OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)"
 msgstr ""
 
@@ -370,7 +370,7 @@ msgstr ""
 msgid "OK (%d)"
 msgstr ""
 
-#: includes/class-admin-page.php:416
+#: includes/class-admin-page.php:422
 msgid "Open Graph tags (og:title, og:image, og:description, og:type=article …)"
 msgstr ""
 
@@ -382,8 +382,8 @@ msgstr ""
 msgid "Optimization"
 msgstr ""
 
-#: includes/class-admin-page.php:425
-msgid "Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results"
+#: includes/class-admin-page.php:431
+msgid "Optional homepage meta description so search engines show your chosen text instead of navigation menus"
 msgstr ""
 
 #: includes/class-robots-admin.php:25
@@ -394,7 +394,7 @@ msgstr ""
 msgid "Pages: ~50–60 characters typical"
 msgstr ""
 
-#: includes/class-admin-page.php:426
+#: includes/class-admin-page.php:432
 msgid "Per-post and per-page SEO title and meta description (editor metabox); when set, they override the SEO plugin’s values for that content where supported"
 msgstr ""
 
@@ -414,11 +414,11 @@ msgstr ""
 msgid "Prefer one source of truth"
 msgstr ""
 
-#: includes/class-admin-page.php:423
+#: includes/class-admin-page.php:429
 msgid "RSS feed enclosure tags with image URL, size, and MIME type"
 msgstr ""
 
-#: includes/class-admin-page.php:356
+#: includes/class-admin-page.php:362
 msgid "Recommended length: about 50–160 characters. Maximum stored: 320. If a supported SEO plugin is active, a filled field here overrides its homepage meta description."
 msgstr ""
 
@@ -471,14 +471,14 @@ msgid "Result"
 msgstr ""
 
 #: includes/class-post-seo.php:114
-msgid "SEO title (Google result title)"
+msgid "SEO title (search result title)"
 msgstr ""
 
 #: includes/class-term-seo-admin.php:214
 msgid "Save all descriptions"
 msgstr ""
 
-#: includes/class-admin-page.php:358
+#: includes/class-admin-page.php:364
 msgid "Save homepage snippet"
 msgstr ""
 
@@ -486,7 +486,7 @@ msgstr ""
 msgid "Save setting"
 msgstr ""
 
-#: includes/class-admin-page.php:332
+#: includes/class-admin-page.php:338
 msgid "Saved"
 msgstr ""
 
@@ -506,11 +506,15 @@ msgstr ""
 msgid "Search Engine Visibility"
 msgstr ""
 
+#: includes/class-term-seo-admin.php:157 includes/class-term-seo.php:101
+msgid "Search description"
+msgstr ""
+
 #: includes/class-robots-admin.php:44 includes/class-robots.php:156 includes/class-robots.php:167
 msgid "Search engine visibility"
 msgstr ""
 
-#: includes/class-admin-page.php:314
+#: includes/class-admin-page.php:320
 msgid "Settings saved."
 msgstr ""
 
@@ -519,7 +523,7 @@ msgid "Settings → Reading → “Discourage search engines from indexing this 
 msgstr ""
 
 #: includes/class-term-seo.php:113
-msgid "Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page."
+msgid "Shown under the title in search results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, search engines pick their own text from the page."
 msgstr ""
 
 #: includes/class-robots.php:400
@@ -554,16 +558,16 @@ msgstr ""
 msgid "Strip metadata from new uploads"
 msgstr ""
 
-#: includes/class-admin-page.php:516
+#: includes/class-admin-page.php:522
 msgid "Test meta tags for this post"
 msgstr ""
 
-#: includes/class-admin-page.php:340
-msgid "Text for the meta description on your site’s front page. Google often shows this under the title in results instead of random text from the menu or footer."
+#: includes/class-admin-page.php:346
+msgid "Text for the meta description on your site’s front page. Search engines often show this under the title in results instead of random text from the menu or footer."
 msgstr ""
 
-#: includes/class-admin-page.php:369
-msgid "Text shown under each category title in Google results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category."
+#: includes/class-admin-page.php:375
+msgid "Text shown under each category title in search results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category."
 msgstr ""
 
 #: includes/class-image-metadata-admin.php:207
@@ -571,15 +575,15 @@ msgid "The setting above only affects new uploads. Use these tools for images al
 msgstr ""
 
 #: includes/class-term-seo-admin.php:133
-msgid "This is the text Google shows under the category title in search results. Without it, Google invents a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category."
+msgid "This is the text shown under the category title in search results. Without it, search engines invent a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category."
 msgstr ""
 
 #: includes/class-post-seo.php:105
-msgid "This page is set to noindex and should not appear in Google search."
+msgid "This page is set to noindex and should not appear in search results."
 msgstr ""
 
 #: includes/class-post-seo.php:103
-msgid "This post is set to noindex and will not appear in Google or Google News."
+msgid "This post is set to noindex and will not appear in search results or news feeds."
 msgstr ""
 
 #: includes/class-image-metadata-admin.php:294
@@ -594,7 +598,7 @@ msgstr ""
 msgid "To (destination)"
 msgstr ""
 
-#: includes/class-admin-page.php:418
+#: includes/class-admin-page.php:424
 msgid "Twitter Card tags (summary_large_image)"
 msgstr ""
 
@@ -614,12 +618,12 @@ msgstr ""
 msgid "Using taxonomy description"
 msgstr ""
 
-#: includes/class-admin-page.php:414
+#: includes/class-admin-page.php:420
 msgid "What this plugin adds"
 msgstr ""
 
-#: includes/class-admin-page.php:320
-msgid "When enabled, the plugin adds Google News meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post."
+#: includes/class-admin-page.php:326
+msgid "When enabled, the plugin adds news meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post."
 msgstr ""
 
 #: includes/class-image-metadata-admin.php:189
@@ -638,11 +642,11 @@ msgstr ""
 msgid "You do not have permission to edit term descriptions."
 msgstr ""
 
-#: includes/class-admin-page.php:494
+#: includes/class-admin-page.php:500
 msgid "ago"
 msgstr ""
 
-#: includes/class-admin-page.php:353
+#: includes/class-admin-page.php:359
 msgid "e.g. Breaking news, reports and analysis, updated around the clock."
 msgstr ""
 
@@ -662,27 +666,27 @@ msgstr ""
 msgid "news-sitemap.xml is not referenced (this plugin adds it when indexing is allowed)."
 msgstr ""
 
-#: includes/class-admin-page.php:419
+#: includes/class-admin-page.php:425
 msgid "news_keywords meta tag (up to 10 post tags)"
 msgstr ""
 
 #: includes/class-post-seo.php:92
-msgid "nofollow — tell Google not to follow links in this post"
+msgid "nofollow — tell search engines not to follow links in this post"
 msgstr ""
 
 #: includes/class-post-seo.php:94
-msgid "nofollow — tell Google not to follow links on this page"
+msgid "nofollow — tell search engines not to follow links on this page"
 msgstr ""
 
 #: includes/class-post-seo.php:82
-msgid "noindex — hide this page from Google search"
+msgid "noindex — hide this page from search results"
 msgstr ""
 
 #: includes/class-post-seo.php:80
-msgid "noindex — hide this post from Google (and Google News)"
+msgid "noindex — hide this post from search results and news feeds"
 msgstr ""
 
-#: includes/class-admin-page.php:420
+#: includes/class-admin-page.php:426
 msgid "robots meta: max-image-preview:large"
 msgstr ""
 

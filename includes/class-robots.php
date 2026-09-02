@@ -270,14 +270,14 @@ class GNH_Robots {
             if ( ! $news_map ) {
                 $has_warn = true;
                 $checks[] = [
-                    'label'  => __( 'Google News sitemap', 'news-seo-helper' ),
+                    'label'  => __( 'News sitemap', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'warn',
                     'result' => __( 'news-sitemap.xml is not referenced (this plugin adds it when indexing is allowed).', 'news-seo-helper' ),
                 ];
             } else {
                 $checks[] = [
-                    'label'  => __( 'Google News sitemap', 'news-seo-helper' ),
+                    'label'  => __( 'News sitemap', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'pass',
                     'result' => __( 'Referenced in robots.txt.', 'news-seo-helper' ),
@@ -388,7 +388,7 @@ class GNH_Robots {
     private static function baseline_optimizations(): array {
         return [
             [
-                'title'  => __( 'Google News', 'news-seo-helper' ),
+                'title'  => __( 'News crawlers', 'news-seo-helper' ),
                 'detail' => __( 'Adds Googlebot-News allow rules and a Sitemap line for news-sitemap.xml.', 'news-seo-helper' ),
             ],
             [

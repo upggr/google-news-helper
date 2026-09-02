@@ -12,14 +12,14 @@
 
 ## Description (paste into "Plugin Description" on the submit form)
 
-News SEO Helper prepares a WordPress news site for Google News and social sharing.
-It covers the publisher-specific gaps that general SEO plugins leave, and works either
-standalone or alongside Yoast SEO, Rank Math, or All in One SEO.
+News SEO Helper prepares a WordPress news site for news aggregators and social
+sharing. It covers the publisher-specific gaps that general SEO plugins leave, and
+works either standalone or alongside Yoast SEO, Rank Math, or All in One SEO.
 
 Features:
 
-* Google News sitemap at /news-sitemap.xml, listing recent posts in the format Google
-  News expects.
+* News sitemap at /news-sitemap.xml, listing recent posts in the format news
+  aggregators expect.
 * NewsArticle JSON-LD structured data on posts and WebPage on pages, including
   publisher and image data.
 * Open Graph and Twitter Card tags so shared articles show the correct title,
@@ -38,7 +38,8 @@ Features:
   tool for images already in the media library.
 * Redirect manager for moved or retired URLs.
 * robots.txt editor with checks for rules that would block news crawlers.
-* Preview dashboard showing how recent posts appear, including a tag tester.
+* Preview dashboard showing how recent posts appear in search results, including a
+  tag tester.
 
 The plugin detects Yoast SEO, Rank Math, and All in One SEO and passes its values
 through their filters rather than printing duplicate tags.
@@ -50,10 +51,15 @@ collected, and no third-party assets are bundled.
 
 ## Notes for the review team (optional — include if a message field is offered)
 
-* This is a resubmission. The first attempt was rejected because the name began
-  with a restricted term; it has been renamed from the original to "News SEO
-  Helper", and neither the display name nor the slug now begins with a
-  trademarked term.
+* This is a resubmission. The first attempt was rejected for a name beginning with a
+  restricted term; the plugin is now "News SEO Helper" and neither the display name
+  nor the slug begins with a trademarked term.
+* The second attempt failed the automated scan on a bundled self-updater and a
+  hidden file. Both are resolved: the updater source is no longer part of this
+  package at all, and the package contains no dotfiles.
+* The robots.txt feature writes "Googlebot-News" allow rules and sends a
+  Googlebot-News user-agent when verifying them. Those are the crawler's actual
+  identifiers, so they appear verbatim in the code; they are not branding.
 * The plugin is also distributed from GitHub, where it self-updates. That code is
   **not present in this package** — the build omits it, so this copy updates only
   through WordPress.org. There is no updater class, and no reference to the update

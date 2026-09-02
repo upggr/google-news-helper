@@ -98,7 +98,7 @@ class GNH_Term_SEO {
         ?>
         <tr class="form-field">
             <th scope="row">
-                <label for="gnh_term_desc"><?php esc_html_e( 'Google search description', 'news-seo-helper' ); ?></label>
+                <label for="gnh_term_desc"><?php esc_html_e( 'Search description', 'news-seo-helper' ); ?></label>
             </th>
             <td>
                 <textarea
@@ -110,7 +110,7 @@ class GNH_Term_SEO {
                     placeholder="<?php esc_attr_e( 'e.g. Local news, reports and daily coverage from our newsroom.', 'news-seo-helper' ); ?>"
                 ><?php echo esc_textarea( $value ); ?></textarea>
                 <p class="description">
-                    <?php esc_html_e( 'Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page.', 'news-seo-helper' ); ?>
+                    <?php esc_html_e( 'Shown under the title in search results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, search engines pick their own text from the page.', 'news-seo-helper' ); ?>
                 </p>
             </td>
         </tr>
