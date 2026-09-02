@@ -54,11 +54,10 @@ collected, and no third-party assets are bundled.
   with a restricted term; it has been renamed from the original to "News SEO
   Helper", and neither the display name nor the slug now begins with a
   trademarked term.
-* The plugin is also distributed from GitHub. The WordPress.org build carries a
-  `.wporg` marker file which disables the self-update code entirely, so this copy
-  updates only through the directory. See
-  `GNH_GitHub_Updater::self_hosted_updates_enabled()` in
-  `includes/class-updater.php`.
+* The plugin is also distributed from GitHub, where it self-updates. That code is
+  **not present in this package** — the build omits it, so this copy updates only
+  through WordPress.org. There is no updater class, and no reference to the update
+  transients anywhere in the ZIP.
 * The image metadata feature writes to files in the uploads directory. It is disabled by
   default, requires `upload_files` capability, is nonce-protected, and writes through a
   temporary file plus rename. Unparseable input is rejected rather than partially

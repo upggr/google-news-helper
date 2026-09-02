@@ -2,10 +2,11 @@
 #
 # Build the WordPress.org distribution ZIP.
 #
-# The .org build differs from the GitHub one in a single way: it carries a
-# `.wporg` marker file, which switches the GitHub self-updater off (a plugin
-# in the directory must update through the directory). Everything else is
-# identical, so there is only one codebase to maintain.
+# The .org build differs from the GitHub one in a single way: includes/class-updater.php
+# is left out. Plugins hosted in the directory update through the directory, and the
+# review scanner rejects updater code even when it is disabled at runtime — it reads
+# the source, not the behaviour. The main plugin file treats that include as optional,
+# so nothing else changes and there is one codebase to maintain.
 #
 # Usage: ./bin/build.sh
 
@@ -49,12 +50,30 @@ cp "$SRC.php" "$DEST/$SLUG.php"
 cp readme.txt "$DEST/"
 cp -R includes assets languages "$DEST/"
 
-# Marker: tells the updater this copy is served by WordPress.org.
-touch "$DEST/.wporg"
+# Self-updater must not ship to WordPress.org.
+rm -f "$DEST/includes/class-updater.php"
 
-# Strip anything that should never ship.
+# Strip anything that should never ship: dotfiles are rejected outright by the
+# review scanner ("Hidden files are not permitted").
 find "$DEST" -name '.DS_Store' -delete
 find "$DEST" -name '*.map' -delete
+find "$DEST" -name '.*' -maxdepth 2 -exec rm -rf {} + 2>/dev/null || true
+
+# Fail loudly rather than shipping something the scanner will bounce.
+if [[ -f "$DEST/includes/class-updater.php" ]]; then
+    echo "Updater still present in build" >&2
+    exit 1
+fi
+if grep -rlq "site_transient_update_plugins" "$DEST" 2>/dev/null; then
+    echo "Update-routine code found in build:" >&2
+    grep -rl "site_transient_update_plugins" "$DEST" >&2
+    exit 1
+fi
+if find "$DEST" -name '.*' -not -name '.' -not -name '..' | grep -q .; then
+    echo "Hidden files found in build:" >&2
+    find "$DEST" -name '.*' -not -name '.' -not -name '..' >&2
+    exit 1
+fi
 
 OUT="$ROOT/dist"
 mkdir -p "$OUT"

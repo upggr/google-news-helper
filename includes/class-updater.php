@@ -101,26 +101,17 @@ class GNH_GitHub_Updater {
     /**
      * Whether this copy should update itself from GitHub.
      *
-     * Builds distributed through WordPress.org must not self-update — the
-     * directory serves their updates, and a plugin that fetches its own code
-     * from elsewhere is not allowed there. The build script drops a marker file
-     * into the .org package, so a copy carrying it defers to WordPress.org while
-     * the GitHub-distributed copy keeps updating itself.
+     * This file ships only in the GitHub distribution — the WordPress.org build
+     * omits it entirely, because plugins hosted in the directory must update
+     * through the directory. This switch exists so a self-hosted site can still
+     * opt out:
      *
-     * Can also be turned off explicitly with:
      *   define( 'GNH_DISABLE_GITHUB_UPDATER', true );
-     * or the gnh_enable_github_updater filter.
+     *
+     * or via the gnh_enable_github_updater filter.
      */
     public static function self_hosted_updates_enabled(): bool {
-        $enabled = true;
-
-        if ( file_exists( GNH_PLUGIN_DIR . '.wporg' ) ) {
-            $enabled = false;
-        }
-
-        if ( defined( 'GNH_DISABLE_GITHUB_UPDATER' ) && GNH_DISABLE_GITHUB_UPDATER ) {
-            $enabled = false;
-        }
+        $enabled = ! ( defined( 'GNH_DISABLE_GITHUB_UPDATER' ) && GNH_DISABLE_GITHUB_UPDATER );
 
         /**
          * Filter whether the GitHub self-updater runs.

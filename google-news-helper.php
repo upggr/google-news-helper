@@ -61,6 +61,16 @@ $_gnh_includes = [
     'includes/class-news-sitemap.php',
     'includes/class-robots-admin.php',
     'includes/class-admin-page.php',
+];
+
+/**
+ * Optional files — absent from some distributions, so a missing one is not an error.
+ *
+ * The self-updater is stripped from the WordPress.org build: plugins hosted in the
+ * directory update through the directory, and shipping updater code there is not
+ * permitted. The GitHub distribution keeps it.
+ */
+$_gnh_optional_includes = [
     'includes/class-updater.php',
 ];
 
@@ -72,7 +82,15 @@ foreach ( $_gnh_includes as $_gnh_file ) {
         error_log( 'News SEO Helper: missing file ' . $path );
     }
 }
-unset( $_gnh_includes, $_gnh_file, $path );
+
+foreach ( $_gnh_optional_includes as $_gnh_file ) {
+    $path = GNH_PLUGIN_DIR . $_gnh_file;
+    if ( file_exists( $path ) ) {
+        require_once $path;
+    }
+}
+
+unset( $_gnh_includes, $_gnh_optional_includes, $_gnh_file, $path );
 
 // ── Bootstrap on plugins_loaded ───────────────────────────────────────────────
 
@@ -101,8 +119,9 @@ add_action( 'plugins_loaded', static function (): void {
     if ( class_exists( 'GNH_News_Sitemap' ) ) {
         new GNH_News_Sitemap();
     }
-    // GitHub update checks run from wp_update_plugins() (admin, WP-Cron, etc.); must not be admin-only
-    // or the pre_set_site_transient_update_plugins filter is missing when the transient is built.
+    // Present only in the GitHub distribution; see $_gnh_optional_includes above.
+    // Update checks run from wp_update_plugins() (admin, WP-Cron, etc.), so this
+    // must not be admin-only or the filter is missing when the transient is built.
     if ( function_exists( 'wp_remote_get' ) && class_exists( 'GNH_GitHub_Updater' ) ) {
         new GNH_GitHub_Updater();
     }

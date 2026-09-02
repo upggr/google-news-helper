@@ -27,10 +27,18 @@ text, a page's own SEO fields). Anything structural is a plugin change.
 ## Two distribution channels
 
 The same codebase ships to GitHub (private updater) and WordPress.org (directory
-updates). `bin/build.sh` drops a `.wporg` marker file into the .org ZIP, and
-`GNH_GitHub_Updater::self_hosted_updates_enabled()` sees that marker and stays out of
-the way — a directory plugin may not fetch its own code. Nothing else differs, so
-there is one codebase, not a fork.
+updates). `bin/build.sh` **omits `includes/class-updater.php`** from the .org ZIP;
+`google-news-helper.php` lists it in `$_gnh_optional_includes`, so its absence is not
+an error and nothing else changes. One codebase, not a fork.
+
+An earlier attempt shipped the file with a `.wporg` marker that disabled it at
+runtime. The review scanner rejected that twice over: it reads source rather than
+behaviour, so `site_transient_update_plugins` was flagged anyway, and dotfiles are
+themselves rejected ("Hidden files are not permitted"). Do not try to disable the
+updater in place — leave it out.
+
+`bin/build.sh` fails the build if the updater file, any `site_transient_update_plugins`
+reference, or any hidden file survives into the package.
 
 `.wordpress-org/` holds the directory page icon, banners and screenshots. Those are
 uploaded to SVN `assets/` and must never ship inside the plugin ZIP.
