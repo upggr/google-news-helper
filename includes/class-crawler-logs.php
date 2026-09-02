@@ -19,7 +19,7 @@ class GNH_Crawler_Logs {
 
     public function add_log_menu(): void {
         add_submenu_page(
-            'google-news-helper',
+            'news-seo-helper',
             'Crawler Logs',
             'Crawler Logs',
             'manage_options',
@@ -35,7 +35,7 @@ class GNH_Crawler_Logs {
 
         ?>
         <div class="wrap">
-            <h1>Google News Helper - Crawler Access Logs</h1>
+            <h1>News SEO Helper - Crawler Access Logs</h1>
             <p>Real-time log of crawlers accessing your site. Use this to identify IP ranges that should be whitelisted.</p>
 
             <h2>Latest Crawler Requests</h2>

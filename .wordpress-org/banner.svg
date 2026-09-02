@@ -37,9 +37,9 @@
 
   <!-- wordmark -->
   <text x="376" y="228" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
-        font-size="76" font-weight="700" fill="#ffffff" letter-spacing="-1.5">Google News Helper</text>
+        font-size="82" font-weight="700" fill="#ffffff" letter-spacing="-1.5">News SEO Helper</text>
   <text x="378" y="284" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
-        font-size="31" font-weight="400" fill="#b8c2cc">News sitemap, structured data, and social tags for WordPress</text>
+        font-size="31" font-weight="400" fill="#b8c2cc">Google News sitemap, structured data and social tags for WordPress</text>
 
   <!-- feature chips -->
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="23" font-weight="600">

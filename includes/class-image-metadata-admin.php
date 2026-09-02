@@ -75,7 +75,7 @@ class GNH_Image_Metadata_Admin {
 
     private function verify(): void {
         if ( ! current_user_can( 'upload_files' ) ) {
-            wp_send_json_error( [ 'message' => __( 'Permission denied.', 'google-news-helper' ) ], 403 );
+            wp_send_json_error( [ 'message' => __( 'Permission denied.', 'news-seo-helper' ) ], 403 );
         }
         check_ajax_referer( self::NONCE, 'nonce' );
     }
@@ -177,40 +177,40 @@ class GNH_Image_Metadata_Admin {
         <div class="wrap gnh-wrap">
             <h1>
                 <span class="dashicons dashicons-format-image" style="font-size:28px;line-height:1;vertical-align:middle;margin-right:6px;color:#e8612d;"></span>
-                <?php esc_html_e( 'Image metadata', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'Image metadata', 'news-seo-helper' ); ?>
             </h1>
 
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Remove AI / provenance metadata from images', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Remove AI / provenance metadata from images', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Photoshop and other image editors embed C2PA “Content Credentials” and XMP provenance data inside image files. Some platforms read this data when a link is shared, which can affect whether the image appears in the post preview and can attach an AI-related label to the post.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Photoshop and other image editors embed C2PA “Content Credentials” and XMP provenance data inside image files. Some platforms read this data when a link is shared, which can affect whether the image appears in the post preview and can attach an AI-related label to the post.', 'news-seo-helper' ); ?>
                 </p>
                 <p class="description">
-                    <?php esc_html_e( 'When enabled, this data is removed from every image as it is uploaded. The picture itself is untouched — the image data is copied across unchanged, so there is no re-compression and no loss of quality. Colour profiles are preserved.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'When enabled, this data is removed from every image as it is uploaded. The picture itself is untouched — the image data is copied across unchanged, so there is no re-compression and no loss of quality. Colour profiles are preserved.', 'news-seo-helper' ); ?>
                 </p>
 
                 <form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" style="margin-top:14px;">
                     <?php settings_fields( 'gnh_image_options_group' ); ?>
                     <label style="display:flex;align-items:center;gap:8px;font-weight:600;">
                         <input type="checkbox" name="<?php echo esc_attr( GNH_Image_Metadata::OPTION ); ?>" value="1" <?php checked( $enabled ); ?>>
-                        <?php esc_html_e( 'Strip metadata from new uploads', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'Strip metadata from new uploads', 'news-seo-helper' ); ?>
                     </label>
                     <p style="margin-top:12px;">
-                        <?php submit_button( __( 'Save setting', 'google-news-helper' ), 'primary', 'submit', false ); ?>
+                        <?php submit_button( __( 'Save setting', 'news-seo-helper' ), 'primary', 'submit', false ); ?>
                     </p>
                 </form>
             </div>
 
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Existing images', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Existing images', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'The setting above only affects new uploads. Use these tools for images already in the media library. Scanning only reports; cleaning rewrites the files and cannot be undone, so take a backup of wp-content/uploads first.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'The setting above only affects new uploads. Use these tools for images already in the media library. Scanning only reports; cleaning rewrites the files and cannot be undone, so take a backup of wp-content/uploads first.', 'news-seo-helper' ); ?>
                 </p>
 
                 <p style="margin-top:14px;">
-                    <button type="button" class="button" id="gnh-scan"><?php esc_html_e( 'Scan library', 'google-news-helper' ); ?></button>
-                    <button type="button" class="button button-primary" id="gnh-clean" style="margin-left:6px;"><?php esc_html_e( 'Clean all images', 'google-news-helper' ); ?></button>
-                    <button type="button" class="button" id="gnh-stop" style="margin-left:6px;display:none;"><?php esc_html_e( 'Stop', 'google-news-helper' ); ?></button>
+                    <button type="button" class="button" id="gnh-scan"><?php esc_html_e( 'Scan library', 'news-seo-helper' ); ?></button>
+                    <button type="button" class="button button-primary" id="gnh-clean" style="margin-left:6px;"><?php esc_html_e( 'Clean all images', 'news-seo-helper' ); ?></button>
+                    <button type="button" class="button" id="gnh-stop" style="margin-left:6px;display:none;"><?php esc_html_e( 'Stop', 'news-seo-helper' ); ?></button>
                 </p>
 
                 <div id="gnh-progress-wrap" style="display:none;margin-top:14px;">
@@ -241,11 +241,11 @@ class GNH_Image_Metadata_Admin {
 
                 stopBtn.addEventListener( 'click', function () {
                     stop = true;
-                    status.textContent = <?php echo wp_json_encode( __( 'Stopping…', 'google-news-helper' ) ); ?>;
+                    status.textContent = <?php echo wp_json_encode( __( 'Stopping…', 'news-seo-helper' ) ); ?>;
                 } );
 
                 function run( action, state, label, done ) {
-                    if ( stop ) { busy( false ); status.textContent += ' ' + <?php echo wp_json_encode( __( '(stopped)', 'google-news-helper' ) ); ?>; return; }
+                    if ( stop ) { busy( false ); status.textContent += ' ' + <?php echo wp_json_encode( __( '(stopped)', 'news-seo-helper' ) ); ?>; return; }
 
                     var body = new URLSearchParams();
                     body.set( 'action', action );
@@ -285,13 +285,13 @@ class GNH_Image_Metadata_Admin {
                         },
                         function ( d ) {
                             status.textContent = d.found === 0
-                                ? <?php echo wp_json_encode( __( 'Scan complete — no images carry provenance metadata.', 'google-news-helper' ) ); ?>
-                                : d.found + ' ' + <?php echo wp_json_encode( __( 'images still carry provenance metadata.', 'google-news-helper' ) ); ?>;
+                                ? <?php echo wp_json_encode( __( 'Scan complete — no images carry provenance metadata.', 'news-seo-helper' ) ); ?>
+                                : d.found + ' ' + <?php echo wp_json_encode( __( 'images still carry provenance metadata.', 'news-seo-helper' ) ); ?>;
                         } );
                 } );
 
                 document.getElementById( 'gnh-clean' ).addEventListener( 'click', function () {
-                    if ( ! window.confirm( <?php echo wp_json_encode( __( 'This rewrites image files in the media library and cannot be undone. Make sure you have a backup of wp-content/uploads. Continue?', 'google-news-helper' ) ); ?> ) ) {
+                    if ( ! window.confirm( <?php echo wp_json_encode( __( 'This rewrites image files in the media library and cannot be undone. Make sure you have a backup of wp-content/uploads. Continue?', 'news-seo-helper' ) ); ?> ) ) {
                         return;
                     }
                     busy( true );
@@ -302,7 +302,7 @@ class GNH_Image_Metadata_Admin {
                             return pct + '% — ' + d.offset + ' / ' + d.total + ' processed, ' + d.cleaned + ' cleaned';
                         },
                         function ( d ) {
-                            status.textContent = <?php echo wp_json_encode( __( 'Done —', 'google-news-helper' ) ); ?> + ' ' + d.cleaned + ' ' + <?php echo wp_json_encode( __( 'images cleaned.', 'google-news-helper' ) ); ?>;
+                            status.textContent = <?php echo wp_json_encode( __( 'Done —', 'news-seo-helper' ) ); ?> + ' ' + d.cleaned + ' ' + <?php echo wp_json_encode( __( 'images cleaned.', 'news-seo-helper' ) ); ?>;
                         } );
                 } );
             }() );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Google News Helper
+ * Plugin Name: News SEO Helper
  * Plugin URI:  https://github.com/upggr/google-news-helper
  * Description: Google News optimization for news sites: news sitemap, NewsArticle structured data, Open Graph and Twitter tags, per-post and per-category search descriptions, redirects, robots.txt tools, and removal of AI/provenance metadata from images.
  * Version:     1.1.0
@@ -10,7 +10,7 @@
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: google-news-helper
+ * Text Domain: news-seo-helper
  * Domain Path: /languages
  */
 
@@ -69,7 +69,7 @@ foreach ( $_gnh_includes as $_gnh_file ) {
     if ( file_exists( $path ) ) {
         require_once $path;
     } else {
-        error_log( 'Google News Helper: missing file ' . $path );
+        error_log( 'News SEO Helper: missing file ' . $path );
     }
 }
 unset( $_gnh_includes, $_gnh_file, $path );

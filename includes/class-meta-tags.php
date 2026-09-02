@@ -39,7 +39,7 @@ class GNH_Meta_Tags {
             return;
         }
 
-        echo "\n<!-- Google News Helper: front page snippet -->\n";
+        echo "\n<!-- News SEO Helper: front page snippet -->\n";
         printf(
             '<meta name="description" content="%s">' . "\n",
             esc_attr( $desc )
@@ -48,7 +48,7 @@ class GNH_Meta_Tags {
             '<meta property="og:description" content="%s">' . "\n",
             esc_attr( $desc )
         );
-        echo "<!-- /Google News Helper: front page snippet -->\n";
+        echo "<!-- /News SEO Helper: front page snippet -->\n";
     }
 
     /**
@@ -215,7 +215,7 @@ class GNH_Meta_Tags {
         // Detect other SEO plugins to avoid duplicate og: tags
         $has_seo_plugin = $this->has_major_seo_plugin();
 
-        echo "\n<!-- Google News Helper v" . esc_html( GNH_VERSION ) . " -->\n";
+        echo "\n<!-- News SEO Helper v" . esc_html( GNH_VERSION ) . " -->\n";
 
         if ( ! $has_seo_plugin ) {
             printf(
@@ -354,7 +354,7 @@ class GNH_Meta_Tags {
         echo '<script type="application/ld+json">' . "\n";
         echo wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
         echo "\n</script>\n";
-        echo "<!-- /Google News Helper -->\n";
+        echo "<!-- /News SEO Helper -->\n";
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

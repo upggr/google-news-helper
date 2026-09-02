@@ -17,12 +17,12 @@ class GNH_Robots_Admin {
         <div class="wrap gnh-wrap gnh-robots-wrap">
             <h1>
                 <span class="dashicons dashicons-shield" style="font-size:28px;line-height:1.1;vertical-align:middle;margin-right:6px;color:#1d2327;"></span>
-                <?php esc_html_e( 'robots.txt', 'google-news-helper' ); ?>
-                <span class="gnh-version"><?php esc_html_e( 'Health & optimization', 'google-news-helper' ); ?> — Google News Helper v<?php echo esc_html( GNH_VERSION ); ?></span>
+                <?php esc_html_e( 'robots.txt', 'news-seo-helper' ); ?>
+                <span class="gnh-version"><?php esc_html_e( 'Health & optimization', 'news-seo-helper' ); ?> — News SEO Helper v<?php echo esc_html( GNH_VERSION ); ?></span>
             </h1>
 
             <div class="gnh-card gnh-robots-summary">
-                <h2><?php esc_html_e( 'Overall status', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Overall status', 'news-seo-helper' ); ?></h2>
                 <?php
                 $badge_class = 'gnh-robots-badge--warn';
                 if ( $report['overall'] === 'good' ) {
@@ -37,21 +37,21 @@ class GNH_Robots_Admin {
                     </span>
                 </p>
                 <p class="description">
-                    <?php esc_html_e( 'Checks the URL crawlers request (usually WordPress’s virtual robots.txt plus this plugin’s rules). A static robots.txt file in your site root can override WordPress entirely.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Checks the URL crawlers request (usually WordPress’s virtual robots.txt plus this plugin’s rules). A static robots.txt file in your site root can override WordPress entirely.', 'news-seo-helper' ); ?>
                 </p>
                 <p>
-                    <a href="<?php echo esc_url( $report['robots_url'] ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Open live robots.txt', 'google-news-helper' ); ?></a>
-                    <a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>" class="button"><?php esc_html_e( 'Search engine visibility', 'google-news-helper' ); ?></a>
+                    <a href="<?php echo esc_url( $report['robots_url'] ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Open live robots.txt', 'news-seo-helper' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>" class="button"><?php esc_html_e( 'Search engine visibility', 'news-seo-helper' ); ?></a>
                 </p>
             </div>
 
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Health checks', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Health checks', 'news-seo-helper' ); ?></h2>
                 <table class="widefat striped gnh-robots-table">
                     <thead>
                         <tr>
-                            <th><?php esc_html_e( 'Check', 'google-news-helper' ); ?></th>
-                            <th><?php esc_html_e( 'Result', 'google-news-helper' ); ?></th>
+                            <th><?php esc_html_e( 'Check', 'news-seo-helper' ); ?></th>
+                            <th><?php esc_html_e( 'Result', 'news-seo-helper' ); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,8 +75,8 @@ class GNH_Robots_Admin {
             </div>
 
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Optimization', 'google-news-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'Google News Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass.', 'google-news-helper' ); ?></p>
+                <h2><?php esc_html_e( 'Optimization', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass.', 'news-seo-helper' ); ?></p>
                 <ul class="gnh-robots-opt-list">
                     <?php foreach ( $report['optimizations'] as $item ) : ?>
                     <li>
@@ -90,8 +90,8 @@ class GNH_Robots_Admin {
             </div>
 
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Live robots.txt (preview)', 'google-news-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'Fetched from your site over HTTP. Cached plugins or a CDN may serve a different body until purged.', 'google-news-helper' ); ?></p>
+                <h2><?php esc_html_e( 'Live robots.txt (preview)', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'Fetched from your site over HTTP. Cached plugins or a CDN may serve a different body until purged.', 'news-seo-helper' ); ?></p>
                 <?php if ( ! empty( $report['fetch_error'] ) ) : ?>
                     <p class="gnh-robots-fetch-error"><?php echo esc_html( $report['fetch_error'] ); ?></p>
                 <?php else : ?>

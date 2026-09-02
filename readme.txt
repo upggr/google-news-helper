@@ -1,6 +1,6 @@
-=== Google News Helper ===
+=== News SEO Helper ===
 Contributors: ielko
-Tags: google news, seo, open graph, structured data, sitemap
+Tags: news, seo, open graph, structured data, sitemap
 Requires at least: 5.6
 Tested up to: 7.1
 Stable tag: 1.1.0
@@ -8,11 +8,11 @@ Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Google News optimization for news sites: news sitemap, NewsArticle structured data, Open Graph tags, category search descriptions, and image metadata cleanup.
+SEO for news publishers: news sitemap, NewsArticle structured data, Open Graph tags, category search descriptions, and image metadata cleanup.
 
 == Description ==
 
-Google News Helper prepares a WordPress news site for Google News and social sharing. It fills the gaps a general SEO plugin leaves for publishers, and works either on its own or alongside Yoast SEO, Rank Math, or All in One SEO.
+News SEO Helper prepares a WordPress news site for Google News and social sharing. It fills the gaps a general SEO plugin leaves for publishers, and works either on its own or alongside Yoast SEO, Rank Math, or All in One SEO.
 
 **What it does**
 
@@ -40,7 +40,7 @@ If Yoast SEO, Rank Math, or All in One SEO is active, the plugin passes its valu
 
 == Installation ==
 
-1. Upload the plugin to `/wp-content/plugins/google-news-helper`, or install it through **Plugins → Add New**.
+1. Upload the plugin to `/wp-content/plugins/news-seo-helper`, or install it through **Plugins → Add New**.
 2. Activate it through the **Plugins** menu.
 3. Visit **Google News** in the admin menu to set your homepage description and review the dashboard.
 4. Optionally visit **Google News → Category descriptions** to write a search description for each category.
@@ -50,7 +50,7 @@ If Yoast SEO, Rank Math, or All in One SEO is active, the plugin passes its valu
 
 = Do I need another SEO plugin? =
 
-No. Google News Helper can output meta descriptions, Open Graph, and structured data on its own. If you already use Yoast SEO, Rank Math, or All in One SEO, it defers to them and fills in what they do not cover.
+No. News SEO Helper can output meta descriptions, Open Graph, and structured data on its own. If you already use Yoast SEO, Rank Math, or All in One SEO, it defers to them and fills in what they do not cover.
 
 = Why do all my category pages show the same text in Google? =
 
@@ -82,7 +82,7 @@ At `/news-sitemap.xml` on your site. Submit that URL in Google Search Console.
 == Changelog ==
 
 = 1.1.0 =
-* First WordPress.org release
+* First WordPress.org release, as News SEO Helper
 * Added search descriptions for categories and tags, with a bulk editor
 * Added removal of XMP/C2PA provenance metadata from images, with a library cleaner
 * Removed a deprecated no-op class

@@ -1,18 +1,18 @@
-# WordPress.org submission — Google News Helper
+# WordPress.org submission — News SEO Helper
 
 ## Form fields
 
-**Plugin Name:** `Google News Helper`
+**Plugin Name:** `News SEO Helper`
 
-**Plugin Slug (requested):** `google-news-helper`  *(verified available)*
+**Plugin Slug (requested):** `news-seo-helper`  *(verified available)*
 
-**Plugin ZIP:** `dist/google-news-helper-1.1.0.zip`
+**Plugin ZIP:** `dist/news-seo-helper-1.1.0.zip`
 
 ---
 
 ## Description (paste into "Plugin Description" on the submit form)
 
-Google News Helper prepares a WordPress news site for Google News and social sharing.
+News SEO Helper prepares a WordPress news site for Google News and social sharing.
 It covers the publisher-specific gaps that general SEO plugins leave, and works either
 standalone or alongside Yoast SEO, Rank Math, or All in One SEO.
 
@@ -50,6 +50,10 @@ collected, and no third-party assets are bundled.
 
 ## Notes for the review team (optional — include if a message field is offered)
 
+* This is a resubmission. The first attempt was rejected because the name began
+  with a restricted term; it has been renamed from the original to "News SEO
+  Helper", and neither the display name nor the slug now begins with a
+  trademarked term.
 * The plugin is also distributed from GitHub. The WordPress.org build carries a
   `.wporg` marker file which disables the self-update code entirely, so this copy
   updates only through the directory. See
@@ -71,7 +75,7 @@ collected, and no third-party assets are bundled.
 - [ ] Confirm the `Contributors:` line in `readme.txt` matches that account's username.
       It currently reads `ielko` — change it if you submit under a different account,
       or the plugin page will not list you as an author.
-- [ ] Upload `dist/google-news-helper-1.1.0.zip`.
+- [ ] Upload `dist/news-seo-helper-1.1.0.zip`.
 - [ ] Paste the description above.
 
 ## After approval
@@ -79,11 +83,11 @@ collected, and no third-party assets are bundled.
 1. Set an SVN password (separate from your account password):
    https://profiles.wordpress.org/me/profile/edit/group/3/
 2. Check out the repository:
-   `svn co https://plugins.svn.wordpress.org/google-news-helper ~/svn/google-news-helper`
-3. Add the directory page images to `.wordpress-org/` — see the README there for the
-   required sizes. Without them the plugin page shows a blank grey banner.
+   `svn co https://plugins.svn.wordpress.org/news-seo-helper ~/svn/news-seo-helper`
+3. The directory page images are already in `.wordpress-org/` (icon, both banners,
+   four screenshots) and svn-deploy.sh copies them to SVN assets/ automatically.
 4. Deploy:
-   `./bin/svn-deploy.sh ~/svn/google-news-helper`
+   `./bin/svn-deploy.sh ~/svn/news-seo-helper`
    Review the printed `svn status`, then commit as instructed.
 
 Nothing appears publicly until that first SVN commit — approval alone does not publish

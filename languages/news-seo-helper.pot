@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later license.
 msgid ""
 msgstr ""
-"Project-Id-Version: Google News Helper 1.1.0\n"
+"Project-Id-Version: News SEO Helper 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/upggr/google-news-helper/issues\n"
-"POT-Creation-Date: 2026-09-02 21:01+0000\n"
+"POT-Creation-Date: 2026-09-02 21:08+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Domain: google-news-helper\n"
+"X-Domain: news-seo-helper\n"
 
 
 #: includes/class-admin-page.php:378
@@ -34,11 +34,11 @@ msgstr ""
 msgid "A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags."
 msgstr ""
 
-#: includes/class-robots.php:342
+#: includes/class-robots.php:345
 msgid "A rule appears to block link-preview crawlers (e.g. Facebot / facebookexternalhit)."
 msgstr ""
 
-#: includes/class-robots.php:321
+#: includes/class-robots.php:324
 msgid "A rule appears to disallow the entire site for *."
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "Add Redirect"
 msgstr ""
 
-#: includes/class-robots.php:389
+#: includes/class-robots.php:392
 msgid "Adds Googlebot-News allow rules and a Sitemap line for news-sitemap.xml."
 msgstr ""
 
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Allow indexing when you are ready to go live"
 msgstr ""
 
-#: includes/class-robots.php:345
+#: includes/class-robots.php:348
 msgid "Allow social crawlers"
 msgstr ""
 
@@ -82,11 +82,11 @@ msgstr ""
 msgid "At least one Sitemap URL is present."
 msgstr ""
 
-#: includes/class-robots.php:325
+#: includes/class-robots.php:328
 msgid "Avoid “Disallow: /” for User-agent: * unless you intentionally block all crawlers."
 msgstr ""
 
-#: includes/class-robots.php:396
+#: includes/class-robots.php:399
 msgid "Caching"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Could not rename the downloaded plugin folder to its expected name."
 msgstr ""
 
-#: includes/class-robots.php:318 includes/class-robots.php:329
+#: includes/class-robots.php:321 includes/class-robots.php:332
 msgid "Crawl rules for all bots (User-agent: *)"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "Crawlers expect text/plain."
 msgstr ""
 
-#: includes/class-robots.php:368
+#: includes/class-robots.php:371
 msgid "Critical issues"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: includes/class-robots.php:393
+#: includes/class-robots.php:396
 msgid "Declares explicit Allow: / for Facebook, X, LinkedIn, WhatsApp, Slack, and Telegram crawlers."
 msgstr ""
 
@@ -186,11 +186,11 @@ msgstr ""
 msgid "Existing images"
 msgstr ""
 
-#: includes/class-robots.php:302
-msgid "Expected “Google News Helper” block not found — another plugin or theme may be replacing robots.txt output."
+#: includes/class-robots.php:305
+msgid "Expected “News SEO Helper” block not found — another plugin or theme may be replacing robots.txt output."
 msgstr ""
 
-#: includes/class-robots.php:340 includes/class-robots.php:351
+#: includes/class-robots.php:343 includes/class-robots.php:354
 msgid "Facebook, X, LinkedIn, etc."
 msgstr ""
 
@@ -210,24 +210,8 @@ msgstr ""
 msgid "From (path)"
 msgstr ""
 
-#: includes/class-admin-page.php:18 includes/class-robots.php:388
+#: includes/class-admin-page.php:18 includes/class-robots.php:391
 msgid "Google News"
-msgstr ""
-
-#: includes/class-admin-page.php:17 includes/class-admin-page.php:28 includes/class-admin-page.php:308
-msgid "Google News Helper"
-msgstr ""
-
-#: includes/class-robots.php:309
-msgid "Google News Helper block is present."
-msgstr ""
-
-#: includes/class-robots-admin.php:79
-msgid "Google News Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass."
-msgstr ""
-
-#: includes/class-post-seo.php:45
-msgid "Google News Helper — SEO"
 msgstr ""
 
 #: includes/class-admin-page.php:422
@@ -262,7 +246,7 @@ msgstr ""
 msgid "Health checks"
 msgstr ""
 
-#: includes/class-robots.php:366
+#: includes/class-robots.php:369
 msgid "Healthy"
 msgstr ""
 
@@ -298,7 +282,7 @@ msgstr ""
 msgid "Leave blank to use this plugin’s auto excerpt, or your SEO plugin’s description if set there"
 msgstr ""
 
-#: includes/class-robots.php:392
+#: includes/class-robots.php:395
 msgid "Link previews"
 msgstr ""
 
@@ -314,8 +298,24 @@ msgstr ""
 msgid "Meta description (Google snippet text)"
 msgstr ""
 
-#: includes/class-robots.php:367
+#: includes/class-robots.php:370
 msgid "Needs attention"
+msgstr ""
+
+#: includes/class-admin-page.php:17 includes/class-admin-page.php:28 includes/class-admin-page.php:308
+msgid "News SEO Helper"
+msgstr ""
+
+#: includes/class-robots.php:312
+msgid "News SEO Helper block is present."
+msgstr ""
+
+#: includes/class-robots-admin.php:79
+msgid "News SEO Helper extends WordPress’s virtual robots.txt (no extra files needed). It adds Google News sitemap discovery, explicit allows for news and social crawlers, and works with your cache plugin’s crawler bypass."
+msgstr ""
+
+#: includes/class-post-seo.php:45
+msgid "News SEO Helper — SEO"
 msgstr ""
 
 #: includes/class-admin-page.php:421
@@ -334,11 +334,11 @@ msgstr ""
 msgid "No featured image"
 msgstr ""
 
-#: includes/class-robots.php:332
+#: includes/class-robots.php:335
 msgid "No full-site Disallow for * detected."
 msgstr ""
 
-#: includes/class-robots.php:353
+#: includes/class-robots.php:356
 msgid "No full-site block detected for common preview bots."
 msgstr ""
 
@@ -406,7 +406,7 @@ msgstr ""
 msgid "Photoshop and other image editors embed C2PA “Content Credentials” and XMP provenance data inside image files. Some platforms read this data when a link is shared, which can affect whether the image appears in the post preview and can attach an AI-related label to the post."
 msgstr ""
 
-#: includes/class-robots.php:289 includes/class-robots.php:299 includes/class-robots.php:306
+#: includes/class-robots.php:289 includes/class-robots.php:302 includes/class-robots.php:309
 msgid "Plugin robots rules"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Relative path, e.g. /2023/05/old-title/ or /category/old/"
 msgstr ""
 
-#: includes/class-robots.php:324
+#: includes/class-robots.php:327
 msgid "Relax overly broad Disallow rules"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Remove AI / provenance metadata from images"
 msgstr ""
 
-#: includes/class-robots.php:346
+#: includes/class-robots.php:349
 msgid "Remove Disallow rules that target Facebot or facebookexternalhit, or add explicit Allow: / for those user agents."
 msgstr ""
 
@@ -522,7 +522,7 @@ msgstr ""
 msgid "Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page."
 msgstr ""
 
-#: includes/class-robots.php:397
+#: includes/class-robots.php:400
 msgid "Signals cache plugins to bypass the cache for those crawlers so previews stay fresh."
 msgstr ""
 
@@ -534,7 +534,7 @@ msgstr ""
 msgid "Sitemap declarations"
 msgstr ""
 
-#: includes/class-robots.php:339 includes/class-robots.php:350
+#: includes/class-robots.php:342 includes/class-robots.php:353
 msgid "Social / link-preview crawlers"
 msgstr ""
 

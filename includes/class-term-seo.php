@@ -38,7 +38,7 @@ class GNH_Term_SEO {
      */
     public static function seo_taxonomies(): array {
         /**
-         * Filter which taxonomies expose a Google News Helper description field.
+         * Filter which taxonomies expose a News SEO Helper description field.
          *
          * @param string[] $taxonomies Taxonomy slugs.
          */
@@ -98,7 +98,7 @@ class GNH_Term_SEO {
         ?>
         <tr class="form-field">
             <th scope="row">
-                <label for="gnh_term_desc"><?php esc_html_e( 'Google search description', 'google-news-helper' ); ?></label>
+                <label for="gnh_term_desc"><?php esc_html_e( 'Google search description', 'news-seo-helper' ); ?></label>
             </th>
             <td>
                 <textarea
@@ -107,10 +107,10 @@ class GNH_Term_SEO {
                     rows="4"
                     class="large-text"
                     maxlength="320"
-                    placeholder="<?php esc_attr_e( 'e.g. Local news, reports and daily coverage from our newsroom.', 'google-news-helper' ); ?>"
+                    placeholder="<?php esc_attr_e( 'e.g. Local news, reports and daily coverage from our newsroom.', 'news-seo-helper' ); ?>"
                 ><?php echo esc_textarea( $value ); ?></textarea>
                 <p class="description">
-                    <?php esc_html_e( 'Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page.', 'news-seo-helper' ); ?>
                 </p>
             </td>
         </tr>
@@ -182,7 +182,7 @@ class GNH_Term_SEO {
         $url  = $term instanceof WP_Term ? get_term_link( $term ) : '';
         $url  = is_string( $url ) ? $url : '';
 
-        echo "\n<!-- Google News Helper: archive snippet -->\n";
+        echo "\n<!-- News SEO Helper: archive snippet -->\n";
         printf( '<meta name="description" content="%s">' . "\n", esc_attr( $desc ) );
         printf( '<meta property="og:type" content="website">' . "\n" );
         printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $term instanceof WP_Term ? $term->name : '' ) );
@@ -193,7 +193,7 @@ class GNH_Term_SEO {
         printf( '<meta property="og:site_name" content="%s">' . "\n", esc_attr( get_bloginfo( 'name' ) ) );
         printf( '<meta name="twitter:card" content="summary_large_image">' . "\n" );
         printf( '<meta name="twitter:description" content="%s">' . "\n", esc_attr( $desc ) );
-        echo "<!-- /Google News Helper: archive snippet -->\n";
+        echo "<!-- /News SEO Helper: archive snippet -->\n";
     }
 
     /**

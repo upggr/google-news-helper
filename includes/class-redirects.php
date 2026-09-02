@@ -64,9 +64,9 @@ class GNH_Redirects {
 
     public function register_menu(): void {
         add_submenu_page(
-            'google-news-helper',
-            __( 'Redirects', 'google-news-helper' ),
-            __( 'Redirects', 'google-news-helper' ),
+            'news-seo-helper',
+            __( 'Redirects', 'news-seo-helper' ),
+            __( 'Redirects', 'news-seo-helper' ),
             'manage_options',
             'gnh-redirects',
             [ $this, 'render_page' ]
@@ -93,39 +93,39 @@ class GNH_Redirects {
         <div class="wrap gnh-wrap">
             <h1>
                 <span class="dashicons dashicons-randomize" style="font-size:26px;line-height:1.2;vertical-align:middle;margin-right:6px;color:#2271b1;"></span>
-                <?php esc_html_e( 'Redirect Manager', 'google-news-helper' ); ?>
-                <span class="gnh-version">Google News Helper v<?php echo esc_html( GNH_VERSION ); ?></span>
+                <?php esc_html_e( 'Redirect Manager', 'news-seo-helper' ); ?>
+                <span class="gnh-version">News SEO Helper v<?php echo esc_html( GNH_VERSION ); ?></span>
             </h1>
 
             <?php if ( isset( $_GET['saved'] ) ): ?>
-            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect saved.', 'google-news-helper' ); ?></p></div>
+            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect saved.', 'news-seo-helper' ); ?></p></div>
             <?php elseif ( isset( $_GET['deleted'] ) ): ?>
-            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect deleted.', 'google-news-helper' ); ?></p></div>
+            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect deleted.', 'news-seo-helper' ); ?></p></div>
             <?php endif; ?>
 
             <!-- Add new redirect -->
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Add Redirect', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Add Redirect', 'news-seo-helper' ); ?></h2>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="gnh_save_redirect">
                     <?php wp_nonce_field( 'gnh_redirect_action', 'gnh_nonce' ); ?>
                     <table class="form-table" style="max-width:700px;">
                         <tr>
-                            <th><label for="gnh-from"><?php esc_html_e( 'From (path)', 'google-news-helper' ); ?></label></th>
+                            <th><label for="gnh-from"><?php esc_html_e( 'From (path)', 'news-seo-helper' ); ?></label></th>
                             <td>
                                 <input type="text" id="gnh-from" name="gnh_from" class="regular-text" placeholder="/old-article-slug/" required>
-                                <p class="description"><?php esc_html_e( 'Relative path, e.g. /2023/05/old-title/ or /category/old/', 'google-news-helper' ); ?></p>
+                                <p class="description"><?php esc_html_e( 'Relative path, e.g. /2023/05/old-title/ or /category/old/', 'news-seo-helper' ); ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th><label for="gnh-to"><?php esc_html_e( 'To (destination)', 'google-news-helper' ); ?></label></th>
+                            <th><label for="gnh-to"><?php esc_html_e( 'To (destination)', 'news-seo-helper' ); ?></label></th>
                             <td>
                                 <input type="text" id="gnh-to" name="gnh_to" class="regular-text" placeholder="/new-article-slug/ or https://example.com/page/" required>
-                                <p class="description"><?php esc_html_e( 'Relative path or full URL. Leave empty for 410 Gone.', 'google-news-helper' ); ?></p>
+                                <p class="description"><?php esc_html_e( 'Relative path or full URL. Leave empty for 410 Gone.', 'news-seo-helper' ); ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th><label for="gnh-type"><?php esc_html_e( 'Type', 'google-news-helper' ); ?></label></th>
+                            <th><label for="gnh-type"><?php esc_html_e( 'Type', 'news-seo-helper' ); ?></label></th>
                             <td>
                                 <select id="gnh-type" name="gnh_type">
                                     <option value="301">301 — Moved Permanently</option>
@@ -135,27 +135,27 @@ class GNH_Redirects {
                             </td>
                         </tr>
                     </table>
-                    <?php submit_button( __( 'Add Redirect', 'google-news-helper' ), 'primary', 'submit', false ); ?>
+                    <?php submit_button( __( 'Add Redirect', 'news-seo-helper' ), 'primary', 'submit', false ); ?>
                 </form>
             </div>
 
             <!-- Existing redirects -->
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Active Redirects', 'google-news-helper' ); ?>
+                <h2><?php esc_html_e( 'Active Redirects', 'news-seo-helper' ); ?>
                     <span class="gnh-version"><?php echo count( $redirects ); ?> total</span>
                 </h2>
 
                 <?php if ( empty( $redirects ) ): ?>
-                    <p><?php esc_html_e( 'No redirects configured yet.', 'google-news-helper' ); ?></p>
+                    <p><?php esc_html_e( 'No redirects configured yet.', 'news-seo-helper' ); ?></p>
                 <?php else: ?>
                 <table class="widefat striped">
                     <thead>
                         <tr>
-                            <th><?php esc_html_e( 'From', 'google-news-helper' ); ?></th>
-                            <th><?php esc_html_e( 'To', 'google-news-helper' ); ?></th>
-                            <th><?php esc_html_e( 'Type', 'google-news-helper' ); ?></th>
-                            <th><?php esc_html_e( 'Hits', 'google-news-helper' ); ?></th>
-                            <th><?php esc_html_e( 'Actions', 'google-news-helper' ); ?></th>
+                            <th><?php esc_html_e( 'From', 'news-seo-helper' ); ?></th>
+                            <th><?php esc_html_e( 'To', 'news-seo-helper' ); ?></th>
+                            <th><?php esc_html_e( 'Type', 'news-seo-helper' ); ?></th>
+                            <th><?php esc_html_e( 'Hits', 'news-seo-helper' ); ?></th>
+                            <th><?php esc_html_e( 'Actions', 'news-seo-helper' ); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -166,7 +166,7 @@ class GNH_Redirects {
                                 <?php if ( ! empty( $r['to'] ) ): ?>
                                     <a href="<?php echo esc_url( $r['to'] ); ?>" target="_blank"><?php echo esc_html( $r['to'] ); ?></a>
                                 <?php else: ?>
-                                    <em><?php esc_html_e( '— (410 Gone)', 'google-news-helper' ); ?></em>
+                                    <em><?php esc_html_e( '— (410 Gone)', 'news-seo-helper' ); ?></em>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -183,8 +183,8 @@ class GNH_Redirects {
                                     <input type="hidden" name="gnh_index" value="<?php echo (int) $i; ?>">
                                     <?php wp_nonce_field( 'gnh_redirect_action', 'gnh_nonce' ); ?>
                                     <button type="submit" class="button button-link-delete"
-                                        onclick="return confirm('<?php esc_attr_e( 'Delete this redirect?', 'google-news-helper' ); ?>')">
-                                        <?php esc_html_e( 'Delete', 'google-news-helper' ); ?>
+                                        onclick="return confirm('<?php esc_attr_e( 'Delete this redirect?', 'news-seo-helper' ); ?>')">
+                                        <?php esc_html_e( 'Delete', 'news-seo-helper' ); ?>
                                     </button>
                                 </form>
                             </td>

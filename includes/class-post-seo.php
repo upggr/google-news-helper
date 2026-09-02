@@ -42,7 +42,7 @@ class GNH_Post_SEO {
             }
             add_meta_box(
                 'gnh-post-seo',
-                '<span class="dashicons dashicons-rss" style="color:#e8612d;vertical-align:middle;margin-right:4px;"></span> ' . esc_html__( 'Google News Helper — SEO', 'google-news-helper' ),
+                '<span class="dashicons dashicons-rss" style="color:#e8612d;vertical-align:middle;margin-right:4px;"></span> ' . esc_html__( 'News SEO Helper — SEO', 'news-seo-helper' ),
                 [ $this, 'render_metabox' ],
                 $post_type,
                 'normal',
@@ -71,15 +71,15 @@ class GNH_Post_SEO {
 
         <!-- Robots -->
         <div class="gnh-meta-section">
-            <label><?php esc_html_e( 'Search Engine Visibility', 'google-news-helper' ); ?></label>
+            <label><?php esc_html_e( 'Search Engine Visibility', 'news-seo-helper' ); ?></label>
             <div class="gnh-meta-row">
                 <input type="checkbox" id="gnh-noindex" name="gnh_noindex" value="1" <?php checked( $noindex ); ?>>
                 <label for="gnh-noindex" style="font-weight:400;">
                     <?php
                     if ( $post->post_type === 'post' ) {
-                        esc_html_e( 'noindex — hide this post from Google (and Google News)', 'google-news-helper' );
+                        esc_html_e( 'noindex — hide this post from Google (and Google News)', 'news-seo-helper' );
                     } else {
-                        esc_html_e( 'noindex — hide this page from Google search', 'google-news-helper' );
+                        esc_html_e( 'noindex — hide this page from Google search', 'news-seo-helper' );
                     }
                     ?>
                 </label>
@@ -89,9 +89,9 @@ class GNH_Post_SEO {
                 <label for="gnh-nofollow" style="font-weight:400;">
                     <?php
                     if ( $post->post_type === 'post' ) {
-                        esc_html_e( 'nofollow — tell Google not to follow links in this post', 'google-news-helper' );
+                        esc_html_e( 'nofollow — tell Google not to follow links in this post', 'news-seo-helper' );
                     } else {
-                        esc_html_e( 'nofollow — tell Google not to follow links on this page', 'google-news-helper' );
+                        esc_html_e( 'nofollow — tell Google not to follow links on this page', 'news-seo-helper' );
                     }
                     ?>
                 </label>
@@ -100,9 +100,9 @@ class GNH_Post_SEO {
             <p style="margin:4px 0 0;padding:6px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-size:12px;color:#7f1d1d;">
                 <?php
                 if ( $post->post_type === 'post' ) {
-                    esc_html_e( 'This post is set to noindex and will not appear in Google or Google News.', 'google-news-helper' );
+                    esc_html_e( 'This post is set to noindex and will not appear in Google or Google News.', 'news-seo-helper' );
                 } else {
-                    esc_html_e( 'This page is set to noindex and should not appear in Google search.', 'google-news-helper' );
+                    esc_html_e( 'This page is set to noindex and should not appear in Google search.', 'news-seo-helper' );
                 }
                 ?>
             </p>
@@ -111,7 +111,7 @@ class GNH_Post_SEO {
 
         <!-- Custom title -->
         <div class="gnh-meta-section">
-            <label for="gnh-seo-title"><?php esc_html_e( 'SEO title (Google result title)', 'google-news-helper' ); ?></label>
+            <label for="gnh-seo-title"><?php esc_html_e( 'SEO title (Google result title)', 'news-seo-helper' ); ?></label>
             <input type="text" id="gnh-seo-title" name="gnh_seo_title" class="large-text"
                 value="<?php echo esc_attr( $title ); ?>"
                 placeholder="<?php echo esc_attr( get_the_title( $post ) ); ?>">
@@ -121,24 +121,24 @@ class GNH_Post_SEO {
                 if ( $post->post_type === 'post' ) {
                     $cls = ( $tlen >= 30 && $tlen <= 110 ) ? 'gnh-char-ok' : 'gnh-char-warn';
                     /* translators: %d: character count */
-                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Google News: 30–110 recommended', 'google-news-helper' ) );
+                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Google News: 30–110 recommended', 'news-seo-helper' ) );
                 } else {
                     $cls = ( $tlen >= 0 && $tlen <= 70 ) ? 'gnh-char-ok' : 'gnh-char-warn';
                     /* translators: %d: character count */
-                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Pages: ~50–60 characters typical', 'google-news-helper' ) );
+                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Pages: ~50–60 characters typical', 'news-seo-helper' ) );
                 }
                 ?>
             </p>
             <p class="description" style="margin-top:6px;">
-                <?php esc_html_e( 'When filled, overrides the SEO title when a supported SEO plugin is active.', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'When filled, overrides the SEO title when a supported SEO plugin is active.', 'news-seo-helper' ); ?>
             </p>
         </div>
 
         <!-- Custom description -->
         <div class="gnh-meta-section">
-            <label for="gnh-seo-desc"><?php esc_html_e( 'Meta description (Google snippet text)', 'google-news-helper' ); ?></label>
+            <label for="gnh-seo-desc"><?php esc_html_e( 'Meta description (Google snippet text)', 'news-seo-helper' ); ?></label>
             <textarea id="gnh-seo-desc" name="gnh_seo_desc" class="large-text" rows="3"
-                placeholder="<?php esc_attr_e( 'Leave blank to use this plugin’s auto excerpt, or your SEO plugin’s description if set there', 'google-news-helper' ); ?>"><?php echo esc_textarea( $desc ); ?></textarea>
+                placeholder="<?php esc_attr_e( 'Leave blank to use this plugin’s auto excerpt, or your SEO plugin’s description if set there', 'news-seo-helper' ); ?>"><?php echo esc_textarea( $desc ); ?></textarea>
             <p class="gnh-char-count" id="gnh-desc-count">
                 <?php
                 $dlen = mb_strlen( $desc );
@@ -147,7 +147,7 @@ class GNH_Post_SEO {
                 ?>
             </p>
             <p class="description" style="margin-top:6px;">
-                <?php esc_html_e( 'When this field is filled, it overrides the meta description when a supported SEO plugin is active.', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'When this field is filled, it overrides the meta description when a supported SEO plugin is active.', 'news-seo-helper' ); ?>
             </p>
         </div>
 

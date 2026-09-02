@@ -14,67 +14,73 @@ class GNH_Admin_Page {
 
     public function register_menu(): void {
         add_menu_page(
-            __( 'Google News Helper', 'google-news-helper' ),
-            __( 'Google News', 'google-news-helper' ),
+            __( 'News SEO Helper', 'news-seo-helper' ),
+            __( 'News SEO', 'news-seo-helper' ),
             'manage_options',
-            'google-news-helper',
+            self::MENU_SLUG,
             [ $this, 'render_page' ],
             'dashicons-rss',
             80
         );
 
         add_submenu_page(
-            'google-news-helper',
-            __( 'Google News Helper', 'google-news-helper' ),
-            __( 'Dashboard', 'google-news-helper' ),
+            self::MENU_SLUG,
+            __( 'News SEO Helper', 'news-seo-helper' ),
+            __( 'Dashboard', 'news-seo-helper' ),
             'manage_options',
-            'google-news-helper',
+            self::MENU_SLUG,
             [ $this, 'render_page' ]
         );
 
         add_submenu_page(
-            'google-news-helper',
-            __( 'Category descriptions', 'google-news-helper' ),
-            __( 'Category descriptions', 'google-news-helper' ),
+            self::MENU_SLUG,
+            __( 'Category descriptions', 'news-seo-helper' ),
+            __( 'Category descriptions', 'news-seo-helper' ),
             'manage_categories',
             'gnh-term-descriptions',
             [ GNH_Term_SEO_Admin::class, 'render_static' ]
         );
 
         add_submenu_page(
-            'google-news-helper',
-            __( 'Image metadata', 'google-news-helper' ),
-            __( 'Image metadata', 'google-news-helper' ),
+            self::MENU_SLUG,
+            __( 'Image metadata', 'news-seo-helper' ),
+            __( 'Image metadata', 'news-seo-helper' ),
             'manage_options',
             'gnh-image-metadata',
             [ GNH_Image_Metadata_Admin::class, 'render_static' ]
         );
 
         add_submenu_page(
-            'google-news-helper',
-            __( 'Redirects', 'google-news-helper' ),
-            __( 'Redirects', 'google-news-helper' ),
+            self::MENU_SLUG,
+            __( 'Redirects', 'news-seo-helper' ),
+            __( 'Redirects', 'news-seo-helper' ),
             'manage_options',
             'gnh-redirects',
             [ GNH_Redirects::class, 'render_static' ]
         );
 
         add_submenu_page(
-            'google-news-helper',
-            __( 'robots.txt', 'google-news-helper' ),
-            __( 'robots.txt', 'google-news-helper' ),
+            self::MENU_SLUG,
+            __( 'robots.txt', 'news-seo-helper' ),
+            __( 'robots.txt', 'news-seo-helper' ),
             'manage_options',
             'gnh-robots',
             [ GNH_Robots_Admin::class, 'render_static' ]
         );
     }
 
+    /** Top-level menu slug; also the base of every submenu's admin page hook. */
+    public const MENU_SLUG = 'news-seo-helper';
+
     public function enqueue_assets( string $hook ): void {
-        $gnh_pages = [
-            'toplevel_page_google-news-helper',
-            'google-news-helper_page_gnh-robots',
-        ];
-        if ( ! in_array( $hook, $gnh_pages, true ) ) {
+        // Hook names are derived from the menu slug rather than hardcoded, so a
+        // renamed menu cannot silently leave admin screens unstyled.
+        $pages = [ 'toplevel_page_' . self::MENU_SLUG ];
+        foreach ( [ 'gnh-term-descriptions', 'gnh-image-metadata', 'gnh-redirects', 'gnh-robots', 'gnh-crawler-logs' ] as $sub ) {
+            $pages[] = self::MENU_SLUG . '_page_' . $sub;
+        }
+
+        if ( ! in_array( $hook, $pages, true ) ) {
             return;
         }
 
@@ -121,7 +127,7 @@ class GNH_Admin_Page {
         // Fetch the post's front-end HTML
         $response = wp_remote_get( $url, [
             'timeout'    => 15,
-            'user-agent' => 'Google News Helper Tag Tester/1.0 (WordPress/' . get_bloginfo( 'version' ) . ')',
+            'user-agent' => 'News SEO Helper Tag Tester/1.0 (WordPress/' . get_bloginfo( 'version' ) . ')',
             'sslverify'  => false, // local dev may have self-signed certs
         ] );
 
@@ -186,7 +192,7 @@ class GNH_Admin_Page {
             $ld_type = 'NewsArticle';
         } elseif ( preg_match( '/"@type"\s*:\s*"Article"/i', $html ) ) {
             $has_ld  = true;
-            $ld_type = 'Article (not NewsArticle — may need Google News Helper active)';
+            $ld_type = 'Article (not NewsArticle — may need News SEO Helper active)';
         }
 
         // Detect active SEO / OG plugins from HTML signals
@@ -236,7 +242,7 @@ class GNH_Admin_Page {
 
         foreach ( $active_plugins as $plugin_file ) {
             $slug = explode( '/', $plugin_file )[0];
-            if ( isset( $known_og_plugins[ $slug ] ) && $slug !== 'google-news-helper' ) {
+            if ( isset( $known_og_plugins[ $slug ] ) && $slug !== 'news-seo-helper' ) {
                 $active_conflict_plugins[] = [
                     'file' => $plugin_file,
                     'name' => $known_og_plugins[ $slug ],
@@ -305,44 +311,44 @@ class GNH_Admin_Page {
         <div class="wrap gnh-wrap">
             <h1>
                 <span class="dashicons dashicons-rss" style="font-size:30px;line-height:1;vertical-align:middle;margin-right:6px;color:#e8612d;"></span>
-                <?php esc_html_e( 'Google News Helper', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'News SEO Helper', 'news-seo-helper' ); ?>
                 <span class="gnh-version">v<?php echo esc_html( GNH_VERSION ); ?> &mdash; by <a href="https://buy-it.gr/" target="_blank">Ioannis Kokkinis</a></span>
             </h1>
 
             <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only notice flag set by options.php. ?>
             <?php if ( ! empty( $_GET['settings-updated'] ) || isset( $_GET['updated'] ) ) : ?>
-            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'google-news-helper' ); ?></p></div>
+            <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'news-seo-helper' ); ?></p></div>
             <?php endif; ?>
 
             <!-- ── Enable toggle ── -->
             <div class="gnh-card gnh-toggle-card">
-                <h2><?php esc_html_e( 'Enable Google News Optimization', 'google-news-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'When enabled, the plugin adds Google News meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post.', 'google-news-helper' ); ?></p>
+                <h2><?php esc_html_e( 'Enable Google News Optimization', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'When enabled, the plugin adds Google News meta tags, Open Graph tags, and NewsArticle JSON-LD structured data to every post.', 'news-seo-helper' ); ?></p>
                 <label class="gnh-switch" for="gnh-enable-toggle">
                     <input type="checkbox" id="gnh-enable-toggle" <?php checked( $enabled ); ?>>
                     <span class="gnh-slider"></span>
                 </label>
                 <span class="gnh-toggle-label">
                     <?php echo $enabled
-                        ? '<span class="gnh-status-on">' . esc_html__( 'Active', 'google-news-helper' ) . '</span>'
-                        : '<span class="gnh-status-off">' . esc_html__( 'Inactive', 'google-news-helper' ) . '</span>';
+                        ? '<span class="gnh-status-on">' . esc_html__( 'Active', 'news-seo-helper' ) . '</span>'
+                        : '<span class="gnh-status-off">' . esc_html__( 'Inactive', 'news-seo-helper' ) . '</span>';
                     ?>
                 </span>
                 <span class="gnh-save-notice" style="display:none;margin-left:12px;color:#46b450;font-weight:600;">
-                    &#10003; <?php esc_html_e( 'Saved', 'google-news-helper' ); ?>
+                    &#10003; <?php esc_html_e( 'Saved', 'news-seo-helper' ); ?>
                 </span>
             </div>
 
             <!-- ── Homepage meta description (Google snippet) ── -->
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Homepage search snippet', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Homepage search snippet', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Text for the meta description on your site’s front page. Google often shows this under the title in results instead of random text from the menu or footer.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Text for the meta description on your site’s front page. Google often shows this under the title in results instead of random text from the menu or footer.', 'news-seo-helper' ); ?>
                 </p>
                 <form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" class="gnh-front-snippet-form">
                     <?php settings_fields( 'gnh_options_group' ); ?>
                     <label for="gnh_front_meta_description" class="screen-reader-text">
-                        <?php esc_html_e( 'Homepage meta description', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'Homepage meta description', 'news-seo-helper' ); ?>
                     </label>
                     <textarea
                         id="gnh_front_meta_description"
@@ -350,12 +356,12 @@ class GNH_Admin_Page {
                         class="large-text"
                         rows="4"
                         maxlength="320"
-                        placeholder="<?php esc_attr_e( 'e.g. Breaking news, reports and analysis, updated around the clock.', 'google-news-helper' ); ?>"
+                        placeholder="<?php esc_attr_e( 'e.g. Breaking news, reports and analysis, updated around the clock.', 'news-seo-helper' ); ?>"
                     ><?php echo esc_textarea( (string) get_option( 'gnh_front_meta_description', '' ) ); ?></textarea>
                     <p class="description" style="margin-top:8px;">
-                        <?php esc_html_e( 'Recommended length: about 50–160 characters. Maximum stored: 320. If a supported SEO plugin is active, a filled field here overrides its homepage meta description.', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'Recommended length: about 50–160 characters. Maximum stored: 320. If a supported SEO plugin is active, a filled field here overrides its homepage meta description.', 'news-seo-helper' ); ?>
                     </p>
-                    <?php submit_button( __( 'Save homepage snippet', 'google-news-helper' ), 'primary', 'submit', false ); ?>
+                    <?php submit_button( __( 'Save homepage snippet', 'news-seo-helper' ), 'primary', 'submit', false ); ?>
                 </form>
             </div>
 
@@ -364,9 +370,9 @@ class GNH_Admin_Page {
             $gnh_missing = $this->count_terms_without_desc();
             ?>
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'Category search snippets', 'google-news-helper' ); ?></h2>
+                <h2><?php esc_html_e( 'Category search snippets', 'news-seo-helper' ); ?></h2>
                 <p class="description">
-                    <?php esc_html_e( 'Text shown under each category title in Google results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Text shown under each category title in Google results. Categories without one get an automatic snippet built from whatever text appears first on the page, which is usually identical across every category.', 'news-seo-helper' ); ?>
                 </p>
                 <p style="margin:12px 0;">
                     <?php if ( $gnh_missing > 0 ) : ?>
@@ -375,29 +381,29 @@ class GNH_Admin_Page {
                             <?php
                             printf(
                                 /* translators: %d: number of categories missing a description. */
-                                esc_html( _n( '%d category has no search description.', '%d categories have no search description.', $gnh_missing, 'google-news-helper' ) ),
+                                esc_html( _n( '%d category has no search description.', '%d categories have no search description.', $gnh_missing, 'news-seo-helper' ) ),
                                 (int) $gnh_missing
                             );
                             ?>
                         </span>
                     <?php else : ?>
                         <span style="color:#00794b;font-weight:600;">
-                            &#10003; <?php esc_html_e( 'Every category has a search description.', 'google-news-helper' ); ?>
+                            &#10003; <?php esc_html_e( 'Every category has a search description.', 'news-seo-helper' ); ?>
                         </span>
                     <?php endif; ?>
                 </p>
                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=gnh-term-descriptions' ) ); ?>" class="button button-primary">
-                    <?php esc_html_e( 'Edit category descriptions', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Edit category descriptions', 'news-seo-helper' ); ?>
                 </a>
             </div>
 
             <!-- ── Article previews ── -->
             <div class="gnh-card">
-                <h2><?php esc_html_e( 'How Your Latest Posts Appear on Google News', 'google-news-helper' ); ?></h2>
-                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags.', 'google-news-helper' ); ?></p>
+                <h2><?php esc_html_e( 'How Your Latest Posts Appear on Google News', 'news-seo-helper' ); ?></h2>
+                <p class="description"><?php esc_html_e( 'A preview of the last 5 published posts as they would appear in Google News. Click the test icon to check meta tags.', 'news-seo-helper' ); ?></p>
 
                 <?php if ( empty( $posts ) ): ?>
-                    <p><?php esc_html_e( 'No published posts found.', 'google-news-helper' ); ?></p>
+                    <p><?php esc_html_e( 'No published posts found.', 'news-seo-helper' ); ?></p>
                 <?php else: ?>
                 <div class="gnh-preview-grid">
                     <?php foreach ( $posts as $post ):
@@ -411,19 +417,19 @@ class GNH_Admin_Page {
 
             <!-- ── Info box ── -->
             <div class="gnh-card gnh-info-card">
-                <h3><?php esc_html_e( 'What this plugin adds', 'google-news-helper' ); ?></h3>
+                <h3><?php esc_html_e( 'What this plugin adds', 'news-seo-helper' ); ?></h3>
                 <ul>
-                    <li><?php esc_html_e( 'Open Graph tags (og:title, og:image, og:description, og:type=article …)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Article Open Graph tags (published time, modified time, author, section, tags)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Twitter Card tags (summary_large_image)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'news_keywords meta tag (up to 10 post tags)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'robots meta: max-image-preview:large', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'NewsArticle JSON-LD structured data (Schema.org)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Google News XML sitemap at /news-sitemap.xml (articles from last 48 hours)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'RSS feed enclosure tags with image URL, size, and MIME type', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results', 'google-news-helper' ); ?></li>
-                    <li><?php esc_html_e( 'Per-post and per-page SEO title and meta description (editor metabox); when set, they override the SEO plugin’s values for that content where supported', 'google-news-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Open Graph tags (og:title, og:image, og:description, og:type=article …)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Article Open Graph tags (published time, modified time, author, section, tags)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Twitter Card tags (summary_large_image)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'news_keywords meta tag (up to 10 post tags)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'robots meta: max-image-preview:large', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'NewsArticle JSON-LD structured data (Schema.org)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Google News XML sitemap at /news-sitemap.xml (articles from last 48 hours)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'RSS feed enclosure tags with image URL, size, and MIME type', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'OG tags are skipped if Yoast SEO, Rank Math, or All-in-One SEO is active (no conflicts)', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Optional homepage meta description so Google can show your chosen text instead of navigation menus in search results', 'news-seo-helper' ); ?></li>
+                    <li><?php esc_html_e( 'Per-post and per-page SEO title and meta description (editor metabox); when set, they override the SEO plugin’s values for that content where supported', 'news-seo-helper' ); ?></li>
                 </ul>
             </div>
         </div>
@@ -449,7 +455,7 @@ class GNH_Admin_Page {
     }
 
     /**
-     * Categories with neither a Google News Helper description nor a taxonomy description,
+     * Categories with neither a News SEO Helper description nor a taxonomy description,
      * i.e. the ones Google will build a snippet for on its own.
      */
     private function count_terms_without_desc(): int {
@@ -491,7 +497,7 @@ class GNH_Admin_Page {
         $cats       = get_the_category( $post->ID );
         $section    = ! empty( $cats ) ? $cats[0]->name : '';
         $pub_ts     = get_post_time( 'U', true, $post );
-        $pub_human  = human_time_diff( (int) $pub_ts, time() ) . ' ' . __( 'ago', 'google-news-helper' );
+        $pub_human  = human_time_diff( (int) $pub_ts, time() ) . ' ' . __( 'ago', 'news-seo-helper' );
         $pub_iso    = get_the_date( 'c', $post );
 
         // Checks
@@ -513,7 +519,7 @@ class GNH_Admin_Page {
                         <span class="gnh-preview-dot">&middot;</span>
                         <span class="gnh-preview-section"><?php echo esc_html( $section ); ?></span>
                     <?php endif; ?>
-                    <button class="gnh-test-icon-btn" data-post-id="<?php echo esc_attr( (string) $post->ID ); ?>" title="<?php esc_attr_e( 'Test meta tags for this post', 'google-news-helper' ); ?>">
+                    <button class="gnh-test-icon-btn" data-post-id="<?php echo esc_attr( (string) $post->ID ); ?>" title="<?php esc_attr_e( 'Test meta tags for this post', 'news-seo-helper' ); ?>">
                         <span class="dashicons dashicons-search"></span>
                     </button>
                 </div>
@@ -528,10 +534,10 @@ class GNH_Admin_Page {
                 <div class="gnh-preview-status <?php echo $has_image ? 'gnh-status-good' : 'gnh-status-warn'; ?>">
                     <?php if ( $has_image ): ?>
                         <span class="dashicons dashicons-yes-alt"></span>
-                        <?php esc_html_e( 'Has featured image', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'Has featured image', 'news-seo-helper' ); ?>
                     <?php else: ?>
                         <span class="dashicons dashicons-warning"></span>
-                        <?php esc_html_e( 'No featured image', 'google-news-helper' ); ?>
+                        <?php esc_html_e( 'No featured image', 'news-seo-helper' ); ?>
                     <?php endif; ?>
                 </div>
                 <div class="gnh-preview-links">

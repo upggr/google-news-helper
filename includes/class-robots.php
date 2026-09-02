@@ -62,7 +62,7 @@ class GNH_Robots {
 
         $sitemap_url = home_url( '/news-sitemap.xml' );
 
-        $additions  = "\n# Google News Helper\n";
+        $additions  = "\n# News SEO Helper\n";
         $additions .= "User-agent: Googlebot-News\n";
         $additions .= "Allow: /\n";
         $additions .= "\n";
@@ -153,21 +153,21 @@ class GNH_Robots {
         if ( ! $public ) {
             $has_fail = true;
             $checks[] = [
-                'label'  => __( 'Search engine visibility', 'google-news-helper' ),
-                'hint'   => __( 'Settings → Reading → “Discourage search engines from indexing this site”.', 'google-news-helper' ),
+                'label'  => __( 'Search engine visibility', 'news-seo-helper' ),
+                'hint'   => __( 'Settings → Reading → “Discourage search engines from indexing this site”.', 'news-seo-helper' ),
                 'status' => 'fail',
-                'result' => __( 'Site is set to discourage indexing (robots will block crawlers).', 'google-news-helper' ),
+                'result' => __( 'Site is set to discourage indexing (robots will block crawlers).', 'news-seo-helper' ),
             ];
             $optimizations[] = [
-                'title'  => __( 'Allow indexing when you are ready to go live', 'google-news-helper' ),
-                'detail' => __( 'Uncheck “Discourage search engines” in Reading settings so WordPress serves a useful virtual robots.txt.', 'google-news-helper' ),
+                'title'  => __( 'Allow indexing when you are ready to go live', 'news-seo-helper' ),
+                'detail' => __( 'Uncheck “Discourage search engines” in Reading settings so WordPress serves a useful virtual robots.txt.', 'news-seo-helper' ),
             ];
         } else {
             $checks[] = [
-                'label'  => __( 'Search engine visibility', 'google-news-helper' ),
+                'label'  => __( 'Search engine visibility', 'news-seo-helper' ),
                 'hint'   => '',
                 'status' => 'pass',
-                'result' => __( 'Indexing is allowed.', 'google-news-helper' ),
+                'result' => __( 'Indexing is allowed.', 'news-seo-helper' ),
             ];
         }
 
@@ -175,7 +175,7 @@ class GNH_Robots {
         if ( $fetch_err !== '' ) {
             $has_fail = true;
             $checks[] = [
-                'label'  => __( 'Live robots.txt fetch', 'google-news-helper' ),
+                'label'  => __( 'Live robots.txt fetch', 'news-seo-helper' ),
                 'hint'   => $robots_url,
                 'status' => 'fail',
                 'result' => $fetch_err,
@@ -183,23 +183,23 @@ class GNH_Robots {
         } elseif ( $code < 200 || $code >= 400 ) {
             $has_fail = true;
             $checks[] = [
-                'label'  => __( 'HTTP status', 'google-news-helper' ),
+                'label'  => __( 'HTTP status', 'news-seo-helper' ),
                 'hint'   => $robots_url,
                 'status' => 'fail',
                 /* translators: %d: HTTP status code */
-                'result' => sprintf( __( 'Unexpected status %d (expected 200).', 'google-news-helper' ), $code ),
+                'result' => sprintf( __( 'Unexpected status %d (expected 200).', 'news-seo-helper' ), $code ),
             ];
             $optimizations[] = [
-                'title'  => __( 'Fix robots.txt URL', 'google-news-helper' ),
-                'detail' => __( 'Ensure /robots.txt is not blocked by the server, a security plugin, or a CDN rule.', 'google-news-helper' ),
+                'title'  => __( 'Fix robots.txt URL', 'news-seo-helper' ),
+                'detail' => __( 'Ensure /robots.txt is not blocked by the server, a security plugin, or a CDN rule.', 'news-seo-helper' ),
             ];
         } else {
             $checks[] = [
-                'label'  => __( 'HTTP status', 'google-news-helper' ),
+                'label'  => __( 'HTTP status', 'news-seo-helper' ),
                 'hint'   => $robots_url,
                 'status' => 'pass',
                 /* translators: %d: HTTP status code */
-                'result' => sprintf( __( 'OK (%d)', 'google-news-helper' ), $code ),
+                'result' => sprintf( __( 'OK (%d)', 'news-seo-helper' ), $code ),
             ];
         }
 
@@ -209,17 +209,17 @@ class GNH_Robots {
             if ( ! $plain && $ctype !== '' ) {
                 $has_warn = true;
                 $checks[] = [
-                    'label'  => __( 'Content-Type header', 'google-news-helper' ),
-                    'hint'   => __( 'Crawlers expect text/plain.', 'google-news-helper' ),
+                    'label'  => __( 'Content-Type header', 'news-seo-helper' ),
+                    'hint'   => __( 'Crawlers expect text/plain.', 'news-seo-helper' ),
                     'status' => 'warn',
                     'result' => $ctype,
                 ];
             } elseif ( $ctype !== '' ) {
                 $checks[] = [
-                    'label'  => __( 'Content-Type header', 'google-news-helper' ),
+                    'label'  => __( 'Content-Type header', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'pass',
-                    'result' => __( 'text/plain (or compatible)', 'google-news-helper' ),
+                    'result' => __( 'text/plain (or compatible)', 'news-seo-helper' ),
                 ];
             }
         }
@@ -228,21 +228,21 @@ class GNH_Robots {
         if ( $physical ) {
             $has_warn = true;
             $checks[] = [
-                'label'  => __( 'Static robots.txt file', 'google-news-helper' ),
+                'label'  => __( 'Static robots.txt file', 'news-seo-helper' ),
                 'hint'   => ABSPATH . 'robots.txt',
                 'status' => 'warn',
-                'result' => __( 'A physical file exists; the web server may serve it instead of WordPress (plugin rules would not apply).', 'google-news-helper' ),
+                'result' => __( 'A physical file exists; the web server may serve it instead of WordPress (plugin rules would not apply).', 'news-seo-helper' ),
             ];
             $optimizations[] = [
-                'title'  => __( 'Prefer one source of truth', 'google-news-helper' ),
-                'detail' => __( 'Remove robots.txt from the site root if you want WordPress and this plugin to control the file, or edit the static file to include the same sitemap and crawler rules.', 'google-news-helper' ),
+                'title'  => __( 'Prefer one source of truth', 'news-seo-helper' ),
+                'detail' => __( 'Remove robots.txt from the site root if you want WordPress and this plugin to control the file, or edit the static file to include the same sitemap and crawler rules.', 'news-seo-helper' ),
             ];
         } else {
             $checks[] = [
-                'label'  => __( 'Static robots.txt file', 'google-news-helper' ),
+                'label'  => __( 'Static robots.txt file', 'news-seo-helper' ),
                 'hint'   => '',
                 'status' => 'pass',
-                'result' => __( 'No robots.txt in WordPress root — virtual robots.txt can apply.', 'google-news-helper' ),
+                'result' => __( 'No robots.txt in WordPress root — virtual robots.txt can apply.', 'news-seo-helper' ),
             ];
         }
 
@@ -252,17 +252,17 @@ class GNH_Robots {
             if ( ! $has_sitemap ) {
                 $has_warn = true;
                 $checks[] = [
-                    'label'  => __( 'Sitemap declarations', 'google-news-helper' ),
+                    'label'  => __( 'Sitemap declarations', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'warn',
-                    'result' => __( 'No “Sitemap:” lines found.', 'google-news-helper' ),
+                    'result' => __( 'No “Sitemap:” lines found.', 'news-seo-helper' ),
                 ];
             } else {
                 $checks[] = [
-                    'label'  => __( 'Sitemap declarations', 'google-news-helper' ),
+                    'label'  => __( 'Sitemap declarations', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'pass',
-                    'result' => __( 'At least one Sitemap URL is present.', 'google-news-helper' ),
+                    'result' => __( 'At least one Sitemap URL is present.', 'news-seo-helper' ),
                 ];
             }
 
@@ -270,43 +270,46 @@ class GNH_Robots {
             if ( ! $news_map ) {
                 $has_warn = true;
                 $checks[] = [
-                    'label'  => __( 'Google News sitemap', 'google-news-helper' ),
+                    'label'  => __( 'Google News sitemap', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'warn',
-                    'result' => __( 'news-sitemap.xml is not referenced (this plugin adds it when indexing is allowed).', 'google-news-helper' ),
+                    'result' => __( 'news-sitemap.xml is not referenced (this plugin adds it when indexing is allowed).', 'news-seo-helper' ),
                 ];
             } else {
                 $checks[] = [
-                    'label'  => __( 'Google News sitemap', 'google-news-helper' ),
+                    'label'  => __( 'Google News sitemap', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'pass',
-                    'result' => __( 'Referenced in robots.txt.', 'google-news-helper' ),
+                    'result' => __( 'Referenced in robots.txt.', 'news-seo-helper' ),
                 ];
             }
 
             if ( $physical ) {
                 $checks[] = [
-                    'label'  => __( 'Plugin robots rules', 'google-news-helper' ),
+                    'label'  => __( 'Plugin robots rules', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'warn',
-                    'result' => __( 'Not verified: a static robots.txt may be served instead of WordPress — confirm the file includes your sitemap and crawler rules.', 'google-news-helper' ),
+                    'result' => __( 'Not verified: a static robots.txt may be served instead of WordPress — confirm the file includes your sitemap and crawler rules.', 'news-seo-helper' ),
                 ];
             } else {
-                $has_gnh = strpos( $body, 'Google News Helper' ) !== false;
+                // Accept the historical marker as well: sites updated from an
+                // older version may still be serving a cached robots.txt.
+                $has_gnh = strpos( $body, 'News SEO Helper' ) !== false
+                    || strpos( $body, 'Google News Helper' ) !== false;
                 if ( ! $has_gnh ) {
                     $has_warn = true;
                     $checks[] = [
-                        'label'  => __( 'Plugin robots rules', 'google-news-helper' ),
+                        'label'  => __( 'Plugin robots rules', 'news-seo-helper' ),
                         'hint'   => '',
                         'status' => 'warn',
-                        'result' => __( 'Expected “Google News Helper” block not found — another plugin or theme may be replacing robots.txt output.', 'google-news-helper' ),
+                        'result' => __( 'Expected “News SEO Helper” block not found — another plugin or theme may be replacing robots.txt output.', 'news-seo-helper' ),
                     ];
                 } else {
                     $checks[] = [
-                        'label'  => __( 'Plugin robots rules', 'google-news-helper' ),
+                        'label'  => __( 'Plugin robots rules', 'news-seo-helper' ),
                         'hint'   => '',
                         'status' => 'pass',
-                        'result' => __( 'Google News Helper block is present.', 'google-news-helper' ),
+                        'result' => __( 'News SEO Helper block is present.', 'news-seo-helper' ),
                     ];
                 }
             }
@@ -315,42 +318,42 @@ class GNH_Robots {
             if ( $star_blocked ) {
                 $has_fail = true;
                 $checks[] = [
-                    'label'  => __( 'Crawl rules for all bots (User-agent: *)', 'google-news-helper' ),
+                    'label'  => __( 'Crawl rules for all bots (User-agent: *)', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'fail',
-                    'result' => __( 'A rule appears to disallow the entire site for *.', 'google-news-helper' ),
+                    'result' => __( 'A rule appears to disallow the entire site for *.', 'news-seo-helper' ),
                 ];
                 $optimizations[] = [
-                    'title'  => __( 'Relax overly broad Disallow rules', 'google-news-helper' ),
-                    'detail' => __( 'Avoid “Disallow: /” for User-agent: * unless you intentionally block all crawlers.', 'google-news-helper' ),
+                    'title'  => __( 'Relax overly broad Disallow rules', 'news-seo-helper' ),
+                    'detail' => __( 'Avoid “Disallow: /” for User-agent: * unless you intentionally block all crawlers.', 'news-seo-helper' ),
                 ];
             } else {
                 $checks[] = [
-                    'label'  => __( 'Crawl rules for all bots (User-agent: *)', 'google-news-helper' ),
+                    'label'  => __( 'Crawl rules for all bots (User-agent: *)', 'news-seo-helper' ),
                     'hint'   => '',
                     'status' => 'pass',
-                    'result' => __( 'No full-site Disallow for * detected.', 'google-news-helper' ),
+                    'result' => __( 'No full-site Disallow for * detected.', 'news-seo-helper' ),
                 ];
             }
 
             if ( $social_blocked ) {
                 $has_fail = true;
                 $checks[] = [
-                    'label'  => __( 'Social / link-preview crawlers', 'google-news-helper' ),
-                    'hint'   => __( 'Facebook, X, LinkedIn, etc.', 'google-news-helper' ),
+                    'label'  => __( 'Social / link-preview crawlers', 'news-seo-helper' ),
+                    'hint'   => __( 'Facebook, X, LinkedIn, etc.', 'news-seo-helper' ),
                     'status' => 'fail',
-                    'result' => __( 'A rule appears to block link-preview crawlers (e.g. Facebot / facebookexternalhit).', 'google-news-helper' ),
+                    'result' => __( 'A rule appears to block link-preview crawlers (e.g. Facebot / facebookexternalhit).', 'news-seo-helper' ),
                 ];
                 $optimizations[] = [
-                    'title'  => __( 'Allow social crawlers', 'google-news-helper' ),
-                    'detail' => __( 'Remove Disallow rules that target Facebot or facebookexternalhit, or add explicit Allow: / for those user agents.', 'google-news-helper' ),
+                    'title'  => __( 'Allow social crawlers', 'news-seo-helper' ),
+                    'detail' => __( 'Remove Disallow rules that target Facebot or facebookexternalhit, or add explicit Allow: / for those user agents.', 'news-seo-helper' ),
                 ];
             } else {
                 $checks[] = [
-                    'label'  => __( 'Social / link-preview crawlers', 'google-news-helper' ),
-                    'hint'   => __( 'Facebook, X, LinkedIn, etc.', 'google-news-helper' ),
+                    'label'  => __( 'Social / link-preview crawlers', 'news-seo-helper' ),
+                    'hint'   => __( 'Facebook, X, LinkedIn, etc.', 'news-seo-helper' ),
                     'status' => 'pass',
-                    'result' => __( 'No full-site block detected for common preview bots.', 'google-news-helper' ),
+                    'result' => __( 'No full-site block detected for common preview bots.', 'news-seo-helper' ),
                 ];
             }
         }
@@ -363,9 +366,9 @@ class GNH_Robots {
         }
 
         $overall_labels = [
-            'good' => __( 'Healthy', 'google-news-helper' ),
-            'warn' => __( 'Needs attention', 'google-news-helper' ),
-            'bad'  => __( 'Critical issues', 'google-news-helper' ),
+            'good' => __( 'Healthy', 'news-seo-helper' ),
+            'warn' => __( 'Needs attention', 'news-seo-helper' ),
+            'bad'  => __( 'Critical issues', 'news-seo-helper' ),
         ];
 
         return [
@@ -385,16 +388,16 @@ class GNH_Robots {
     private static function baseline_optimizations(): array {
         return [
             [
-                'title'  => __( 'Google News', 'google-news-helper' ),
-                'detail' => __( 'Adds Googlebot-News allow rules and a Sitemap line for news-sitemap.xml.', 'google-news-helper' ),
+                'title'  => __( 'Google News', 'news-seo-helper' ),
+                'detail' => __( 'Adds Googlebot-News allow rules and a Sitemap line for news-sitemap.xml.', 'news-seo-helper' ),
             ],
             [
-                'title'  => __( 'Link previews', 'google-news-helper' ),
-                'detail' => __( 'Declares explicit Allow: / for Facebook, X, LinkedIn, WhatsApp, Slack, and Telegram crawlers.', 'google-news-helper' ),
+                'title'  => __( 'Link previews', 'news-seo-helper' ),
+                'detail' => __( 'Declares explicit Allow: / for Facebook, X, LinkedIn, WhatsApp, Slack, and Telegram crawlers.', 'news-seo-helper' ),
             ],
             [
-                'title'  => __( 'Caching', 'google-news-helper' ),
-                'detail' => __( 'Signals cache plugins to bypass the cache for those crawlers so previews stay fresh.', 'google-news-helper' ),
+                'title'  => __( 'Caching', 'news-seo-helper' ),
+                'detail' => __( 'Signals cache plugins to bypass the cache for those crawlers so previews stay fresh.', 'news-seo-helper' ),
             ],
         ];
     }
@@ -409,7 +412,7 @@ class GNH_Robots {
             $url,
             [
                 'timeout'     => 15,
-                'user-agent'  => 'Google News Helper Robots Check/' . GNH_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ')',
+                'user-agent'  => 'News SEO Helper Robots Check/' . GNH_VERSION . ' (WordPress/' . get_bloginfo( 'version' ) . ')',
                 'sslverify'   => false,
                 'redirection' => 5,
             ]

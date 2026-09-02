@@ -21,8 +21,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 ROOT="$PWD"
-SLUG="google-news-helper"
-VERSION="$(grep -m1 "^ \* Version:" "$SLUG.php" | awk '{print $3}')"
+SLUG="news-seo-helper"          # WordPress.org slug
+SRC="google-news-helper"        # repo/source filenames
+VERSION="$(grep -m1 "^ \* Version:" "$SRC.php" | awk '{print $3}')"
 
 if [[ $# -lt 1 ]]; then
     echo "Usage: ./bin/svn-deploy.sh <svn-checkout-dir> [--commit \"message\"]" >&2

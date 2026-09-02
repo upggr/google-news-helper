@@ -55,7 +55,7 @@ class GNH_Term_SEO_Admin {
 
     public function handle_save(): void {
         if ( ! current_user_can( 'manage_categories' ) ) {
-            wp_die( esc_html__( 'You do not have permission to edit term descriptions.', 'google-news-helper' ) );
+            wp_die( esc_html__( 'You do not have permission to edit term descriptions.', 'news-seo-helper' ) );
         }
 
         check_admin_referer( self::NONCE_ACTION );
@@ -110,7 +110,7 @@ class GNH_Term_SEO_Admin {
         <div class="wrap gnh-wrap">
             <h1>
                 <span class="dashicons dashicons-category" style="font-size:28px;line-height:1;vertical-align:middle;margin-right:6px;color:#e8612d;"></span>
-                <?php esc_html_e( 'Category search descriptions', 'google-news-helper' ); ?>
+                <?php esc_html_e( 'Category search descriptions', 'news-seo-helper' ); ?>
             </h1>
 
             <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only count for the success notice. ?>
@@ -120,7 +120,7 @@ class GNH_Term_SEO_Admin {
                         <?php
                         printf(
                             /* translators: %d: number of terms saved. */
-                            esc_html__( 'Saved %d descriptions.', 'google-news-helper' ),
+                            esc_html__( 'Saved %d descriptions.', 'news-seo-helper' ),
                             isset( $_GET['gnh-updated'] ) ? (int) $_GET['gnh-updated'] : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                         );
                         ?>
@@ -130,15 +130,15 @@ class GNH_Term_SEO_Admin {
 
             <div class="gnh-card">
                 <p class="description" style="margin-bottom:4px;">
-                    <?php esc_html_e( 'This is the text Google shows under the category title in search results. Without it, Google invents a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'This is the text Google shows under the category title in search results. Without it, Google invents a snippet from whatever text appears first on the page — often a banner alt text or menu labels, identical across every category.', 'news-seo-helper' ); ?>
                 </p>
                 <p class="description">
-                    <?php esc_html_e( 'Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear in Google, and Google may still choose its own text for some searches.', 'google-news-helper' ); ?>
+                    <?php esc_html_e( 'Aim for 50–160 characters, describing what a reader finds in this category. Changes can take days or weeks to appear in Google, and Google may still choose its own text for some searches.', 'news-seo-helper' ); ?>
                 </p>
             </div>
 
             <?php if ( empty( $grouped ) ) : ?>
-                <div class="gnh-card"><p><?php esc_html_e( 'No categories or tags found.', 'google-news-helper' ); ?></p></div>
+                <div class="gnh-card"><p><?php esc_html_e( 'No categories or tags found.', 'news-seo-helper' ); ?></p></div>
             <?php else : ?>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="gnh_save_term_descs">
@@ -153,9 +153,9 @@ class GNH_Term_SEO_Admin {
                             <table class="widefat striped gnh-term-table">
                                 <thead>
                                     <tr>
-                                        <th style="width:22%;"><?php esc_html_e( 'Category', 'google-news-helper' ); ?></th>
-                                        <th><?php esc_html_e( 'Google search description', 'google-news-helper' ); ?></th>
-                                        <th style="width:70px;text-align:right;"><?php esc_html_e( 'Chars', 'google-news-helper' ); ?></th>
+                                        <th style="width:22%;"><?php esc_html_e( 'Category', 'news-seo-helper' ); ?></th>
+                                        <th><?php esc_html_e( 'Google search description', 'news-seo-helper' ); ?></th>
+                                        <th style="width:70px;text-align:right;"><?php esc_html_e( 'Chars', 'news-seo-helper' ); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -174,18 +174,18 @@ class GNH_Term_SEO_Admin {
                                                 <?php
                                                 printf(
                                                     /* translators: %d: number of published posts in this category. */
-                                                    esc_html__( '%d posts', 'google-news-helper' ),
+                                                    esc_html__( '%d posts', 'news-seo-helper' ),
                                                     (int) $term->count
                                                 );
                                                 ?>
                                             </div>
                                             <?php if ( $stored === '' && ! $inherits ) : ?>
                                                 <div style="color:#b32d2e;font-size:11px;margin-top:2px;">
-                                                    &#9888; <?php esc_html_e( 'No description', 'google-news-helper' ); ?>
+                                                    &#9888; <?php esc_html_e( 'No description', 'news-seo-helper' ); ?>
                                                 </div>
                                             <?php elseif ( $inherits ) : ?>
                                                 <div style="color:#996800;font-size:11px;margin-top:2px;">
-                                                    <?php esc_html_e( 'Using taxonomy description', 'google-news-helper' ); ?>
+                                                    <?php esc_html_e( 'Using taxonomy description', 'news-seo-helper' ); ?>
                                                 </div>
                                             <?php endif; ?>
                                         </td>
@@ -196,7 +196,7 @@ class GNH_Term_SEO_Admin {
                                                 rows="2"
                                                 class="large-text gnh-term-desc"
                                                 maxlength="320"
-                                                placeholder="<?php echo esc_attr( $inherits ? wp_strip_all_tags( $term->description ) : __( 'Describe what readers find in this category…', 'google-news-helper' ) ); ?>"
+                                                placeholder="<?php echo esc_attr( $inherits ? wp_strip_all_tags( $term->description ) : __( 'Describe what readers find in this category…', 'news-seo-helper' ) ); ?>"
                                             ><?php echo esc_textarea( $stored ); ?></textarea>
                                         </td>
                                         <td style="text-align:right;vertical-align:middle;">
@@ -211,7 +211,7 @@ class GNH_Term_SEO_Admin {
                         </div>
                     <?php endforeach; ?>
 
-                    <?php submit_button( __( 'Save all descriptions', 'google-news-helper' ) ); ?>
+                    <?php submit_button( __( 'Save all descriptions', 'news-seo-helper' ) ); ?>
                 </form>
 
                 <script>

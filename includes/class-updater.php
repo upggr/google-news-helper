@@ -70,7 +70,7 @@ class GNH_GitHub_Updater {
         if ( ! $wp_filesystem->move( $source, $desired ) ) {
             return new WP_Error(
                 'gnh_rename_failed',
-                __( 'Could not rename the downloaded plugin folder to its expected name.', 'google-news-helper' )
+                __( 'Could not rename the downloaded plugin folder to its expected name.', 'news-seo-helper' )
             );
         }
 
@@ -186,7 +186,7 @@ class GNH_GitHub_Updater {
         }
 
         $info               = new stdClass();
-        $info->name         = 'Google News Helper';
+        $info->name         = 'News SEO Helper';
         $info->slug         = $this->slug;
         $info->version      = (string) GNH_VERSION;
         $info->author       = '<a href="https://buy-it.gr">Ioannis Kokkinis</a>';
@@ -217,7 +217,7 @@ class GNH_GitHub_Updater {
                 'timeout' => 10,
                 'headers' => [
                     'Accept'     => 'application/vnd.github+json',
-                    'User-Agent' => 'google-news-helper',
+                    'User-Agent' => 'news-seo-helper',
                 ],
             ]
         );
