@@ -54,7 +54,11 @@ class GNH_Redirects {
                     exit( 'Gone' );
                 }
 
-                wp_redirect( $r['to'], $type );
+                // Not wp_safe_redirect(): the whole point of this feature is
+                // sending visitors to destinations an administrator configured,
+                // including external ones. The target is admin-supplied, never
+                // taken from the request.
+                wp_redirect( esc_url_raw( $r['to'] ), $type ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
                 exit;
             }
         }
@@ -97,8 +101,10 @@ class GNH_Redirects {
                 <span class="gnh-version">News SEO Helper v<?php echo esc_html( GNH_VERSION ); ?></span>
             </h1>
 
+            <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only notice flag. ?>
             <?php if ( isset( $_GET['saved'] ) ): ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect saved.', 'news-seo-helper' ); ?></p></div>
+            <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only notice flag. ?>
             <?php elseif ( isset( $_GET['deleted'] ) ): ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Redirect deleted.', 'news-seo-helper' ); ?></p></div>
             <?php endif; ?>
@@ -209,10 +215,10 @@ class GNH_Redirects {
 
         $from = '/' . ltrim( sanitize_text_field( wp_unslash( $_POST['gnh_from'] ?? '' ) ), '/' );
         $to   = sanitize_text_field( wp_unslash( $_POST['gnh_to'] ?? '' ) );
-        $type = (int) ( $_POST['gnh_type'] ?? 301 );
+        $type = isset( $_POST['gnh_type'] ) ? (int) sanitize_text_field( wp_unslash( $_POST['gnh_type'] ) ) : 301;
 
         if ( empty( $from ) ) {
-            wp_redirect( add_query_arg( 'error', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
+            wp_safe_redirect( add_query_arg( 'error', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
             exit;
         }
 
@@ -229,7 +235,7 @@ class GNH_Redirects {
         ];
         update_option( self::OPTION, $redirects, false );
 
-        wp_redirect( add_query_arg( 'saved', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
+        wp_safe_redirect( add_query_arg( 'saved', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
         exit;
     }
 
@@ -240,7 +246,7 @@ class GNH_Redirects {
             wp_die( 'Unauthorized' );
         }
 
-        $index     = (int) ( $_POST['gnh_index'] ?? -1 );
+        $index     = isset( $_POST['gnh_index'] ) ? (int) sanitize_text_field( wp_unslash( $_POST['gnh_index'] ) ) : -1;
         $redirects = $this->get_all();
 
         if ( isset( $redirects[ $index ] ) ) {
@@ -248,7 +254,7 @@ class GNH_Redirects {
             update_option( self::OPTION, $redirects, false );
         }
 
-        wp_redirect( add_query_arg( 'deleted', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
+        wp_safe_redirect( add_query_arg( 'deleted', '1', admin_url( 'admin.php?page=gnh-redirects' ) ) );
         exit;
     }
 

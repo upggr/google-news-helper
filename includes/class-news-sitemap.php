@@ -139,6 +139,6 @@ class GNH_News_Sitemap {
 		$file_size  = ( $file_path && file_exists( $file_path ) ) ? (int) filesize( $file_path ) : 0;
 		$mime_type  = get_post_mime_type( $image_id ) ?: 'image/jpeg';
 
-		echo "\t<enclosure url=\"" . esc_url( $image_url ) . "\" length=\"" . $file_size . "\" type=\"" . esc_attr( $mime_type ) . "\" />\n";
+		echo "\t<enclosure url=\"" . esc_url( $image_url ) . "\" length=\"" . esc_attr( (string) $file_size ) . "\" type=\"" . esc_attr( $mime_type ) . "\" />\n";
 	}
 }

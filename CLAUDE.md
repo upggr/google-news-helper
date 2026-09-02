@@ -77,6 +77,35 @@ tags offline. v1.0.18 renames the folder back and reactivates if needed, but ver
 wp --allow-root plugin list --name=google-news-helper
 ```
 
+## Plugin Check
+
+The directory runs Plugin Check on submission, so run it before shipping. There is no
+local wp-cli (it breaks on PHP 8.5), so use the server's PHP 8.3:
+
+```bash
+scp dist/news-seo-helper-*.zip root@89.167.92.241:/root/pccheck/
+ssh root@89.167.92.241 'cd /var/www/html \
+  && wp --allow-root plugin install plugin-check --activate \
+  && unzip -qo /root/pccheck/news-seo-helper-*.zip -d wp-content/plugins/ \
+  && wp --allow-root plugin check news-seo-helper --include-experimental --severity=1'
+```
+
+Extract the build but **do not activate it** there, and delete both it and
+plugin-check afterwards — that host runs the live site.
+
+Current state: zero errors and zero warnings, including experimental checks.
+
+Recurring rules worth knowing:
+- **Escape everything, including integers.** `%d` in a `printf` still trips
+  `EscapeOutput`; use `esc_html( (string) $n )`.
+- **No raw filesystem calls.** `file_get_contents`, `file_put_contents`, `rename`,
+  `unlink`, `chmod`, `is_writable` all fail. Use `WP_Filesystem` (see
+  `GNH_Image_Metadata::filesystem()`).
+- **Nonce checks must be visible at the call site.** A `check_ajax_referer()` inside a
+  helper is not followed by the sniffer; call it directly in the handler.
+- **`suppress_filters` does nothing on `WP_Query`** — it is a `get_posts()` idiom and
+  is flagged. Remove it rather than suppressing the warning.
+
 ## Linting
 
 `./bin/lint.sh` syntax-checks every PHP file. It uses local `php` when present and

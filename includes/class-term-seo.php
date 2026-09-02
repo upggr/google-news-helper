@@ -131,7 +131,7 @@ class GNH_Term_SEO {
             return;
         }
 
-        $value = self::sanitize( wp_unslash( $_POST['gnh_term_desc'] ) );
+        $value = self::sanitize( sanitize_textarea_field( wp_unslash( $_POST['gnh_term_desc'] ) ) );
 
         if ( $value === '' ) {
             delete_term_meta( $term_id, self::META_DESC );

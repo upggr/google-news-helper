@@ -121,11 +121,11 @@ class GNH_Post_SEO {
                 if ( $post->post_type === 'post' ) {
                     $cls = ( $tlen >= 30 && $tlen <= 110 ) ? 'gnh-char-ok' : 'gnh-char-warn';
                     /* translators: %d: character count */
-                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'News: 30–110 recommended', 'news-seo-helper' ) );
+                    printf( '<span class="%1$s">%2$s chars</span> — %3$s', esc_attr( $cls ), esc_html( (string) $tlen ), esc_html__( 'News: 30–110 recommended', 'news-seo-helper' ) );
                 } else {
                     $cls = ( $tlen >= 0 && $tlen <= 70 ) ? 'gnh-char-ok' : 'gnh-char-warn';
                     /* translators: %d: character count */
-                    printf( '<span class="%1$s">%2$d chars</span> — %3$s', esc_attr( $cls ), $tlen, esc_html__( 'Pages: ~50–60 characters typical', 'news-seo-helper' ) );
+                    printf( '<span class="%1$s">%2$s chars</span> — %3$s', esc_attr( $cls ), esc_html( (string) $tlen ), esc_html__( 'Pages: ~50–60 characters typical', 'news-seo-helper' ) );
                 }
                 ?>
             </p>
@@ -143,7 +143,7 @@ class GNH_Post_SEO {
                 <?php
                 $dlen = mb_strlen( $desc );
                 $cls  = ( $dlen === 0 || ( $dlen >= 50 && $dlen <= 160 ) ) ? 'gnh-char-ok' : 'gnh-char-warn';
-                printf( '<span class="%s">%d chars</span> — recommended: 50–160', esc_attr( $cls ), $dlen );
+                printf( '<span class="%1$s">%2$s chars</span> — %3$s', esc_attr( $cls ), esc_html( (string) $dlen ), esc_html__( 'recommended: 50–160', 'news-seo-helper' ) );
                 ?>
             </p>
             <p class="description" style="margin-top:6px;">

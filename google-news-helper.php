@@ -78,7 +78,8 @@ foreach ( $_gnh_includes as $_gnh_file ) {
     $path = GNH_PLUGIN_DIR . $_gnh_file;
     if ( file_exists( $path ) ) {
         require_once $path;
-    } else {
+    } elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- debug-only diagnostic.
         error_log( 'News SEO Helper: missing file ' . $path );
     }
 }

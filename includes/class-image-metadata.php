@@ -76,11 +76,12 @@ class GNH_Image_Metadata {
      * @return bool True when the file was rewritten.
      */
     public static function strip_file( string $path ): bool {
-        if ( ! is_readable( $path ) || ! is_writable( $path ) ) {
+        $fs = self::filesystem();
+        if ( ! $fs || ! $fs->is_readable( $path ) || ! $fs->is_writable( $path ) ) {
             return false;
         }
 
-        $data = file_get_contents( $path );
+        $data = $fs->get_contents( $path );
         if ( ! is_string( $data ) || $data === '' ) {
             return false;
         }
@@ -260,24 +261,45 @@ class GNH_Image_Metadata {
     }
 
     /**
+     * Initialised WP_Filesystem instance, or null when it is unavailable
+     * (for example when the install requires FTP credentials).
+     */
+    private static function filesystem(): ?WP_Filesystem_Base {
+        global $wp_filesystem;
+
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+
+        if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
+            WP_Filesystem();
+        }
+
+        return $wp_filesystem instanceof WP_Filesystem_Base ? $wp_filesystem : null;
+    }
+
+    /**
      * Write via a temp file in the same directory so a failure cannot leave a
      * half-written image in place.
      */
     private static function atomic_write( string $path, string $bytes ): bool {
-        $tmp = $path . '.gnh-tmp';
-
-        if ( file_put_contents( $tmp, $bytes, LOCK_EX ) === false ) {
-            @unlink( $tmp );
+        $fs = self::filesystem();
+        if ( ! $fs ) {
             return false;
         }
 
-        $perms = @fileperms( $path );
-        if ( $perms !== false ) {
-            @chmod( $tmp, $perms & 0777 );
+        $tmp   = $path . '.gnh-tmp';
+        $perms = $fs->getchmod( $path );
+        $perms = is_string( $perms ) && $perms !== '' ? intval( $perms, 8 ) : false;
+
+        if ( ! $fs->put_contents( $tmp, $bytes, $perms !== false ? $perms : FS_CHMOD_FILE ) ) {
+            $fs->delete( $tmp );
+            return false;
         }
 
-        if ( ! @rename( $tmp, $path ) ) {
-            @unlink( $tmp );
+        // move() with overwrite: the destination already exists.
+        if ( ! $fs->move( $tmp, $path, true ) ) {
+            $fs->delete( $tmp );
             return false;
         }
 

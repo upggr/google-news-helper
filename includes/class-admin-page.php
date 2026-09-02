@@ -112,7 +112,7 @@ class GNH_Admin_Page {
             wp_send_json_error( [ 'message' => 'Unauthorized' ], 403 );
         }
 
-        $post_id = (int) ( $_POST['post_id'] ?? 0 );
+        $post_id = isset( $_POST['post_id'] ) ? (int) sanitize_text_field( wp_unslash( $_POST['post_id'] ) ) : 0;
         if ( ! $post_id ) {
             wp_send_json_error( [ 'message' => 'No post ID supplied.' ] );
         }
@@ -259,8 +259,17 @@ class GNH_Admin_Page {
             foreach ( $mu_files as $mu_file ) {
                 $mu_data = get_file_data( $mu_file, [ 'Name' => 'Plugin Name' ] );
                 $mu_name = $mu_data['Name'] ?: basename( $mu_file );
-                // Read first 4KB to look for og-related code
-                $mu_snippet = file_get_contents( $mu_file, false, null, 0, 4096 ) ?: '';
+                // Look for og-related code in the file's opening bytes.
+                global $wp_filesystem;
+                if ( ! function_exists( 'WP_Filesystem' ) ) {
+                    require_once ABSPATH . 'wp-admin/includes/file.php';
+                }
+                if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
+                    WP_Filesystem();
+                }
+                $mu_snippet = $wp_filesystem instanceof WP_Filesystem_Base
+                    ? substr( (string) $wp_filesystem->get_contents( $mu_file ), 0, 4096 )
+                    : '';
                 if ( preg_match( '/og:(title|image|description|type)|twitter:card|open.?graph|NewsArticle/i', $mu_snippet ) ) {
                     $mu_conflict_plugins[] = [
                         'file' => basename( $mu_file ),
@@ -447,7 +456,6 @@ class GNH_Admin_Page {
             'orderby'          => 'date',
             'order'            => 'DESC',
             'no_found_rows'    => true,
-            'suppress_filters' => true,
         ] );
         $posts = $query->posts ?: [];
         usort( $posts, static fn( $a, $b ) => strtotime( $b->post_date ) - strtotime( $a->post_date ) );
@@ -456,7 +464,7 @@ class GNH_Admin_Page {
 
     /**
      * Categories with neither a News SEO Helper description nor a taxonomy description,
-     * i.e. the ones Google will build a snippet for on its own.
+     * i.e. the ones search engines will build a snippet for on their own.
      */
     private function count_terms_without_desc(): int {
         if ( ! class_exists( 'GNH_Term_SEO' ) ) {

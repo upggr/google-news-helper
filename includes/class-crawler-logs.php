@@ -113,15 +113,15 @@ for ip in sorted(google_ips):
                 $ua = $matches[4];
 
                 // Highlight crawler IPs
-                $ip_class = '';
+                $ip_style = '';
                 if ( preg_match( '/^(66\.249|66\.102|40\.77|207\.46)/', $ip ) ) {
-                    $ip_class = ' style="background-color: #ffffcc; font-weight: bold;"';
+                    $ip_style = 'background-color: #ffffcc; font-weight: bold;';
                 }
 
                 printf(
-                    '<tr><td>%s</td><td%s>%s</td><td>%s</td><td>%s</td></tr>',
+                    '<tr><td>%1$s</td><td style="%2$s">%3$s</td><td>%4$s</td><td>%5$s</td></tr>',
                     esc_html( $timestamp ),
-                    $ip_class,
+                    esc_attr( $ip_style ),
                     esc_html( $ip ),
                     esc_html( $is_bot ),
                     esc_html( substr( $ua, 0, 70 ) ) . ( strlen( $ua ) > 70 ? '...' : '' )

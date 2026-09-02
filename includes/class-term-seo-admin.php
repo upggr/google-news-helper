@@ -60,8 +60,9 @@ class GNH_Term_SEO_Admin {
 
         check_admin_referer( self::NONCE_ACTION );
 
+        // Values are sanitized per-entry by GNH_Term_SEO::sanitize() in the loop below.
         $submitted = isset( $_POST['gnh_term_desc'] ) && is_array( $_POST['gnh_term_desc'] )
-            ? wp_unslash( $_POST['gnh_term_desc'] )
+            ? array_map( 'sanitize_textarea_field', wp_unslash( $_POST['gnh_term_desc'] ) )
             : [];
 
         $saved = 0;

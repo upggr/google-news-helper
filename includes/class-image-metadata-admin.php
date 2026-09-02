@@ -33,6 +33,15 @@ class GNH_Image_Metadata_Admin {
     private static function image_ids(): array {
         global $wpdb;
 
+        $cached = wp_cache_get( 'gnh_image_ids', 'news-seo-helper' );
+        if ( is_array( $cached ) ) {
+            return $cached;
+        }
+
+        // A direct query rather than WP_Query: this only needs a bare ID list for
+        // batching, and get_posts() with posts_per_page => -1 would hydrate every
+        // attachment object on libraries with tens of thousands of images.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- justified above; result is cached below.
         $ids = $wpdb->get_col(
             "SELECT ID FROM {$wpdb->posts}
              WHERE post_type = 'attachment'
@@ -40,7 +49,10 @@ class GNH_Image_Metadata_Admin {
              ORDER BY ID ASC"
         );
 
-        return array_map( 'intval', (array) $ids );
+        $ids = array_map( 'intval', (array) $ids );
+        wp_cache_set( 'gnh_image_ids', $ids, 'news-seo-helper', 5 * MINUTE_IN_SECONDS );
+
+        return $ids;
     }
 
     /**
@@ -74,21 +86,23 @@ class GNH_Image_Metadata_Admin {
     }
 
     private function verify(): void {
+        check_ajax_referer( self::NONCE, 'nonce' );
+
         if ( ! current_user_can( 'upload_files' ) ) {
             wp_send_json_error( [ 'message' => __( 'Permission denied.', 'news-seo-helper' ) ], 403 );
         }
-        check_ajax_referer( self::NONCE, 'nonce' );
     }
 
     /**
      * Report how many attachments still carry provenance metadata.
      */
     public function ajax_scan(): void {
+        check_ajax_referer( self::NONCE, 'nonce' );
         $this->verify();
 
         $ids    = self::image_ids();
-        $offset = isset( $_POST['offset'] ) ? max( 0, (int) $_POST['offset'] ) : 0;
-        $found  = isset( $_POST['found'] ) ? max( 0, (int) $_POST['found'] ) : 0;
+        $offset = isset( $_POST['offset'] ) ? max( 0, (int) sanitize_text_field( wp_unslash( $_POST['offset'] ) ) ) : 0;
+        $found  = isset( $_POST['found'] ) ? max( 0, (int) sanitize_text_field( wp_unslash( $_POST['found'] ) ) ) : 0;
 
         $slice = array_slice( $ids, $offset, self::BATCH );
 
@@ -115,11 +129,12 @@ class GNH_Image_Metadata_Admin {
      * Strip provenance from a batch of attachments.
      */
     public function ajax_clean(): void {
+        check_ajax_referer( self::NONCE, 'nonce' );
         $this->verify();
 
         $ids     = self::image_ids();
-        $offset  = isset( $_POST['offset'] ) ? max( 0, (int) $_POST['offset'] ) : 0;
-        $cleaned = isset( $_POST['cleaned'] ) ? max( 0, (int) $_POST['cleaned'] ) : 0;
+        $offset  = isset( $_POST['offset'] ) ? max( 0, (int) sanitize_text_field( wp_unslash( $_POST['offset'] ) ) ) : 0;
+        $cleaned = isset( $_POST['cleaned'] ) ? max( 0, (int) sanitize_text_field( wp_unslash( $_POST['cleaned'] ) ) ) : 0;
 
         $slice = array_slice( $ids, $offset, self::BATCH );
 
@@ -149,11 +164,18 @@ class GNH_Image_Metadata_Admin {
      * Cheap check for provenance markers without loading whole files where possible.
      */
     public static function file_has_provenance( string $path ): bool {
-        if ( ! is_readable( $path ) ) {
+        global $wp_filesystem;
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+        if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
+            WP_Filesystem();
+        }
+        if ( ! $wp_filesystem instanceof WP_Filesystem_Base || ! $wp_filesystem->is_readable( $path ) ) {
             return false;
         }
 
-        $data = file_get_contents( $path );
+        $data = $wp_filesystem->get_contents( $path );
         if ( ! is_string( $data ) || $data === '' ) {
             return false;
         }
