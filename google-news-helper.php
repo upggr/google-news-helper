@@ -1,19 +1,24 @@
 <?php
 /**
  * Plugin Name: Google News Helper
- * Description: Optimizes your WordPress site for Google News: generates Google News sitemap, adds required meta tags, Open Graph, NewsArticle JSON-LD for posts (WebPage for pages), RSS enclosure tags, SEO metabox on posts and pages, editable Google search descriptions for categories, removal of XMP/C2PA provenance metadata from uploaded images, and a preview dashboard. Auto-updates from GitHub.
- * Version:     1.0.19
+ * Plugin URI:  https://github.com/upggr/google-news-helper
+ * Description: Google News optimization for news sites: news sitemap, NewsArticle structured data, Open Graph and Twitter tags, per-post and per-category search descriptions, redirects, robots.txt tools, and removal of AI/provenance metadata from images.
+ * Version:     1.1.0
+ * Requires at least: 5.6
+ * Requires PHP: 7.4
  * Author:      Ioannis Kokkinis
  * Author URI:  https://buy-it.gr/
  * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: google-news-helper
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GNH_VERSION',     '1.0.19' );
+define( 'GNH_VERSION',     '1.1.0' );
 define( 'GNH_PLUGIN_FILE', __FILE__ );
 define( 'GNH_GITHUB_REPO', 'upggr/google-news-helper' );
 define( 'GNH_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
@@ -52,7 +57,6 @@ $_gnh_includes = [
     'includes/class-redirects.php',
     'includes/class-meta-tags.php',
     'includes/class-robots.php',
-    'includes/class-ad-nosnippet.php',
     'includes/class-crawler-logs.php',
     'includes/class-news-sitemap.php',
     'includes/class-robots-admin.php',
@@ -93,9 +97,6 @@ add_action( 'plugins_loaded', static function (): void {
     }
     if ( class_exists( 'GNH_Robots' ) ) {
         new GNH_Robots();
-    }
-    if ( class_exists( 'GNH_Ad_Nosnippet' ) ) {
-        new GNH_Ad_Nosnippet();
     }
     if ( class_exists( 'GNH_News_Sitemap' ) ) {
         new GNH_News_Sitemap();

@@ -19,7 +19,9 @@ class GNH_Robots {
      * serving a cached version so they always get a fresh full response.
      */
     private function maybe_bypass_cache_for_crawlers(): void {
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ua = isset( $_SERVER['HTTP_USER_AGENT'] )
+            ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) )
+            : '';
         if ( empty( $ua ) ) {
             return;
         }

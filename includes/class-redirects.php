@@ -35,7 +35,8 @@ class GNH_Redirects {
             return;
         }
 
-        $request_path = '/' . ltrim( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) ?: '', '/' );
+        $request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+        $request_path = '/' . ltrim( (string) ( wp_parse_url( $request_uri, PHP_URL_PATH ) ?: '' ), '/' );
 
         foreach ( $redirects as $index => $r ) {
             $from = '/' . ltrim( $r['from'], '/' );

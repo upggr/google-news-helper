@@ -309,6 +309,7 @@ class GNH_Admin_Page {
                 <span class="gnh-version">v<?php echo esc_html( GNH_VERSION ); ?> &mdash; by <a href="https://buy-it.gr/" target="_blank">Ioannis Kokkinis</a></span>
             </h1>
 
+            <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only notice flag set by options.php. ?>
             <?php if ( ! empty( $_GET['settings-updated'] ) || isset( $_GET['updated'] ) ) : ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'google-news-helper' ); ?></p></div>
             <?php endif; ?>
@@ -349,7 +350,7 @@ class GNH_Admin_Page {
                         class="large-text"
                         rows="4"
                         maxlength="320"
-                        placeholder="<?php esc_attr_e( 'e.g. Ζάκυνθος — ειδήσεις, ρεπορτάζ και επικαιρότητα 24/7 από ανεξάρτητη σύνταξη.', 'google-news-helper' ); ?>"
+                        placeholder="<?php esc_attr_e( 'e.g. Breaking news, reports and analysis, updated around the clock.', 'google-news-helper' ); ?>"
                     ><?php echo esc_textarea( (string) get_option( 'gnh_front_meta_description', '' ) ); ?></textarea>
                     <p class="description" style="margin-top:8px;">
                         <?php esc_html_e( 'Recommended length: about 50–160 characters. Maximum stored: 320. If a supported SEO plugin is active, a filled field here overrides its homepage meta description.', 'google-news-helper' ); ?>
@@ -542,7 +543,7 @@ class GNH_Admin_Page {
                 </div>
             </div>
             <div class="gnh-preview-thumb">
-                <?php echo $thumb_html; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+                <?php echo wp_kses_post( $thumb_html ); ?>
             </div>
         </div>
         <?php

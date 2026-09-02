@@ -113,6 +113,7 @@ class GNH_Term_SEO_Admin {
                 <?php esc_html_e( 'Category search descriptions', 'google-news-helper' ); ?>
             </h1>
 
+            <?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only count for the success notice. ?>
             <?php if ( isset( $_GET['gnh-updated'] ) ) : ?>
                 <div class="notice notice-success is-dismissible">
                     <p>
@@ -120,7 +121,7 @@ class GNH_Term_SEO_Admin {
                         printf(
                             /* translators: %d: number of terms saved. */
                             esc_html__( 'Saved %d descriptions.', 'google-news-helper' ),
-                            (int) $_GET['gnh-updated']
+                            isset( $_GET['gnh-updated'] ) ? (int) $_GET['gnh-updated'] : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                         );
                         ?>
                     </p>

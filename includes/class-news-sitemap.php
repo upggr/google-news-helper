@@ -41,7 +41,8 @@ class GNH_News_Sitemap {
 	}
 
 	public function serve_news_sitemap(): void {
-		$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ) : '';
+		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$path = $uri !== '' ? (string) wp_parse_url( $uri, PHP_URL_PATH ) : '';
 		if ( $path === '/news-sitemap.xml' ) {
 			$this->render_news_sitemap();
 		}

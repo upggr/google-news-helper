@@ -24,6 +24,27 @@ Reasons this keeps mattering:
 Only edit a site directly for **content** (the words in a description, an image alt
 text, a page's own SEO fields). Anything structural is a plugin change.
 
+## Two distribution channels
+
+The same codebase ships to GitHub (private updater) and WordPress.org (directory
+updates). `bin/build.sh` drops a `.wporg` marker file into the .org ZIP, and
+`GNH_GitHub_Updater::self_hosted_updates_enabled()` sees that marker and stays out of
+the way — a directory plugin may not fetch its own code. Nothing else differs, so
+there is one codebase, not a fork.
+
+`.wordpress-org/` holds the directory page icon, banners and screenshots. Those are
+uploaded to SVN `assets/` and must never ship inside the plugin ZIP.
+
+Release to WordPress.org:
+
+```bash
+./bin/build.sh                                   # dist/google-news-helper-X.Y.Z.zip
+./bin/svn-deploy.sh ~/svn/google-news-helper     # review, then commit
+```
+
+`readme.txt` `Stable tag:` must equal the `Version:` header — build.sh refuses
+otherwise, because a mismatch is what makes .org serve the wrong release.
+
 ## Release process
 
 The updater reads GitHub tags, so a change is not live until it is tagged.
@@ -76,7 +97,6 @@ There is no test suite. Lint plus a manual check on the live site is the bar.
 | `class-robots.php` / `class-robots-admin.php` | robots.txt management and health checks |
 | `class-redirects.php` | Redirect manager |
 | `class-news-sitemap.php` | Google News sitemap |
-| `class-ad-nosnippet.php` | Wraps ad markup in `data-nosnippet` |
 | `class-crawler-logs.php` | Crawler hit logging |
 | `class-updater.php` | GitHub release updater |
 

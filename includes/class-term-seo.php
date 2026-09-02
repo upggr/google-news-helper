@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Meta description for category / tag archives.
  *
  * Without this, archives ship no <meta name="description"> and Google builds the
- * search snippet out of whatever text it finds first on the page — on this site
- * that was the alt text of the banner ad at the top of every archive, so every
- * category shared one identical, meaningless snippet.
+ * search snippet out of whatever text it finds first on the page — often a banner
+ * alt text or menu labels, which leaves every category sharing one identical,
+ * meaningless snippet.
  */
 class GNH_Term_SEO {
 
@@ -107,7 +107,7 @@ class GNH_Term_SEO {
                     rows="4"
                     class="large-text"
                     maxlength="320"
-                    placeholder="<?php esc_attr_e( 'e.g. Ειδήσεις και ρεπορτάζ από τη Ζάκυνθο: τοπική επικαιρότητα, δήμος, κοινωνία.', 'google-news-helper' ); ?>"
+                    placeholder="<?php esc_attr_e( 'e.g. Local news, reports and daily coverage from our newsroom.', 'google-news-helper' ); ?>"
                 ><?php echo esc_textarea( $value ); ?></textarea>
                 <p class="description">
                     <?php esc_html_e( 'Shown under the title in Google results for this archive. Recommended 50–160 characters. If left empty, the taxonomy description above is used; if that is empty too, Google picks its own text from the page.', 'google-news-helper' ); ?>
