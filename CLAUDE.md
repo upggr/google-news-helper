@@ -43,6 +43,11 @@ reference, or any hidden file survives into the package.
 `.wordpress-org/` holds the directory page icon, banners and screenshots. Those are
 uploaded to SVN `assets/` and must never ship inside the plugin ZIP.
 
+The SVN repo does not exist until the plugins team approves the submission — there is
+nothing to push to before then, and no credential will change that. WordPress.org SVN
+auth is the wordpress.org account itself (not per-plugin), so an existing cached
+credential from another plugin works once the repo exists.
+
 Release to WordPress.org:
 
 ```bash

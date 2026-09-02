@@ -64,10 +64,19 @@ else
 fi
 
 # plugin directory page assets (never part of the plugin itself)
-if [[ -d "$ROOT/.wordpress-org" ]] && compgen -G "$ROOT/.wordpress-org/*" >/dev/null; then
+# Only the published images — not the .svg sources or the folder's own README,
+# which would otherwise appear on the plugin directory page.
+if [[ -d "$ROOT/.wordpress-org" ]]; then
     mkdir -p "$SVN_DIR/assets"
-    cp "$ROOT"/.wordpress-org/* "$SVN_DIR/assets/"
-    echo "  assets/"
+    copied=0
+    for f in "$ROOT"/.wordpress-org/icon-*.png \
+             "$ROOT"/.wordpress-org/banner-*.png \
+             "$ROOT"/.wordpress-org/screenshot-*.png; do
+        [[ -f "$f" ]] || continue
+        cp "$f" "$SVN_DIR/assets/"
+        copied=$((copied + 1))
+    done
+    echo "  assets/ ($copied files)"
 fi
 
 rm -rf "$STAGE"
